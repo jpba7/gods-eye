@@ -2991,5 +2991,28 @@
   "Begin with a clean globe": "Comece com um globo limpo",
   "Don't show this again": "Não mostrar novamente",
   "ESC to dismiss": "ESC para fechar",
-  "Tip: the GEV MIC button in the dock lets you talk to the map.": "Dica: o botão GEV MIC no dock permite falar com o mapa."
+  "Tip: the GEV MIC button in the dock lets you talk to the map.": "Dica: o botão GEV MIC no dock permite falar com o mapa.",
+  "{year} BCE": "{year} a.C.",
+  "{count} inhabitants ({year})": {
+    "one": "{count} habitante ({year})",
+    "many": "{count} de habitantes ({year})",
+    "other": "{count} habitantes ({year})"
+  },
+  "{count} inhabitants": {
+    "one": "{count} habitante",
+    "many": "{count} de habitantes",
+    "other": "{count} habitantes"
+  },
+  "{elevation} m above sea level": "{elevation} m de altitude",
+  "Since {year}": "Desde {year}",
+  "UNESCO World Heritage Site": "Patrimônio Mundial da UNESCO",
+  "Loading from Wikipedia…": "Carregando da Wikipédia…",
+  "Wikipedia did not answer · click the place to retry": "A Wikipédia não respondeu · clique no lugar para tentar de novo",
+  "click card to read more": "clique no cartão para ler mais",
+  "Open {title} on Wikipedia": "Abrir {title} na Wikipédia",
+  "Wikipedia is unavailable": "Wikipédia indisponível",
+  "zoom in to see places": "aproxime para ver lugares",
+  "Malformed Wikipedia response": "Resposta da Wikipédia malformada",
+  "Notable places": "Lugares notáveis",
+  "Explore": "Explorar"
 }

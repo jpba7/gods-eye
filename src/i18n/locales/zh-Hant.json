@@ -2853,5 +2853,24 @@
   },
   "S2 Underground publishes these KMZ products to GitHub. New uploads are detected within seconds and replace the previous edition automatically. Click a marker for its report.": "S2 Underground 在 GitHub 發布這些 KMZ 產品。新上傳的內容會在數秒內被檢測到，並自動替換舊版本。點擊標記查看報告。",
   "routing busy — too many routes at once": "路線服務繁忙：同時請求的路線過多",
-  "route proxy error": "路線代理出錯"
+  "route proxy error": "路線代理出錯",
+  "{year} BCE": "西元前{year}年",
+  "{count} inhabitants ({year})": {
+    "other": "人口 {count}（{year}年）"
+  },
+  "{count} inhabitants": {
+    "other": "人口 {count}"
+  },
+  "{elevation} m above sea level": "海拔 {elevation} 公尺",
+  "Since {year}": "始於{year}年",
+  "UNESCO World Heritage Site": "聯合國教科文組織世界遺產",
+  "Loading from Wikipedia…": "正在從維基百科載入…",
+  "Wikipedia did not answer · click the place to retry": "維基百科未回應 · 點擊該地點重試",
+  "click card to read more": "點擊卡片閱讀更多",
+  "Open {title} on Wikipedia": "在維基百科中開啟{title}",
+  "Wikipedia is unavailable": "維基百科無法使用",
+  "zoom in to see places": "放大以查看地點",
+  "Malformed Wikipedia response": "維基百科回應格式錯誤",
+  "Notable places": "知名地點",
+  "Explore": "探索"
 }

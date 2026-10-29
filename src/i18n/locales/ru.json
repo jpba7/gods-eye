@@ -3060,5 +3060,30 @@
   "Preview is off.": "Предпросмотр отключён.",
   "Automatic stop is unavailable for this voice connection.": "Автоматическая остановка недоступна для этого голосового подключения.",
   "routing busy — too many routes at once": "сервис маршрутов занят: слишком много маршрутов одновременно",
-  "route proxy error": "ошибка прокси маршрутов"
+  "route proxy error": "ошибка прокси маршрутов",
+  "{year} BCE": "{year} г. до н. э.",
+  "{count} inhabitants ({year})": {
+    "one": "{count} житель ({year})",
+    "few": "{count} жителя ({year})",
+    "many": "{count} жителей ({year})",
+    "other": "{count} жителя ({year})"
+  },
+  "{count} inhabitants": {
+    "one": "{count} житель",
+    "few": "{count} жителя",
+    "many": "{count} жителей",
+    "other": "{count} жителя"
+  },
+  "{elevation} m above sea level": "{elevation} м над уровнем моря",
+  "Since {year}": "С {year} г.",
+  "UNESCO World Heritage Site": "Объект Всемирного наследия ЮНЕСКО",
+  "Loading from Wikipedia…": "Загрузка из Википедии…",
+  "Wikipedia did not answer · click the place to retry": "Википедия не ответила · нажмите на место, чтобы повторить",
+  "click card to read more": "нажмите на карточку, чтобы читать дальше",
+  "Open {title} on Wikipedia": "Открыть «{title}» в Википедии",
+  "Wikipedia is unavailable": "Википедия недоступна",
+  "zoom in to see places": "приблизьте карту, чтобы увидеть места",
+  "Malformed Wikipedia response": "Некорректный ответ Википедии",
+  "Notable places": "Примечательные места",
+  "Explore": "Исследовать"
 }

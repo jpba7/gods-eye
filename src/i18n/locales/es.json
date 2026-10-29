@@ -2991,5 +2991,28 @@
   "Preview is off.": "La vista previa está desactivada.",
   "Automatic stop is unavailable for this voice connection.": "La parada automática no está disponible para esta conexión de voz.",
   "routing busy — too many routes at once": "servicio de rutas ocupado: demasiadas rutas a la vez",
-  "route proxy error": "error del proxy de rutas"
+  "route proxy error": "error del proxy de rutas",
+  "{year} BCE": "{year} a. C.",
+  "{count} inhabitants ({year})": {
+    "one": "{count} habitante ({year})",
+    "many": "{count} de habitantes ({year})",
+    "other": "{count} habitantes ({year})"
+  },
+  "{count} inhabitants": {
+    "one": "{count} habitante",
+    "many": "{count} de habitantes",
+    "other": "{count} habitantes"
+  },
+  "{elevation} m above sea level": "{elevation} m sobre el nivel del mar",
+  "Since {year}": "Desde {year}",
+  "UNESCO World Heritage Site": "Patrimonio de la Humanidad de la UNESCO",
+  "Loading from Wikipedia…": "Cargando desde Wikipedia…",
+  "Wikipedia did not answer · click the place to retry": "Wikipedia no respondió · haz clic en el lugar para reintentar",
+  "click card to read more": "haz clic en la tarjeta para leer más",
+  "Open {title} on Wikipedia": "Abrir {title} en Wikipedia",
+  "Wikipedia is unavailable": "Wikipedia no está disponible",
+  "zoom in to see places": "acércate para ver lugares",
+  "Malformed Wikipedia response": "Respuesta de Wikipedia mal formada",
+  "Notable places": "Lugares destacados",
+  "Explore": "Explorar"
 }

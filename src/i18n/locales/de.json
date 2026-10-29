@@ -2922,5 +2922,26 @@
   "Malformed cyclone snapshot": "Fehlerhafter Wirbelsturm-Snapshot",
   "STALE · Roads: {source} · Flow: cached TomTom tiles": "VERALTET · Straßen: {source} · Verkehrsfluss: TomTom-Kacheln aus dem Cache",
   "routing busy — too many routes at once": "Routing-Dienst ausgelastet – zu viele Routen gleichzeitig",
-  "route proxy error": "Fehler des Routen-Proxys"
+  "route proxy error": "Fehler des Routen-Proxys",
+  "{year} BCE": "{year} v. Chr.",
+  "{count} inhabitants ({year})": {
+    "one": "{count} Einwohner ({year})",
+    "other": "{count} Einwohner ({year})"
+  },
+  "{count} inhabitants": {
+    "one": "{count} Einwohner",
+    "other": "{count} Einwohner"
+  },
+  "{elevation} m above sea level": "{elevation} m über dem Meer",
+  "Since {year}": "Seit {year}",
+  "UNESCO World Heritage Site": "UNESCO-Welterbe",
+  "Loading from Wikipedia…": "Wird von Wikipedia geladen…",
+  "Wikipedia did not answer · click the place to retry": "Wikipedia hat nicht geantwortet · Ort anklicken, um es erneut zu versuchen",
+  "click card to read more": "Karte anklicken, um mehr zu lesen",
+  "Open {title} on Wikipedia": "{title} in Wikipedia öffnen",
+  "Wikipedia is unavailable": "Wikipedia ist nicht erreichbar",
+  "zoom in to see places": "hineinzoomen, um Orte zu sehen",
+  "Malformed Wikipedia response": "Fehlerhafte Wikipedia-Antwort",
+  "Notable places": "Bemerkenswerte Orte",
+  "Explore": "Entdecken"
 }

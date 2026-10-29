@@ -2991,5 +2991,28 @@
   "ESC to dismiss": "ESC pour fermer",
   "Tip: the GEV MIC button in the dock lets you talk to the map.": "Astuce : le bouton GEV MIC du dock permet de parler à la carte.",
   "Malformed cyclone snapshot": "Instantané cyclonique mal formé",
-  "Cyclone request timed out": "Délai dépassé pour la requête cyclonique"
+  "Cyclone request timed out": "Délai dépassé pour la requête cyclonique",
+  "{year} BCE": "{year} av. J.-C.",
+  "{count} inhabitants ({year})": {
+    "one": "{count} habitant ({year})",
+    "many": "{count} d’habitants ({year})",
+    "other": "{count} habitants ({year})"
+  },
+  "{count} inhabitants": {
+    "one": "{count} habitant",
+    "many": "{count} d’habitants",
+    "other": "{count} habitants"
+  },
+  "{elevation} m above sea level": "{elevation} m d’altitude",
+  "Since {year}": "Depuis {year}",
+  "UNESCO World Heritage Site": "Patrimoine mondial de l’UNESCO",
+  "Loading from Wikipedia…": "Chargement depuis Wikipédia…",
+  "Wikipedia did not answer · click the place to retry": "Wikipédia n’a pas répondu · cliquez sur le lieu pour réessayer",
+  "click card to read more": "cliquez sur la carte pour en savoir plus",
+  "Open {title} on Wikipedia": "Ouvrir {title} sur Wikipédia",
+  "Wikipedia is unavailable": "Wikipédia est indisponible",
+  "zoom in to see places": "zoomez pour voir des lieux",
+  "Malformed Wikipedia response": "Réponse de Wikipédia mal formée",
+  "Notable places": "Lieux remarquables",
+  "Explore": "Explorer"
 }
