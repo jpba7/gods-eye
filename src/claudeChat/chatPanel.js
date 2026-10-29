@@ -6,6 +6,10 @@
  * result is posted to /api/claude/chat/result.
  */
 
+import { t } from '../i18n/index.js';
+
+// A product name, not UI text: it stays the same in every language.
+const NAME = 'Claude';
 const SESSION_STORAGE_KEY = 'gev:claude-chat:session:v1';
 
 /** Split a fetch body stream into parsed NDJSON events. */
@@ -77,19 +81,19 @@ export function initClaudeChat({
   root.id = 'gev-claude-chat';
   root.dataset.open = 'false';
   root.innerHTML = `
-    <button type="button" class="gev-claude-chat-toggle" aria-expanded="false" aria-controls="gev-claude-chat-panel" title="Chat with Claude">
-      <span aria-hidden="true">✦</span><span class="gev-claude-chat-toggle-label">Claude</span>
+    <button type="button" class="gev-claude-chat-toggle" aria-expanded="false" aria-controls="gev-claude-chat-panel" title="${t('Chat with Claude')}">
+      <span aria-hidden="true">✦</span><span class="gev-claude-chat-toggle-label">${NAME}</span>
     </button>
     <div class="gev-claude-chat-panel" id="gev-claude-chat-panel" hidden>
       <header class="gev-claude-chat-header">
-        <span class="gev-claude-chat-title">Claude</span>
-        <button type="button" class="gev-claude-chat-new" title="Start a new conversation">New</button>
-        <button type="button" class="gev-claude-chat-close" aria-label="Close chat">×</button>
+        <span class="gev-claude-chat-title">${NAME}</span>
+        <button type="button" class="gev-claude-chat-new" title="${t('Start a new conversation')}">${t('New', { context: 'claude chat' })}</button>
+        <button type="button" class="gev-claude-chat-close" aria-label="${t('Close chat')}">×</button>
       </header>
       <ol class="gev-claude-chat-log" aria-live="polite"></ol>
       <form class="gev-claude-chat-form">
-        <textarea rows="2" maxlength="4000" placeholder="Ask or command the map…" aria-label="Message to Claude"></textarea>
-        <button type="submit" class="gev-claude-chat-send">Send</button>
+        <textarea rows="2" maxlength="4000" placeholder="${t('Ask or command the map…')}" aria-label="${t('Message to Claude')}"></textarea>
+        <button type="submit" class="gev-claude-chat-send">${t('Send', { context: 'claude chat' })}</button>
       </form>
     </div>`;
   doc.body.appendChild(root);
@@ -122,7 +126,9 @@ export function initClaudeChat({
 
   function setBusy(busy) {
     root.dataset.busy = String(busy);
-    send.textContent = busy ? 'Stop' : 'Send';
+    send.textContent = busy
+      ? t('Stop', { context: 'claude chat' })
+      : t('Send', { context: 'claude chat' });
     input.disabled = busy;
   }
 
@@ -149,7 +155,7 @@ export function initClaudeChat({
     turn = controller;
     setBusy(true);
     addEntry('user', message);
-    const thinking = addEntry('status', 'Thinking…');
+    const thinking = addEntry('status', t('Thinking…'));
     let chatId = null;
     let answered = false;
     try {
@@ -187,10 +193,10 @@ export function initClaudeChat({
           throw new Error(event.error);
         }
       }
-      if (!answered) addEntry('status', 'Done.');
+      if (!answered) addEntry('status', t('Done.'));
     } catch (error) {
       if (!signal.aborted) addEntry('error', error?.message || String(error));
-      else addEntry('status', 'Stopped.');
+      else addEntry('status', t('Stopped.'));
     } finally {
       thinking.remove();
       if (turn === controller) turn = null;

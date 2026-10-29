@@ -2991,5 +2991,16 @@
   "Preview is off.": "La vista previa está desactivada.",
   "Automatic stop is unavailable for this voice connection.": "La parada automática no está disponible para esta conexión de voz.",
   "routing busy — too many routes at once": "servicio de rutas ocupado: demasiadas rutas a la vez",
-  "route proxy error": "error del proxy de rutas"
+  "route proxy error": "error del proxy de rutas",
+  "Chat with Claude": "Chatear con Claude",
+  "Start a new conversation": "Empezar una conversación nueva",
+  "claude chat|New": "Nueva",
+  "Close chat": "Cerrar chat",
+  "Ask or command the map…": "Pregunta o da órdenes al mapa…",
+  "Message to Claude": "Mensaje para Claude",
+  "claude chat|Send": "Enviar",
+  "claude chat|Stop": "Detener",
+  "Thinking…": "Pensando…",
+  "Done.": "Listo.",
+  "Stopped.": "Detenido."
 }

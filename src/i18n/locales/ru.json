@@ -3060,5 +3060,16 @@
   "Preview is off.": "Предпросмотр отключён.",
   "Automatic stop is unavailable for this voice connection.": "Автоматическая остановка недоступна для этого голосового подключения.",
   "routing busy — too many routes at once": "сервис маршрутов занят: слишком много маршрутов одновременно",
-  "route proxy error": "ошибка прокси маршрутов"
+  "route proxy error": "ошибка прокси маршрутов",
+  "Chat with Claude": "Чат с Claude",
+  "Start a new conversation": "Начать новый разговор",
+  "claude chat|New": "Новый",
+  "Close chat": "Закрыть чат",
+  "Ask or command the map…": "Спросите или управляйте картой…",
+  "Message to Claude": "Сообщение для Claude",
+  "claude chat|Send": "Отправить",
+  "claude chat|Stop": "Остановить",
+  "Thinking…": "Думаю…",
+  "Done.": "Готово.",
+  "Stopped.": "Остановлено."
 }

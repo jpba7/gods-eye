@@ -2853,5 +2853,16 @@
   "routing busy — too many routes at once": "ルート検索サービスが混雑しています。同時に要求されたルートが多すぎます",
   "route proxy error": "ルート検索プロキシでエラーが発生しました",
   "Malformed cyclone snapshot": "サイクロンのスナップショットの形式が不正です",
-  "Cyclone request timed out": "サイクロンのリクエストがタイムアウトしました"
+  "Cyclone request timed out": "サイクロンのリクエストがタイムアウトしました",
+  "Chat with Claude": "Claude とチャット",
+  "Start a new conversation": "新しい会話を始める",
+  "claude chat|New": "新規",
+  "Close chat": "チャットを閉じる",
+  "Ask or command the map…": "質問やマップの操作を入力…",
+  "Message to Claude": "Claude へのメッセージ",
+  "claude chat|Send": "送信",
+  "claude chat|Stop": "停止",
+  "Thinking…": "考え中…",
+  "Done.": "完了。",
+  "Stopped.": "停止しました。"
 }
