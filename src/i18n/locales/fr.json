@@ -2991,5 +2991,16 @@
   "ESC to dismiss": "ESC pour fermer",
   "Tip: the GEV MIC button in the dock lets you talk to the map.": "Astuce : le bouton GEV MIC du dock permet de parler à la carte.",
   "Malformed cyclone snapshot": "Instantané cyclonique mal formé",
-  "Cyclone request timed out": "Délai dépassé pour la requête cyclonique"
+  "Cyclone request timed out": "Délai dépassé pour la requête cyclonique",
+  "Chat with Claude": "Discuter avec Claude",
+  "Start a new conversation": "Commencer une nouvelle conversation",
+  "claude chat|New": "Nouvelle",
+  "Close chat": "Fermer le chat",
+  "Ask or command the map…": "Interrogez ou pilotez la carte…",
+  "Message to Claude": "Message pour Claude",
+  "claude chat|Send": "Envoyer",
+  "claude chat|Stop": "Arrêter",
+  "Thinking…": "Réflexion…",
+  "Done.": "Terminé.",
+  "Stopped.": "Arrêté."
 }

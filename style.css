@@ -25,6 +25,7 @@
 @import './src/ui/styles/command-dock-sliding.css';
 @import './src/ui/styles/voice-cost.css';
 @import './src/ui/styles/voice-card.css';
+@import './src/ui/styles/claude-chat.css';
 @import './src/ui/styles/first-run.css';
 @import './src/ui/styles/provider-settings.css';
 @import './src/ui/styles/locale-picker.css';

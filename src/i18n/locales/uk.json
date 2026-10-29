@@ -3060,5 +3060,16 @@
   "ESC to dismiss": "ESC — приховати",
   "Tip: the GEV MIC button in the dock lets you talk to the map.": "Порада: кнопка МІК у доку дає змогу говорити з картою.",
   "Malformed cyclone snapshot": "Некоректний знімок циклонів",
-  "Cyclone request timed out": "Минув час очікування запиту циклонів"
+  "Cyclone request timed out": "Минув час очікування запиту циклонів",
+  "Chat with Claude": "Чат із Claude",
+  "Start a new conversation": "Почати нову розмову",
+  "claude chat|New": "Нова",
+  "Close chat": "Закрити чат",
+  "Ask or command the map…": "Запитайте або керуйте мапою…",
+  "Message to Claude": "Повідомлення для Claude",
+  "claude chat|Send": "Надіслати",
+  "claude chat|Stop": "Зупинити",
+  "Thinking…": "Думаю…",
+  "Done.": "Готово.",
+  "Stopped.": "Зупинено."
 }

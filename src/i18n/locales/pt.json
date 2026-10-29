@@ -2991,5 +2991,16 @@
   "Begin with a clean globe": "Comece com um globo limpo",
   "Don't show this again": "Não mostrar novamente",
   "ESC to dismiss": "ESC para fechar",
-  "Tip: the GEV MIC button in the dock lets you talk to the map.": "Dica: o botão GEV MIC no dock permite falar com o mapa."
+  "Tip: the GEV MIC button in the dock lets you talk to the map.": "Dica: o botão GEV MIC no dock permite falar com o mapa.",
+  "Chat with Claude": "Conversar com o Claude",
+  "Start a new conversation": "Começar uma nova conversa",
+  "claude chat|New": "Nova",
+  "Close chat": "Fechar chat",
+  "Ask or command the map…": "Pergunte ou comande o mapa…",
+  "Message to Claude": "Mensagem para o Claude",
+  "claude chat|Send": "Enviar",
+  "claude chat|Stop": "Parar",
+  "Thinking…": "Pensando…",
+  "Done.": "Pronto.",
+  "Stopped.": "Interrompido."
 }

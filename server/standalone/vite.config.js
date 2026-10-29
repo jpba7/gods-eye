@@ -20,7 +20,11 @@ export default defineConfig(({ command, mode }) => {
   const tools = standaloneVoiceTools();
   return createBrowserViteConfig({
     plugins: [
-      ...localProviderPlugins({ realtime: { tools }, gemini: { tools } }),
+      ...localProviderPlugins({
+        realtime: { tools },
+        gemini: { tools },
+        claude: { tools },
+      }),
       localMcpPlugin(),
       googleTokenUnavailablePlugin(),
       apiNotFoundPlugin(),
