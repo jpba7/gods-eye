@@ -3060,5 +3060,30 @@
   "ESC to dismiss": "ESC — приховати",
   "Tip: the GEV MIC button in the dock lets you talk to the map.": "Порада: кнопка МІК у доку дає змогу говорити з картою.",
   "Malformed cyclone snapshot": "Некоректний знімок циклонів",
-  "Cyclone request timed out": "Минув час очікування запиту циклонів"
+  "Cyclone request timed out": "Минув час очікування запиту циклонів",
+  "{year} BCE": "{year} р. до н. е.",
+  "{count} inhabitants ({year})": {
+    "one": "{count} мешканець ({year})",
+    "few": "{count} мешканці ({year})",
+    "many": "{count} мешканців ({year})",
+    "other": "{count} мешканця ({year})"
+  },
+  "{count} inhabitants": {
+    "one": "{count} мешканець",
+    "few": "{count} мешканці",
+    "many": "{count} мешканців",
+    "other": "{count} мешканця"
+  },
+  "{elevation} m above sea level": "{elevation} м над рівнем моря",
+  "Since {year}": "З {year} р.",
+  "UNESCO World Heritage Site": "Об’єкт Світової спадщини ЮНЕСКО",
+  "Loading from Wikipedia…": "Завантаження з Вікіпедії…",
+  "Wikipedia did not answer · click the place to retry": "Вікіпедія не відповіла · натисніть на місце, щоб повторити",
+  "click card to read more": "натисніть на картку, щоб читати далі",
+  "Open {title} on Wikipedia": "Відкрити «{title}» у Вікіпедії",
+  "Wikipedia is unavailable": "Вікіпедія недоступна",
+  "zoom in to see places": "наблизьте мапу, щоб побачити місця",
+  "Malformed Wikipedia response": "Некоректна відповідь Вікіпедії",
+  "Notable places": "Визначні місця",
+  "Explore": "Досліджувати"
 }

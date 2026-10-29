@@ -39,6 +39,10 @@ function lifecycleStateLabel(lifecycleState) {
 // Presentation order is independent of catalog registration and startup order.
 const PANEL_GROUPS = [
   {
+    label: msg('Explore'),
+    ids: ['wiki-places'],
+  },
+  {
     label: msg('Movement'),
     ids: [
       'satellites',

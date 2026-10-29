@@ -177,6 +177,15 @@ export const DATA_CREDITS = [
       '· <a href="https://eccc-msc.github.io/open-data/licence/readme_en/" target="_blank" rel="noopener">ECCC Data Servers End-use Licence</a>',
   },
   {
+    key: 'wikipedia',
+    html:
+      'Notable places: article text from ' +
+      '<a href="https://www.wikipedia.org" target="_blank" rel="noopener">Wikipedia</a> ' +
+      '(<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; ' +
+      'each card links its article and contributors) · facts from ' +
+      '<a href="https://www.wikidata.org" target="_blank" rel="noopener">Wikidata</a> (CC0)',
+  },
+  {
     key: 'overture-military-names',
     html: 'Military area names: <a href="https://overturemaps.org" target="_blank" rel="noopener">Overture Maps Foundation</a> (ODbL)',
   },

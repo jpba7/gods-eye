@@ -21,6 +21,7 @@ import { createWindSource } from '../layers/wind/source.js';
 import { createFirmsSource } from '../layers/firms/source.js';
 import { createGhostMapsSource } from '../layers/ghostMaps/source.js';
 import { createMapillarySource } from '../layers/streetLevel/providers/mapillary/source.js';
+import { createWikipediaPlacesSource } from '../layers/wikiPlaces/source.js';
 import { createReferenceSources } from '../sources/reference.js';
 export { createReferenceSources as createStandaloneReferenceSources } from '../sources/reference.js';
 
@@ -55,6 +56,7 @@ export function createStandaloneLayerSources(overrides = {}) {
     wind: createWindSource(),
     weather: createWeatherSource(),
     cyclones: createCycloneSource(),
+    'wiki-places': createWikipediaPlacesSource(),
     mapillary: createMapillarySource({
       token: import.meta.env?.MAPILLARY_CLIENT_TOKEN || '',
     }),
