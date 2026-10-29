@@ -20,6 +20,7 @@ import { aisLiveProxy } from './vessels/ais-live.js';
 import { trackBackfillProxies } from './aircraft/tracks.js';
 import { openAiRealtimeProxy } from './openai.js';
 import { geminiLiveProxy } from './gemini.js';
+import { claudeChatProxy } from './claude.js';
 import { googlePlacesContextProxy } from './places.js';
 import { mapillaryProxy } from './mapillary.js';
 import { keySetupEndpoint } from '../standalone/key-setup.js';
@@ -32,9 +33,10 @@ import { windProxy } from './wind.js';
 
 /**
  * Construct the local provider plugins in their established order.
- * `realtime` configures OpenAI; `gemini` explicitly opts into Gemini Live.
+ * `realtime` configures OpenAI; `gemini` explicitly opts into Gemini Live;
+ * `claude` opts into the Claude Code text chat.
  */
-function localProviderPlugins({ realtime, gemini } = {}) {
+function localProviderPlugins({ realtime, gemini, claude } = {}) {
   return [
     openSkyProxy(),
     celestrakProxy(),
@@ -58,6 +60,7 @@ function localProviderPlugins({ realtime, gemini } = {}) {
     trackBackfillProxies(),
     openAiRealtimeProxy({ realtime }),
     ...(gemini ? [geminiLiveProxy({ realtime: gemini })] : []),
+    ...(claude ? [claudeChatProxy(claude)] : []),
     googlePlacesContextProxy(),
     windProxy(),
     weatherProxy(),
