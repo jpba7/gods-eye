@@ -3070,5 +3070,7 @@
   "Dictation stopped unexpectedly.": "El dictado se detuvo inesperadamente.",
   "Dictate (Ctrl+M)": "Dictar (Ctrl+M)",
   "Dictate a message": "Dictar un mensaje",
-  "Stop dictation (Ctrl+M)": "Detener dictado (Ctrl+M)"
+  "Stop dictation (Ctrl+M)": "Detener dictado (Ctrl+M)",
+  "Performance": "Rendimiento",
+  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "Modo rendimiento: teselas 3D más ligeras y antialiasing para un movimiento más fluido"
 }

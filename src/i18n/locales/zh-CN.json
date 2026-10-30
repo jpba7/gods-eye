@@ -2926,5 +2926,7 @@
   "Dictation stopped unexpectedly.": "听写意外停止。",
   "Dictate (Ctrl+M)": "听写 (Ctrl+M)",
   "Dictate a message": "听写消息",
-  "Stop dictation (Ctrl+M)": "停止听写 (Ctrl+M)"
+  "Stop dictation (Ctrl+M)": "停止听写 (Ctrl+M)",
+  "Performance": "性能",
+  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "性能模式：更轻量的 3D 瓦片和抗锯齿，让移动更流畅"
 }
