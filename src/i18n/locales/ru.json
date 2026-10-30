@@ -3071,5 +3071,7 @@
   "claude chat|Stop": "Остановить",
   "Thinking…": "Думаю…",
   "Done.": "Готово.",
-  "Stopped.": "Остановлено."
+  "Stopped.": "Остановлено.",
+  "Performance": "Производительность",
+  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "Режим производительности: облегчённые 3D-тайлы и сглаживание для более плавного движения"
 }

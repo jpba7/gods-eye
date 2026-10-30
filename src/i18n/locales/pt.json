@@ -3002,5 +3002,7 @@
   "claude chat|Stop": "Parar",
   "Thinking…": "Pensando…",
   "Done.": "Pronto.",
-  "Stopped.": "Interrompido."
+  "Stopped.": "Interrompido.",
+  "Performance": "Desempenho",
+  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "Modo desempenho: tiles 3D mais leves e anti-aliasing mais barato para um movimento mais fluido"
 }

@@ -8,6 +8,7 @@ import { VisualSettings } from './visualSettings.js';
 import { NavigationController } from './navigationController.js';
 import { ShareRestoration } from './shareRestoration.js';
 import { DisplayBindings } from './displayBindings.js';
+import { RenderPerformance } from './renderPerformance.js';
 import { createStateChannel } from '../app/stateChannel.js';
 import { setSplitFlapText } from '../splitFlap.js';
 import { UiLifetime } from './uiLifetime.js';
@@ -511,6 +512,10 @@ export class StyleManager extends ShellFacade {
 
     this._initStages();
     this._initBloomSharpen();
+    this._renderPerformance = new RenderPerformance({
+      viewer,
+      button: document.getElementById('performance-toggle'),
+    });
     this._displayBindings = new DisplayBindings({
       viewer,
       services: {
@@ -1780,6 +1785,7 @@ export class StyleManager extends ShellFacade {
     this._feedback.destroy();
 
     this._displayBindings.destroy();
+    this._renderPerformance?.destroy();
     this._mapSourceControls?.destroy();
     this._cameraOrientationControls?.destroy();
     this._clearLayersControl?.destroy();

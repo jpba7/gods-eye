@@ -2864,5 +2864,7 @@
   "claude chat|Stop": "停止",
   "Thinking…": "考え中…",
   "Done.": "完了。",
-  "Stopped.": "停止しました。"
+  "Stopped.": "停止しました。",
+  "Performance": "パフォーマンス",
+  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "パフォーマンスモード：3Dタイルとアンチエイリアスを軽くして動きを滑らかにします"
 }
