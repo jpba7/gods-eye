@@ -1,3 +1,6 @@
+/* The Claude chat shares this card's glass treatment. */
+@import './claude-chat.css';
+
 /* ------------------------------------------------------------------ *
  * Voice card — captions, plan steps and the latest result, nested in
  * #gev-voice-control beside its help and error trays. It shares their
