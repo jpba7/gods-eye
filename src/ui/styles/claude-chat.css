@@ -16,6 +16,12 @@
   pointer-events: none;
 }
 
+/* Earth shell: left of the zoom column, above the status bar. */
+body.earth-shell #gev-claude-chat {
+  right: 74px;
+  bottom: 46px;
+}
+
 #gev-claude-chat > * {
   pointer-events: auto;
 }
