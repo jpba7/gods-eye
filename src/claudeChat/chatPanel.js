@@ -6,7 +6,12 @@
  * result is posted to /api/claude/chat/result.
  */
 
-import { t } from '../i18n/index.js';
+import { getLocale, t } from '../i18n/index.js';
+import {
+  createDictation,
+  getSpeechRecognition,
+  recognitionLanguage,
+} from './dictation.js';
 
 // A product name, not UI text: it stays the same in every language.
 const NAME = 'Claude';
@@ -65,6 +70,19 @@ function toolLabel(name) {
   return String(name || '').replace(/_/g, ' ');
 }
 
+/** What to show when dictation fails, by SpeechRecognition error code. */
+function dictationErrorText(code) {
+  if (code === 'not-allowed' || code === 'service-not-allowed')
+    return t(
+      'Microphone access was denied. Allow it in the browser to dictate.',
+    );
+  if (code === 'audio-capture') return t('No microphone was found.');
+  if (code === 'network')
+    return t('Dictation needs an internet connection to transcribe.');
+  if (code === 'no-speech') return t('No speech was heard. Try again.');
+  return t('Dictation stopped unexpectedly.');
+}
+
 /**
  * Mount the panel. `run(name, args, { signal })` executes one tool, as the
  * voice runner does.
@@ -74,6 +92,7 @@ export function initClaudeChat({
   doc = document,
   fetchImpl = (...args) => fetch(...args),
   storage = globalThis.localStorage,
+  SpeechRecognition = getSpeechRecognition(doc.defaultView),
 } = {}) {
   if (typeof run !== 'function') return { destroy() {} };
 
@@ -93,6 +112,11 @@ export function initClaudeChat({
       <ol class="gev-claude-chat-log" aria-live="polite"></ol>
       <form class="gev-claude-chat-form">
         <textarea rows="2" maxlength="4000" placeholder="${t('Ask or command the map…')}" aria-label="${t('Message to Claude')}"></textarea>
+        ${
+          SpeechRecognition
+            ? `<button type="button" class="gev-claude-chat-mic" aria-pressed="false" title="${t('Dictate (Ctrl+M)')}" aria-label="${t('Dictate a message')}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2Z"/></svg></button>`
+            : ''
+        }
         <button type="submit" class="gev-claude-chat-send">${t('Send', { context: 'claude chat' })}</button>
       </form>
     </div>`;
@@ -104,11 +128,29 @@ export function initClaudeChat({
   const form = root.querySelector('.gev-claude-chat-form');
   const input = form.querySelector('textarea');
   const send = form.querySelector('.gev-claude-chat-send');
+  const mic = form.querySelector('.gev-claude-chat-mic');
+
+  const dictation = createDictation({
+    input,
+    button: mic,
+    Recognition: SpeechRecognition,
+    lang: () =>
+      recognitionLanguage(getLocale(), doc.defaultView?.navigator?.language),
+    onError: (code) => addEntry('error', dictationErrorText(code)),
+    onChange: (listening) => {
+      root.dataset.listening = String(listening);
+      mic?.setAttribute(
+        'title',
+        listening ? t('Stop dictation (Ctrl+M)') : t('Dictate (Ctrl+M)'),
+      );
+    },
+  });
 
   let sessionId = readStoredSession(storage);
   let turn = null;
 
   function setOpen(open) {
+    if (!open) dictation?.cancel();
     root.dataset.open = String(open);
     panel.hidden = !open;
     toggle.setAttribute('aria-expanded', String(open));
@@ -130,6 +172,7 @@ export function initClaudeChat({
       ? t('Stop', { context: 'claude chat' })
       : t('Send', { context: 'claude chat' });
     input.disabled = busy;
+    if (mic) mic.disabled = busy;
   }
 
   async function answerToolCall(event, chatId, signal, step) {
@@ -211,6 +254,7 @@ export function initClaudeChat({
     .addEventListener('click', () => setOpen(false));
   root.querySelector('.gev-claude-chat-new').addEventListener('click', () => {
     turn?.abort();
+    dictation?.cancel();
     sessionId = null;
     writeStoredSession(storage, null);
     log.replaceChildren();
@@ -222,6 +266,7 @@ export function initClaudeChat({
       turn.abort();
       return;
     }
+    dictation?.cancel();
     const message = input.value.trim();
     if (!message) return;
     input.value = '';
@@ -230,6 +275,17 @@ export function initClaudeChat({
   input.addEventListener('keydown', (event) => {
     // Enter sends; Shift+Enter makes a new line. Keys stay out of the map.
     event.stopPropagation();
+    if (
+      dictation &&
+      (event.ctrlKey || event.metaKey) &&
+      !event.altKey &&
+      event.key.toLowerCase() === 'm'
+    ) {
+      event.preventDefault();
+      if (dictation.listening) dictation.stop();
+      else dictation.start();
+      return;
+    }
     if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
       event.preventDefault();
       form.requestSubmit();
@@ -242,6 +298,7 @@ export function initClaudeChat({
     open: () => setOpen(true),
     destroy() {
       turn?.abort();
+      dictation?.cancel();
       root.remove();
     },
   };

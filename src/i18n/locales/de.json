@@ -2933,5 +2933,13 @@
   "claude chat|Stop": "Stoppen",
   "Thinking…": "Denkt nach…",
   "Done.": "Fertig.",
-  "Stopped.": "Gestoppt."
+  "Stopped.": "Gestoppt.",
+  "Microphone access was denied. Allow it in the browser to dictate.": "Der Mikrofonzugriff wurde verweigert. Erlaube ihn im Browser, um zu diktieren.",
+  "No microphone was found.": "Kein Mikrofon gefunden.",
+  "Dictation needs an internet connection to transcribe.": "Das Diktieren braucht eine Internetverbindung zum Transkribieren.",
+  "No speech was heard. Try again.": "Es wurde keine Sprache erkannt. Versuche es erneut.",
+  "Dictation stopped unexpectedly.": "Das Diktieren wurde unerwartet beendet.",
+  "Dictate (Ctrl+M)": "Diktieren (Strg+M)",
+  "Dictate a message": "Nachricht diktieren",
+  "Stop dictation (Ctrl+M)": "Diktieren beenden (Strg+M)"
 }
