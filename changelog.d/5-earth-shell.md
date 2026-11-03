@@ -7,4 +7,4 @@
   were when it closes. A dark graphite palette with a single blue accent
   replaces the neon glass skin, and the original spy-satellite HUD stays one
   switch away under Visual > Tactical HUD. Cockpit, scene playback, recording,
-  clean view, the Cyber skin and phones keep their own layouts.
+  clean view, the Cyber skin and phones keep their own layouts (#5).
