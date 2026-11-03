@@ -3051,5 +3051,24 @@
     "one": "{count} camada ativa",
     "many": "{count} camadas ativas",
     "other": "{count} camadas ativas"
-  }
+  },
+  "Chat with Claude": "Conversar com o Claude",
+  "Start a new conversation": "Começar uma nova conversa",
+  "claude chat|New": "Nova",
+  "Close chat": "Fechar chat",
+  "Ask or command the map…": "Pergunte ou comande o mapa…",
+  "Message to Claude": "Mensagem para o Claude",
+  "claude chat|Send": "Enviar",
+  "claude chat|Stop": "Parar",
+  "Thinking…": "Pensando…",
+  "Done.": "Pronto.",
+  "Stopped.": "Interrompido.",
+  "Microphone access was denied. Allow it in the browser to dictate.": "O acesso ao microfone foi negado. Permita no navegador para ditar.",
+  "No microphone was found.": "Nenhum microfone foi encontrado.",
+  "Dictation needs an internet connection to transcribe.": "O ditado precisa de internet para transcrever.",
+  "No speech was heard. Try again.": "Nenhuma fala foi ouvida. Tente de novo.",
+  "Dictation stopped unexpectedly.": "O ditado parou inesperadamente.",
+  "Dictate (Ctrl+M)": "Ditar (Ctrl+M)",
+  "Dictate a message": "Ditar uma mensagem",
+  "Stop dictation (Ctrl+M)": "Parar ditado (Ctrl+M)"
 }

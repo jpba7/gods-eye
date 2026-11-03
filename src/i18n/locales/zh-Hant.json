@@ -2907,5 +2907,24 @@
   "Camera {height}": "相機 {height}",
   "{count} active layers": {
     "other": "{count} 個圖層已啟用"
-  }
+  },
+  "Chat with Claude": "與 Claude 聊天",
+  "Start a new conversation": "開始新對話",
+  "claude chat|New": "新增",
+  "Close chat": "關閉聊天",
+  "Ask or command the map…": "提問或控制地圖…",
+  "Message to Claude": "給 Claude 的訊息",
+  "claude chat|Send": "傳送",
+  "claude chat|Stop": "停止",
+  "Thinking…": "思考中…",
+  "Done.": "完成。",
+  "Stopped.": "已停止。",
+  "Microphone access was denied. Allow it in the browser to dictate.": "麥克風存取遭拒。請在瀏覽器中允許後再聽寫。",
+  "No microphone was found.": "找不到麥克風。",
+  "Dictation needs an internet connection to transcribe.": "聽寫需要連上網路才能轉寫。",
+  "No speech was heard. Try again.": "沒有聽到語音，請再試一次。",
+  "Dictation stopped unexpectedly.": "聽寫意外停止。",
+  "Dictate (Ctrl+M)": "聽寫 (Ctrl+M)",
+  "Dictate a message": "聽寫訊息",
+  "Stop dictation (Ctrl+M)": "停止聽寫 (Ctrl+M)"
 }

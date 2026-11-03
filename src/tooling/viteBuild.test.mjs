@@ -127,8 +127,15 @@ test('root config retains existing named exports and standalone provider order',
     standaloneProviders.indexOf('gemini-live-proxy'),
     standaloneProviders.indexOf('openai-realtime-proxy') + 1,
   );
+  // The standalone server also opts into the Claude chat, after Gemini.
+  assert.equal(
+    standaloneProviders.indexOf('claude-chat-proxy'),
+    standaloneProviders.indexOf('gemini-live-proxy') + 1,
+  );
   assert.deepEqual(
-    standaloneProviders.filter((name) => name !== 'gemini-live-proxy'),
+    standaloneProviders.filter(
+      (name) => name !== 'gemini-live-proxy' && name !== 'claude-chat-proxy',
+    ),
     providers.localProviderPlugins().map((plugin) => plugin.name),
   );
   assert.equal(config.plugins.at(-7).name, 'gev-key-setup');

@@ -2907,5 +2907,24 @@
   "Camera {height}": "カメラ {height}",
   "{count} active layers": {
     "other": "有効なレイヤー {count} 件"
-  }
+  },
+  "Chat with Claude": "Claude とチャット",
+  "Start a new conversation": "新しい会話を始める",
+  "claude chat|New": "新規",
+  "Close chat": "チャットを閉じる",
+  "Ask or command the map…": "質問やマップの操作を入力…",
+  "Message to Claude": "Claude へのメッセージ",
+  "claude chat|Send": "送信",
+  "claude chat|Stop": "停止",
+  "Thinking…": "考え中…",
+  "Done.": "完了。",
+  "Stopped.": "停止しました。",
+  "Microphone access was denied. Allow it in the browser to dictate.": "マイクへのアクセスが拒否されました。音声入力するにはブラウザで許可してください。",
+  "No microphone was found.": "マイクが見つかりません。",
+  "Dictation needs an internet connection to transcribe.": "音声入力の文字起こしにはインターネット接続が必要です。",
+  "No speech was heard. Try again.": "音声が聞き取れませんでした。もう一度お試しください。",
+  "Dictation stopped unexpectedly.": "音声入力が予期せず停止しました。",
+  "Dictate (Ctrl+M)": "音声入力 (Ctrl+M)",
+  "Dictate a message": "メッセージを音声入力",
+  "Stop dictation (Ctrl+M)": "音声入力を停止 (Ctrl+M)"
 }

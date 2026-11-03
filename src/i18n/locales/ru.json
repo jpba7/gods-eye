@@ -3123,5 +3123,24 @@
     "few": "{count} активных слоя",
     "many": "{count} активных слоёв",
     "other": "{count} активного слоя"
-  }
+  },
+  "Chat with Claude": "Чат с Claude",
+  "Start a new conversation": "Начать новый разговор",
+  "claude chat|New": "Новый",
+  "Close chat": "Закрыть чат",
+  "Ask or command the map…": "Спросите или управляйте картой…",
+  "Message to Claude": "Сообщение для Claude",
+  "claude chat|Send": "Отправить",
+  "claude chat|Stop": "Остановить",
+  "Thinking…": "Думаю…",
+  "Done.": "Готово.",
+  "Stopped.": "Остановлено.",
+  "Microphone access was denied. Allow it in the browser to dictate.": "Доступ к микрофону запрещён. Разрешите его в браузере, чтобы диктовать.",
+  "No microphone was found.": "Микрофон не найден.",
+  "Dictation needs an internet connection to transcribe.": "Для распознавания диктовки нужно подключение к интернету.",
+  "No speech was heard. Try again.": "Речь не распознана. Попробуйте ещё раз.",
+  "Dictation stopped unexpectedly.": "Диктовка неожиданно остановилась.",
+  "Dictate (Ctrl+M)": "Диктовать (Ctrl+M)",
+  "Dictate a message": "Надиктовать сообщение",
+  "Stop dictation (Ctrl+M)": "Остановить диктовку (Ctrl+M)"
 }

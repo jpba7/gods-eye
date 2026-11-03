@@ -3123,5 +3123,24 @@
     "few": "{count} активні шари",
     "many": "{count} активних шарів",
     "other": "{count} активного шару"
-  }
+  },
+  "Chat with Claude": "Чат із Claude",
+  "Start a new conversation": "Почати нову розмову",
+  "claude chat|New": "Нова",
+  "Close chat": "Закрити чат",
+  "Ask or command the map…": "Запитайте або керуйте мапою…",
+  "Message to Claude": "Повідомлення для Claude",
+  "claude chat|Send": "Надіслати",
+  "claude chat|Stop": "Зупинити",
+  "Thinking…": "Думаю…",
+  "Done.": "Готово.",
+  "Stopped.": "Зупинено.",
+  "Microphone access was denied. Allow it in the browser to dictate.": "Доступ до мікрофона заборонено. Дозвольте його в браузері, щоб диктувати.",
+  "No microphone was found.": "Мікрофон не знайдено.",
+  "Dictation needs an internet connection to transcribe.": "Для розпізнавання диктування потрібне підключення до інтернету.",
+  "No speech was heard. Try again.": "Мовлення не почуто. Спробуйте ще раз.",
+  "Dictation stopped unexpectedly.": "Диктування неочікувано зупинилося.",
+  "Dictate (Ctrl+M)": "Диктувати (Ctrl+M)",
+  "Dictate a message": "Надиктувати повідомлення",
+  "Stop dictation (Ctrl+M)": "Зупинити диктування (Ctrl+M)"
 }

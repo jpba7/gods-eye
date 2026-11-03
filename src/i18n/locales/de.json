@@ -2979,5 +2979,24 @@
   "{count} active layers": {
     "one": "{count} aktive Ebene",
     "other": "{count} aktive Ebenen"
-  }
+  },
+  "Chat with Claude": "Mit Claude chatten",
+  "Start a new conversation": "Neue Unterhaltung beginnen",
+  "claude chat|New": "Neu",
+  "Close chat": "Chat schließen",
+  "Ask or command the map…": "Fragen oder die Karte steuern…",
+  "Message to Claude": "Nachricht an Claude",
+  "claude chat|Send": "Senden",
+  "claude chat|Stop": "Stoppen",
+  "Thinking…": "Denkt nach…",
+  "Done.": "Fertig.",
+  "Stopped.": "Gestoppt.",
+  "Microphone access was denied. Allow it in the browser to dictate.": "Der Mikrofonzugriff wurde verweigert. Erlaube ihn im Browser, um zu diktieren.",
+  "No microphone was found.": "Kein Mikrofon gefunden.",
+  "Dictation needs an internet connection to transcribe.": "Das Diktieren braucht eine Internetverbindung zum Transkribieren.",
+  "No speech was heard. Try again.": "Es wurde keine Sprache erkannt. Versuche es erneut.",
+  "Dictation stopped unexpectedly.": "Das Diktieren wurde unerwartet beendet.",
+  "Dictate (Ctrl+M)": "Diktieren (Strg+M)",
+  "Dictate a message": "Nachricht diktieren",
+  "Stop dictation (Ctrl+M)": "Diktieren beenden (Strg+M)"
 }

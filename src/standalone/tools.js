@@ -1,9 +1,11 @@
 import { createAssetDirectorySource } from '../director/packs/source.js';
 import { createApplicationTools } from '../app/tools.js';
+import { isEmbedded } from '../app/embed.js';
+import { initClaudeChat } from '../claudeChat/chatPanel.js';
 import { startStandaloneChrome } from './startupChrome.js';
 import { loadToolCatalog } from './toolCatalog.js';
 export function createStandaloneTools(options) {
-  return createApplicationTools({
+  const tools = createApplicationTools({
     startChrome: startStandaloneChrome,
     sceneDataPacks: {
       sources: {
@@ -24,4 +26,13 @@ export function createStandaloneTools(options) {
       ...options?.voice,
     },
   });
+  // The Claude chat runs tools through the voice runner; embeds have no chat.
+  if (!isEmbedded()) {
+    const chat = initClaudeChat({
+      run: (name, args, runOptions) =>
+        tools.voiceCommands.runner(name, args, runOptions),
+    });
+    options?.defer?.(() => chat.destroy());
+  }
+  return tools;
 }

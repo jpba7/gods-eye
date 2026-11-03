@@ -3051,5 +3051,24 @@
     "one": "{count} calque actif",
     "many": "{count} calques actifs",
     "other": "{count} calques actifs"
-  }
+  },
+  "Chat with Claude": "Discuter avec Claude",
+  "Start a new conversation": "Commencer une nouvelle conversation",
+  "claude chat|New": "Nouvelle",
+  "Close chat": "Fermer le chat",
+  "Ask or command the map…": "Interrogez ou pilotez la carte…",
+  "Message to Claude": "Message pour Claude",
+  "claude chat|Send": "Envoyer",
+  "claude chat|Stop": "Arrêter",
+  "Thinking…": "Réflexion…",
+  "Done.": "Terminé.",
+  "Stopped.": "Arrêté.",
+  "Microphone access was denied. Allow it in the browser to dictate.": "L’accès au microphone a été refusé. Autorisez-le dans le navigateur pour dicter.",
+  "No microphone was found.": "Aucun microphone n’a été trouvé.",
+  "Dictation needs an internet connection to transcribe.": "La dictée nécessite une connexion internet pour transcrire.",
+  "No speech was heard. Try again.": "Aucune parole n’a été entendue. Réessayez.",
+  "Dictation stopped unexpectedly.": "La dictée s’est arrêtée de façon inattendue.",
+  "Dictate (Ctrl+M)": "Dicter (Ctrl+M)",
+  "Dictate a message": "Dicter un message",
+  "Stop dictation (Ctrl+M)": "Arrêter la dictée (Ctrl+M)"
 }

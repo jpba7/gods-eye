@@ -2907,5 +2907,24 @@
   "Camera {height}": "相机 {height}",
   "{count} active layers": {
     "other": "{count} 个图层已启用"
-  }
+  },
+  "Chat with Claude": "与 Claude 聊天",
+  "Start a new conversation": "开始新对话",
+  "claude chat|New": "新建",
+  "Close chat": "关闭聊天",
+  "Ask or command the map…": "提问或控制地图…",
+  "Message to Claude": "发给 Claude 的消息",
+  "claude chat|Send": "发送",
+  "claude chat|Stop": "停止",
+  "Thinking…": "思考中…",
+  "Done.": "完成。",
+  "Stopped.": "已停止。",
+  "Microphone access was denied. Allow it in the browser to dictate.": "麦克风访问被拒绝。请在浏览器中允许后再听写。",
+  "No microphone was found.": "未找到麦克风。",
+  "Dictation needs an internet connection to transcribe.": "听写需要联网才能转写。",
+  "No speech was heard. Try again.": "没有听到语音，请重试。",
+  "Dictation stopped unexpectedly.": "听写意外停止。",
+  "Dictate (Ctrl+M)": "听写 (Ctrl+M)",
+  "Dictate a message": "听写消息",
+  "Stop dictation (Ctrl+M)": "停止听写 (Ctrl+M)"
 }
