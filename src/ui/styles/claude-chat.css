@@ -206,3 +206,56 @@
   color: var(--text-primary);
   background: rgba(255, 80, 60, 0.35);
 }
+
+/* Dictation: the mic button beside the message box (src/claudeChat/dictation.js). */
+.gev-claude-chat-mic {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  padding: 0;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.gev-claude-chat-mic:hover:not(:disabled) {
+  color: var(--text-primary);
+  border-color: var(--glass-border-hover);
+}
+
+.gev-claude-chat-mic:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.gev-claude-chat-mic[data-listening='true'] {
+  color: #fff;
+  background: rgba(255, 80, 60, 0.45);
+  border-color: rgba(255, 110, 90, 0.85);
+  animation: gev-claude-chat-mic-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes gev-claude-chat-mic-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 90, 70, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 0.3rem rgba(255, 90, 70, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gev-claude-chat-mic[data-listening='true'] {
+    animation: none;
+  }
+}

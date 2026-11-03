@@ -3002,5 +3002,13 @@
   "claude chat|Stop": "Detener",
   "Thinking…": "Pensando…",
   "Done.": "Listo.",
-  "Stopped.": "Detenido."
+  "Stopped.": "Detenido.",
+  "Microphone access was denied. Allow it in the browser to dictate.": "Se denegó el acceso al micrófono. Permítelo en el navegador para dictar.",
+  "No microphone was found.": "No se encontró ningún micrófono.",
+  "Dictation needs an internet connection to transcribe.": "El dictado necesita conexión a internet para transcribir.",
+  "No speech was heard. Try again.": "No se oyó ninguna voz. Inténtalo de nuevo.",
+  "Dictation stopped unexpectedly.": "El dictado se detuvo inesperadamente.",
+  "Dictate (Ctrl+M)": "Dictar (Ctrl+M)",
+  "Dictate a message": "Dictar un mensaje",
+  "Stop dictation (Ctrl+M)": "Detener dictado (Ctrl+M)"
 }
