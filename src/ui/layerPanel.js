@@ -39,6 +39,10 @@ function lifecycleStateLabel(lifecycleState) {
 // Presentation order is independent of catalog registration and startup order.
 const PANEL_GROUPS = [
   {
+    label: msg('Explore'),
+    ids: ['wiki-places', 'imagery-history'],
+  },
+  {
     label: msg('Movement'),
     ids: [
       'satellites',
@@ -301,6 +305,8 @@ export class LayerPanel {
       if (group && group !== previousGroup) {
         const heading = document.createElement('h3');
         heading.className = 'data-layer-group-heading';
+        // English group name, so shells can present one group on its own.
+        heading.dataset.layerGroup = group;
         heading.textContent = t(group);
         this._toggleContainer.appendChild(heading);
       }
@@ -308,6 +314,7 @@ export class LayerPanel {
       const row = document.createElement('div');
       row.className = 'data-toggle-row';
       row.dataset.layerId = layer.id;
+      row.dataset.layerGroup = group;
       // English name for voice tools, which must not receive translated text.
       row.dataset.layerName = englishPanelLabel(layer);
 

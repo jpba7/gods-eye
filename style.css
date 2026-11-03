@@ -16,6 +16,7 @@
 @import './src/ui/styles/scenes.css';
 @import './src/ui/styles/bhote-koshi.css';
 @import './src/ui/styles/recent-imagery.css';
+@import './src/ui/styles/imagery-history.css';
 @import './src/ui/styles/recording.css';
 @import './src/ui/styles/embed.css';
 @import './src/ui/styles/responsive.css';
@@ -28,10 +29,10 @@
 @import './src/ui/styles/first-run.css';
 @import './src/ui/styles/provider-settings.css';
 @import './src/ui/styles/locale-picker.css';
-
 @import './src/ui/styles/weather.css';
 @import './src/ui/styles/panel-surfaces.css';
 @import './src/ui/styles/segmented-control.css';
 @import './src/ui/styles/cjk.css';
 @import './src/ui/styles/mobile-shell.css';
+@import './src/ui/styles/earth-shell.css';
 @import './src/ui/styles/cyber.css';
