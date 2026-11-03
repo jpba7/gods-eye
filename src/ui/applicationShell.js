@@ -4,6 +4,7 @@ import { AircraftDisplay } from './aircraftDisplay.js';
 import { LayerBindings } from './layerBindings.js';
 import { PanelChrome } from './panelChrome.js';
 import { initMobileShell } from './mobileShell.js';
+import { initEarthShell } from './earthShell.js';
 import { VisualSettings } from './visualSettings.js';
 import { NavigationController } from './navigationController.js';
 import { ShareRestoration } from './shareRestoration.js';
@@ -131,7 +132,8 @@ export class StyleManager extends ShellFacade {
       readScrollRestoreOwner: () => this._displayPortalScrollRestoreOwner,
       readDisplayScrollTop: () => this._standardDisplayScrollTop,
       readSharedCollapsed: (panelId) =>
-        this._mobileShell?.sharedCollapsed(panelId),
+        this._mobileShell?.sharedCollapsed(panelId) ??
+        this._earthShell?.sharedCollapsed(panelId),
     });
     this._feedback = new ShellFeedback({
       readLayers: () => this._dataManager?.getAll?.() || [],
@@ -604,6 +606,7 @@ export class StyleManager extends ShellFacade {
     this._initGlobalContextPanel();
     this._initLocationBar();
     this._initMobileShell();
+    this._initEarthShell();
     this._initShareButton();
     this._initCameraOrientationControls();
     this._initClearSelectedLayersButton();
@@ -878,6 +881,19 @@ export class StyleManager extends ShellFacade {
       onTabOpened: (sheet) => {
         void this._onMobileTabOpened(sheet);
       },
+    });
+  }
+
+  /**
+   * Desktop layout: top bar, section rail and drawer presenting the existing
+   * panels (src/ui/earthShell.js). Inactive at phone widths.
+   * @returns {void}
+   */
+  _initEarthShell() {
+    this._earthShell = initEarthShell({
+      setPanelCollapsed: (panelId, collapsed, options) =>
+        this._panelChrome.setPanelCollapsed(panelId, collapsed, options),
+      getViewer: () => this.viewer,
     });
   }
 
@@ -1776,6 +1792,7 @@ export class StyleManager extends ShellFacade {
     this._localePicker = null;
     this._recording.destroy();
     this._mobileShell?.destroy();
+    this._earthShell?.destroy();
     this._panelChrome.destroy();
     this._feedback.destroy();
 
