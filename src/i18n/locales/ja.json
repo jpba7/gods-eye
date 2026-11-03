@@ -2883,5 +2883,29 @@
   "Compare this year with today's imagery": "この年と現在の画像を比較",
   "Each year shows the last Esri World Imagery release of that year. A release mixes photos taken at different times, so a place can look the same in several years until Esri replaced its photo.": "各年はその年に公開された最後の Esri World Imagery リリースを表示します。リリースには異なる時期の写真が混在するため、Esri が写真を差し替えるまで、同じ場所が複数年で同じに見えることがあります。",
   "Malformed Wayback response": "Wayback の応答が不正です",
-  "Imagery through time": "時をさかのぼる画像"
+  "Imagery through time": "時をさかのぼる画像",
+  "Places, history and quick trips": "場所・歴史・クイック移動",
+  "Live data on the globe": "地球上のライブデータ",
+  "Scenes": "シーン",
+  "Saved views and camera tours": "保存したビューとカメラツアー",
+  "Visual": "表示",
+  "Style, base map and effects": "スタイル・ベースマップ・エフェクト",
+  "Traffic cameras and street imagery": "交通カメラとストリート画像",
+  "What is near you on the map": "地図上で近くにあるもの",
+  "Show or hide the side panel": "サイドパネルの表示/非表示",
+  "Search a place, city or coordinates": "場所・都市・座標を検索",
+  "Surprise me": "おまかせ",
+  "Assistant": "アシスタント",
+  "Sections": "セクション",
+  "Close panel": "パネルを閉じる",
+  "Go to": "移動先",
+  "Discover": "発見",
+  "Tactical HUD": "戦術HUD",
+  "Shows the original spy-satellite overlay": "元のスパイ衛星オーバーレイを表示",
+  "Filter layers": "レイヤーを絞り込む",
+  "Zoom": "ズーム",
+  "Camera {height}": "カメラ {height}",
+  "{count} active layers": {
+    "other": "有効なレイヤー {count} 件"
+  }
 }

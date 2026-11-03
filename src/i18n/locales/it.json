@@ -3025,5 +3025,31 @@
   "Compare this year with today's imagery": "Confronta quest'anno con le immagini di oggi",
   "Each year shows the last Esri World Imagery release of that year. A release mixes photos taken at different times, so a place can look the same in several years until Esri replaced its photo.": "Ogni anno mostra l'ultima versione di Esri World Imagery pubblicata in quell'anno. Una versione unisce foto di date diverse, quindi un luogo può apparire uguale per più anni finché Esri non ne sostituisce la foto.",
   "Malformed Wayback response": "Risposta Wayback non valida",
-  "Imagery through time": "Immagini nel tempo"
+  "Imagery through time": "Immagini nel tempo",
+  "Places, history and quick trips": "Luoghi, storia e viaggi rapidi",
+  "Live data on the globe": "Dati in tempo reale sul globo",
+  "Scenes": "Scene",
+  "Saved views and camera tours": "Viste salvate e tour della telecamera",
+  "Visual": "Visuale",
+  "Style, base map and effects": "Stile, mappa di base ed effetti",
+  "Traffic cameras and street imagery": "Telecamere del traffico e immagini stradali",
+  "What is near you on the map": "Cosa c'è vicino a te sulla mappa",
+  "Show or hide the side panel": "Mostra o nascondi il pannello laterale",
+  "Search a place, city or coordinates": "Cerca un luogo, una città o coordinate",
+  "Surprise me": "Sorprendimi",
+  "Assistant": "Assistente",
+  "Sections": "Sezioni",
+  "Close panel": "Chiudi pannello",
+  "Go to": "Vai a",
+  "Discover": "Scopri",
+  "Tactical HUD": "HUD tattico",
+  "Shows the original spy-satellite overlay": "Mostra la sovrapposizione originale da satellite spia",
+  "Filter layers": "Filtra livelli",
+  "Zoom": "Zoom",
+  "Camera {height}": "Telecamera {height}",
+  "{count} active layers": {
+    "one": "{count} livello attivo",
+    "many": "{count} livelli attivi",
+    "other": "{count} livelli attivi"
+  }
 }

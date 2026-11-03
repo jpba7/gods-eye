@@ -3025,5 +3025,31 @@
   "Compare this year with today's imagery": "Comparer cette année avec l'imagerie actuelle",
   "Each year shows the last Esri World Imagery release of that year. A release mixes photos taken at different times, so a place can look the same in several years until Esri replaced its photo.": "Chaque année affiche la dernière version d'Esri World Imagery publiée cette année-là. Une version mêle des photos de dates différentes : un lieu peut donc sembler identique plusieurs années, jusqu'à ce qu'Esri remplace sa photo.",
   "Malformed Wayback response": "Réponse Wayback mal formée",
-  "Imagery through time": "Imagerie à travers le temps"
+  "Imagery through time": "Imagerie à travers le temps",
+  "Places, history and quick trips": "Lieux, histoire et voyages rapides",
+  "Live data on the globe": "Données en direct sur le globe",
+  "Scenes": "Scènes",
+  "Saved views and camera tours": "Vues enregistrées et visites caméra",
+  "Visual": "Visuel",
+  "Style, base map and effects": "Style, fond de carte et effets",
+  "Traffic cameras and street imagery": "Caméras de circulation et images de rue",
+  "What is near you on the map": "Ce qui est près de vous sur la carte",
+  "Show or hide the side panel": "Afficher ou masquer le panneau latéral",
+  "Search a place, city or coordinates": "Rechercher un lieu, une ville ou des coordonnées",
+  "Surprise me": "Surprenez-moi",
+  "Assistant": "Assistant",
+  "Sections": "Sections",
+  "Close panel": "Fermer le panneau",
+  "Go to": "Aller à",
+  "Discover": "Découvrir",
+  "Tactical HUD": "HUD tactique",
+  "Shows the original spy-satellite overlay": "Affiche la surcouche originale de satellite espion",
+  "Filter layers": "Filtrer les calques",
+  "Zoom": "Zoom",
+  "Camera {height}": "Caméra {height}",
+  "{count} active layers": {
+    "one": "{count} calque actif",
+    "many": "{count} calques actifs",
+    "other": "{count} calques actifs"
+  }
 }

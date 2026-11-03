@@ -713,6 +713,7 @@
     "modules": [
       "src/i18n/marker.js",
       "src/ui/mobileShell.js",
+      "src/ui/earthShell.js",
       "src/exclusiveSurfaces.js",
       "src/ui/placeNames.js",
       "src/hudLayouts.js",
@@ -2418,6 +2419,7 @@
       "src/styles/thermal.js",
       "src/ui/applicationShell.js",
       "src/ui/mobileShell.js",
+      "src/ui/earthShell.js",
       "src/exclusiveSurfaces.js",
       "src/ui/localePicker.js",
       "src/ui/cyberSonarControls.js",

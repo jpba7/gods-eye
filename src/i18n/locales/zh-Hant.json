@@ -2883,5 +2883,29 @@
   "Compare this year with today's imagery": "將這一年與目前影像比較",
   "Each year shows the last Esri World Imagery release of that year. A release mixes photos taken at different times, so a place can look the same in several years until Esri replaced its photo.": "每一年顯示該年最後發布的 Esri World Imagery 版本。一個版本混合了不同時間拍攝的照片，因此在 Esri 更換照片之前，同一地點可能在多個年份看起來相同。",
   "Malformed Wayback response": "Wayback 回應格式錯誤",
-  "Imagery through time": "影像時光機"
+  "Imagery through time": "影像時光機",
+  "Places, history and quick trips": "地點、歷史與快速出遊",
+  "Live data on the globe": "地球上的即時資料",
+  "Scenes": "場景",
+  "Saved views and camera tours": "已儲存的視圖與相機巡遊",
+  "Visual": "顯示",
+  "Style, base map and effects": "樣式、底圖與效果",
+  "Traffic cameras and street imagery": "交通攝影機與街景影像",
+  "What is near you on the map": "地圖上你附近的事物",
+  "Show or hide the side panel": "顯示或隱藏側邊面板",
+  "Search a place, city or coordinates": "搜尋地點、城市或座標",
+  "Surprise me": "給我驚喜",
+  "Assistant": "助理",
+  "Sections": "區段",
+  "Close panel": "關閉面板",
+  "Go to": "前往",
+  "Discover": "探索發現",
+  "Tactical HUD": "戰術 HUD",
+  "Shows the original spy-satellite overlay": "顯示原始的間諜衛星疊加層",
+  "Filter layers": "篩選圖層",
+  "Zoom": "縮放",
+  "Camera {height}": "相機 {height}",
+  "{count} active layers": {
+    "other": "{count} 個圖層已啟用"
+  }
 }

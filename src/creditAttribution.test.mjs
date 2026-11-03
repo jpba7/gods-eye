@@ -248,6 +248,9 @@ function ownBoxEntries() {
       // The phone shell is its own layout; mobileShell.test.mjs pins its
       // attribution clearance.
       if (part.startsWith('body.mobile-shell')) continue;
+      // So is the desktop Earth shell; earthShell.test.mjs pins the credit
+      // above its status bar and clear of its rail and drawer.
+      if (part.startsWith('body.earth-shell')) continue;
       entries.push({ rule, part });
     }
   }
