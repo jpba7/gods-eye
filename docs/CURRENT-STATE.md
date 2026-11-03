@@ -231,6 +231,16 @@ the original HUD presentation; Cyber retains its existing skin.
 `node scripts/qa-scope-hud.mjs` checks native input, range, layout persistence,
 restoration and both Scope presentations. `QA_SCREENSHOT_DIR` saves screenshots.
 
+## Performance mode — November 3, 2026
+
+Visual controls carry a Performance toggle (`src/ui/renderPerformance.js`).
+On, it sets `scene.msaaSamples` to 1, enables FXAA and raises
+`maximumScreenSpaceError` to at least 32 on every 3D tileset in the scene,
+rescanning every 60 frames for tilesets added later. Off restores the saved
+MSAA, FXAA and per-tileset values. The choice is stored in `localStorage`
+under `gev:render-performance:v1` and applied at startup. Sharpening and
+`preserveDrawingBuffer` are not touched.
+
 ## HUD layouts — October 29, 2026
 
 Display > HUD > Layout offers Tactical, Minimal and Cyber; the `set_hud` voice
