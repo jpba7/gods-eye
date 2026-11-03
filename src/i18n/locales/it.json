@@ -3014,5 +3014,16 @@
   "zoom in to see places": "avvicinati per vedere i luoghi",
   "Malformed Wikipedia response": "Risposta di Wikipedia non valida",
   "Notable places": "Luoghi notevoli",
-  "Explore": "Esplora"
+  "Explore": "Esplora",
+  "Past and present imagery divider": "Divisore tra immagine passata e attuale",
+  "TODAY": "OGGI",
+  "No Wayback releases": "Nessuna versione Wayback",
+  "Esri Wayback is unavailable": "Esri Wayback non disponibile",
+  "Esri imagery as published on {date}": "Immagini Esri pubblicate il {date}",
+  "SWIPE": "CONFRONTA",
+  "Another imagery comparison is using the map": "Un altro confronto di immagini sta usando la mappa",
+  "Compare this year with today's imagery": "Confronta quest'anno con le immagini di oggi",
+  "Each year shows the last Esri World Imagery release of that year. A release mixes photos taken at different times, so a place can look the same in several years until Esri replaced its photo.": "Ogni anno mostra l'ultima versione di Esri World Imagery pubblicata in quell'anno. Una versione unisce foto di date diverse, quindi un luogo può apparire uguale per più anni finché Esri non ne sostituisce la foto.",
+  "Malformed Wayback response": "Risposta Wayback non valida",
+  "Imagery through time": "Immagini nel tempo"
 }

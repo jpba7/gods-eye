@@ -2872,5 +2872,16 @@
   "zoom in to see places": "ズームインすると場所が表示されます",
   "Malformed Wikipedia response": "Wikipediaの応答が不正です",
   "Notable places": "注目の場所",
-  "Explore": "探索"
+  "Explore": "探索",
+  "Past and present imagery divider": "過去と現在の画像の境界",
+  "TODAY": "現在",
+  "No Wayback releases": "Wayback のリリースがありません",
+  "Esri Wayback is unavailable": "Esri Wayback を利用できません",
+  "Esri imagery as published on {date}": "{date} 公開の Esri 画像",
+  "SWIPE": "比較",
+  "Another imagery comparison is using the map": "別の画像比較が地図を使用中です",
+  "Compare this year with today's imagery": "この年と現在の画像を比較",
+  "Each year shows the last Esri World Imagery release of that year. A release mixes photos taken at different times, so a place can look the same in several years until Esri replaced its photo.": "各年はその年に公開された最後の Esri World Imagery リリースを表示します。リリースには異なる時期の写真が混在するため、Esri が写真を差し替えるまで、同じ場所が複数年で同じに見えることがあります。",
+  "Malformed Wayback response": "Wayback の応答が不正です",
+  "Imagery through time": "時をさかのぼる画像"
 }

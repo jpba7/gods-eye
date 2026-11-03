@@ -40,7 +40,7 @@ function lifecycleStateLabel(lifecycleState) {
 const PANEL_GROUPS = [
   {
     label: msg('Explore'),
-    ids: ['wiki-places'],
+    ids: ['wiki-places', 'imagery-history'],
   },
   {
     label: msg('Movement'),

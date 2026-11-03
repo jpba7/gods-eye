@@ -186,6 +186,13 @@ export const DATA_CREDITS = [
       '<a href="https://www.wikidata.org" target="_blank" rel="noopener">Wikidata</a> (CC0)',
   },
   {
+    key: 'esri-wayback',
+    html:
+      'Imagery through time: ' +
+      '<a href="https://livingatlas.arcgis.com/wayback/" target="_blank" rel="noopener">Esri World Imagery Wayback</a> ' +
+      '· Esri, Maxar, Earthstar Geographics and the GIS User Community',
+  },
+  {
     key: 'overture-military-names',
     html: 'Military area names: <a href="https://overturemaps.org" target="_blank" rel="noopener">Overture Maps Foundation</a> (ODbL)',
   },

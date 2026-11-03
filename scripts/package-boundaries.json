@@ -2815,7 +2815,11 @@
       "src/layers/wikiPlaces/model.js",
       "src/layers/wikiPlaces/cards.js",
       "src/layers/wikiPlaces/index.js",
-      "src/app/layers/wikiPlaces.js"
+      "src/app/layers/wikiPlaces.js",
+      "src/layers/imageryHistory/model.js",
+      "src/layers/imageryHistory/source.js",
+      "src/layers/imageryHistory/index.js",
+      "src/app/layers/imageryHistory.js"
     ],
     "external": [
       "hls.js",
@@ -3404,7 +3408,11 @@
       "src/layers/wikiPlaces/source.js",
       "src/layers/wikiPlaces/cards.js",
       "src/layers/wikiPlaces/index.js",
-      "src/app/layers/wikiPlaces.js"
+      "src/app/layers/wikiPlaces.js",
+      "src/layers/imageryHistory/model.js",
+      "src/layers/imageryHistory/source.js",
+      "src/layers/imageryHistory/index.js",
+      "src/app/layers/imageryHistory.js"
     ],
     "external": [
       "hls.js",

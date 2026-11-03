@@ -3085,5 +3085,16 @@
   "zoom in to see places": "наблизьте мапу, щоб побачити місця",
   "Malformed Wikipedia response": "Некоректна відповідь Вікіпедії",
   "Notable places": "Визначні місця",
-  "Explore": "Досліджувати"
+  "Explore": "Досліджувати",
+  "Past and present imagery divider": "Роздільник старих і поточних знімків",
+  "TODAY": "ЗАРАЗ",
+  "No Wayback releases": "Немає випусків Wayback",
+  "Esri Wayback is unavailable": "Esri Wayback недоступний",
+  "Esri imagery as published on {date}": "Знімки Esri, опубліковані {date}",
+  "SWIPE": "ПОРІВНЯТИ",
+  "Another imagery comparison is using the map": "Мапа зайнята іншим порівнянням знімків",
+  "Compare this year with today's imagery": "Порівняти цей рік із поточними знімками",
+  "Each year shows the last Esri World Imagery release of that year. A release mixes photos taken at different times, so a place can look the same in several years until Esri replaced its photo.": "Для кожного року показано останній випуск Esri World Imagery за цей рік. Випуск поєднує знімки різного часу, тож місце може виглядати однаково кілька років, доки Esri не замінить його знімок.",
+  "Malformed Wayback response": "Некоректна відповідь Wayback",
+  "Imagery through time": "Знімки крізь час"
 }

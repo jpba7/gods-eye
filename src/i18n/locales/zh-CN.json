@@ -2872,5 +2872,16 @@
   "zoom in to see places": "放大以查看地点",
   "Malformed Wikipedia response": "维基百科响应格式错误",
   "Notable places": "知名地点",
-  "Explore": "探索"
+  "Explore": "探索",
+  "Past and present imagery divider": "过去与当前影像分隔线",
+  "TODAY": "现在",
+  "No Wayback releases": "没有 Wayback 版本",
+  "Esri Wayback is unavailable": "Esri Wayback 不可用",
+  "Esri imagery as published on {date}": "Esri 影像，发布于 {date}",
+  "SWIPE": "对比",
+  "Another imagery comparison is using the map": "另一个影像对比正在使用地图",
+  "Compare this year with today's imagery": "将这一年与当前影像对比",
+  "Each year shows the last Esri World Imagery release of that year. A release mixes photos taken at different times, so a place can look the same in several years until Esri replaced its photo.": "每一年显示该年最后发布的 Esri World Imagery 版本。一个版本混合了不同时间拍摄的照片，因此在 Esri 更换照片之前，同一地点可能在多个年份看起来相同。",
+  "Malformed Wayback response": "Wayback 响应格式错误",
+  "Imagery through time": "影像时光机"
 }

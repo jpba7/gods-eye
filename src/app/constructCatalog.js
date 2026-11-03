@@ -16,6 +16,7 @@ import { createApplicationBikeshare } from './layers/bikeshare.js';
 import { createApplicationDirections } from './layers/directions.js';
 import { createApplicationRecentImagery } from './layers/recentImagery.js';
 import { createApplicationWikiPlaces } from './layers/wikiPlaces.js';
+import { createApplicationImageryHistory } from './layers/imageryHistory.js';
 import { createApplicationTransit } from './layers/transit.js';
 import { createApplicationInstallations } from './layers/militaryInstallations.js';
 import { createApplicationSatellites } from './layers/satellites.js';
@@ -45,6 +46,7 @@ export const LOCAL_ONLY_LAYER_METADATA = Object.freeze([
   // Fork-owned layers stay out of the share-link token ledger, so a token
   // upstream publishes later can never collide with one claimed here.
   Object.freeze({ id: 'wiki-places', disposition: 'local-only' }),
+  Object.freeze({ id: 'imagery-history', disposition: 'local-only' }),
 ]);
 
 /** Serialization metadata for every layer the application catalog constructs. */
@@ -148,6 +150,9 @@ export function createApplicationCatalog({
         createApplicationDirections({ source: sources.directions }),
         createApplicationRecentImagery({ source: sources['recent-imagery'] }),
         createApplicationWikiPlaces({ source: sources['wiki-places'] }),
+        createApplicationImageryHistory({
+          source: sources['imagery-history'],
+        }),
         vessels,
         installations,
         createApplicationAwareness({

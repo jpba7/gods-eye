@@ -43,6 +43,7 @@ export const LAYER_NAME_KEYS = Object.freeze({
   'air-quality': msg('Air quality'),
   directions: msg('Directions'),
   'wiki-places': msg('Notable places'),
+  'imagery-history': msg('Imagery through time'),
   'alpr-cameras': msg('ALPR Cameras'),
 });
 
