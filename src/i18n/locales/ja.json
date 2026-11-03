@@ -2926,5 +2926,7 @@
   "Dictation stopped unexpectedly.": "音声入力が予期せず停止しました。",
   "Dictate (Ctrl+M)": "音声入力 (Ctrl+M)",
   "Dictate a message": "メッセージを音声入力",
-  "Stop dictation (Ctrl+M)": "音声入力を停止 (Ctrl+M)"
+  "Stop dictation (Ctrl+M)": "音声入力を停止 (Ctrl+M)",
+  "Performance": "パフォーマンス",
+  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "パフォーマンスモード：3Dタイルとアンチエイリアスを軽くして動きを滑らかにします"
 }

@@ -3142,5 +3142,7 @@
   "Dictation stopped unexpectedly.": "Диктовка неожиданно остановилась.",
   "Dictate (Ctrl+M)": "Диктовать (Ctrl+M)",
   "Dictate a message": "Надиктовать сообщение",
-  "Stop dictation (Ctrl+M)": "Остановить диктовку (Ctrl+M)"
+  "Stop dictation (Ctrl+M)": "Остановить диктовку (Ctrl+M)",
+  "Performance": "Производительность",
+  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "Режим производительности: облегчённые 3D-тайлы и сглаживание для более плавного движения"
 }
