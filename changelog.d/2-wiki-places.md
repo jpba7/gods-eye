@@ -2,4 +2,4 @@
   Wikipedia articles around the view, ranked by 30-day page views, in the app
   language's edition. Clicking one shows its intro, Wikidata facts (population,
   area, elevation, founding year, UNESCO status) and a link to the article
-  (jpba7).
+  (jpba7, #2).
