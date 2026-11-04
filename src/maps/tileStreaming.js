@@ -97,7 +97,8 @@ function* walkTiles(root) {
     const tile = stack.pop();
     yield tile;
     const children = tile?.children;
-    if (Array.isArray(children)) for (const child of children) stack.push(child);
+    if (Array.isArray(children))
+      for (const child of children) stack.push(child);
   }
 }
 
