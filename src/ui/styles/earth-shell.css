@@ -881,7 +881,92 @@ body.earth-shell[data-earth-section='visual']
   width: 100% !important;
   overflow: visible !important;
 }
+/* ── Visual: map-source picker ─────────────────────────────────────────
+   The first choice in the drawer, one row per provider with what it is (or
+   why it cannot be used) under its name. */
+body.earth-shell[data-earth-section='visual']
+  #control-panel
+  #control-panel-popover {
+  display: flex !important;
+  flex-direction: column;
+}
+body.earth-shell[data-earth-section='visual'] .map-source-section {
+  order: -1;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 0 0 14px;
+  border-top: 0;
+  border-bottom: 1px solid var(--earth-border);
+}
+body.earth-shell[data-earth-section='visual'] .map-source-heading {
+  color: var(--earth-text-2);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+body.earth-shell[data-earth-section='visual'] .map-source-heading .pp-stack-status {
+  max-width: none;
+  padding: 2px 8px;
+  font-size: 11px;
+  color: var(--earth-accent);
+  background: var(--earth-accent-soft);
+  border-radius: 999px;
+}
 body.earth-shell[data-earth-section='visual'] .map-stack-chip-row {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 6px;
+}
+body.earth-shell[data-earth-section='visual'] .map-stack-chip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  justify-content: stretch;
+  gap: 2px 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  letter-spacing: 0;
+  text-align: left;
+  text-transform: none;
+  white-space: normal;
+  color: var(--earth-text);
+  background: var(--earth-surface-2);
+  border-color: var(--earth-border);
+  border-radius: 10px;
+}
+body.earth-shell[data-earth-section='visual'] .map-stack-chip-label {
+  font-weight: 600;
+}
+body.earth-shell[data-earth-section='visual'] .map-stack-chip-desc {
+  display: block;
+  grid-column: 1 / -1;
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: var(--earth-text-3);
+}
+body.earth-shell[data-earth-section='visual'] .map-stack-chip-req {
+  grid-area: 1 / 2;
+  padding: 1px 6px;
+  font-size: 10px;
+  color: var(--earth-amber);
+  border: 1px solid currentColor;
+  border-radius: 999px;
+}
+body.earth-shell[data-earth-section='visual'] .map-stack-chip.active {
+  color: var(--earth-accent-strong);
+  background: var(--earth-accent-soft);
+  border-color: var(--earth-accent);
+  box-shadow: inset 3px 0 0 var(--earth-accent);
+}
+body.earth-shell[data-earth-section='visual'] .map-stack-chip.active .map-stack-chip-desc {
+  color: var(--earth-text-2);
+}
+body.earth-shell[data-earth-section='visual'] .map-stack-chip.unavailable {
+  color: var(--earth-text-3);
+  background: transparent;
+  border-style: dashed;
+}
+body.earth-shell[data-earth-section='visual']
+  .map-stack-chip.unavailable
+  .map-stack-chip-desc {
+  color: var(--earth-amber);
 }
