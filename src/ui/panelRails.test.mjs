@@ -1,5 +1,6 @@
 import { readStylesheet } from '../testSupport/readStylesheet.mjs';
 import { displayPanelScroller } from './displayPanelScroll.js';
+import { railLayoutHud } from './panelLayoutController.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
@@ -260,6 +261,26 @@ for (const side of ['left', 'right']) {
     assert.equal(f.first.classList.contains('layout-auto-collapsed'), true);
     assert.deepEqual(f.collapsed, ['first']);
     assert.equal(f.retries(), 1);
+  });
+  test(`${side} layout under the Earth shell keeps an open drawer's panels expanded`, () => {
+    const shellBody = {
+      classList: { contains: (name) => name === 'earth-shell' },
+    };
+    const hud = railLayoutHud(
+      { visible: true, variant: 'tactical' },
+      shellBody,
+    );
+    assert.deepEqual(hud, { visible: false, variant: 'tactical' });
+    const f = fixture(side, { hud });
+    f.expand(f.first, 900);
+    f.expand(f.second, 900);
+    f.first.classList.add('layout-auto-collapsed');
+    f.run();
+    for (const panel of [f.first, f.second]) {
+      assert.equal(panel.classList.contains('collapsed'), false, panel.id);
+      assert.equal(panel.classList.contains('layout-auto-collapsed'), false);
+    }
+    assert.equal(f.retries(), 0);
   });
   test(`${side} hidden HUD restores automatic collapse without altering manual collapse`, () => {
     const f = fixture(side, { hud: { visible: false, variant: 'tactical' } });
@@ -776,5 +797,25 @@ test('right layout ignores a hidden panel: no lane, no gap, no auto-collapse', (
     parseFloat(
       f.first.style.getPropertyValue('--right-panel-allocated-height'),
     ) <= alone,
+  );
+});
+
+test('the rail layout plans around the Tactical HUD only outside the Earth shell', () => {
+  const hud = { visible: true, variant: 'tactical' };
+  const body = (classes) => ({
+    classList: { contains: (name) => classes.includes(name) },
+  });
+  assert.equal(railLayoutHud(hud, body([])), hud);
+  assert.equal(railLayoutHud(hud, null), hud);
+  assert.deepEqual(railLayoutHud(hud, body(['earth-shell'])), {
+    visible: false,
+    variant: 'tactical',
+  });
+  assert.deepEqual(
+    railLayoutHud(hud, body(['earth-shell', 'earth-hud-visible'])),
+    {
+      visible: false,
+      variant: 'tactical',
+    },
   );
 });

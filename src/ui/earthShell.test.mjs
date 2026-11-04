@@ -340,3 +340,40 @@ test('the required map credit stays above the status bar and beside the drawer',
   // The credit is never hidden to make room.
   assert.doesNotMatch(css, /#cesium-credits[^{]*\{[^}]*display:\s*none/);
 });
+
+test('section panels keep icon glyphs in the Material Symbols font', () => {
+  const css = readFileSync(
+    new URL('./styles/earth-shell.css', import.meta.url),
+    'utf8',
+  ).replace(/\/\*[\s\S]*?\*\//g, '');
+  // A rule that sets the face or the spacing of every span in a section
+  // panel turns icon ligatures back into their names ("radar", "draw").
+  const offending = [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)]
+    .map(([, selector, body]) => [selector.replace(/\s+/g, ''), body])
+    .filter(
+      ([selector, body]) =>
+        /:is\([^)]*\bspan\b/.test(selector) &&
+        /(font-family|letter-spacing):/.test(body) &&
+        !selector.includes(':not(.material-symbols-outlined)'),
+    )
+    .map(([selector]) => selector);
+  assert.deepEqual(offending, []);
+});
+
+test('open drawers end above the status bar whatever the rail engine sizes', () => {
+  const css = readFileSync(
+    new URL('./styles/earth-shell.css', import.meta.url),
+    'utf8',
+  );
+  const rule =
+    /body\.earth-shell\[data-earth-section='context'\] #right-context-rail \{([^}]*)\}/.exec(
+      css,
+    );
+  assert.ok(rule, 'the shared open-section rail rule exists');
+  assert.match(rule[1], /bottom: var\(--earth-status\) !important;/);
+  // `.layout-focus` gives the rail a height for the floating HUD corridor;
+  // with top, bottom and height all set, height wins and the drawer runs
+  // under the status bar, out of reach of its own scrollbar.
+  assert.match(rule[1], /\n {2}height: auto !important;/);
+  assert.match(rule[1], /overflow-y: auto;/);
+});
