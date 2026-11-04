@@ -422,6 +422,33 @@ test('every shipped source explains itself in one line under its name', async ()
   assert.equal(chipText(container.children[0]), 'Google 3D');
 });
 
+test('descriptions and reasons render in the active language', async () => {
+  const { setLocale } = await import('./i18n/index.js');
+  const { MAP_STACKS } = await import('./maps/catalog.js');
+  setLocale('pt');
+  try {
+    const container = makeElement();
+    renderMapStackChips(
+      container,
+      MAP_STACKS.map((stack) => ({
+        ...stack,
+        available: !stack.requiresIon,
+        // The controller's reason is translated where it is composed.
+        unavailableReason: null,
+      })),
+      { activeId: 'photoreal', doc },
+    );
+    assert.equal(
+      chipDetail(container.children[0]),
+      'Cidades e relevo em 3D fotorrealista',
+    );
+    assert.equal(chipDetail(container.children[4]), 'Mapa de ruas, sem chave');
+    assert.match(chipDetail(container.children[1]), /^Requer CESIUM_ION_TOKEN/);
+  } finally {
+    setLocale('en');
+  }
+});
+
 test('a missing row or document is inert rather than throwing during boot', () => {
   assert.deepEqual(renderMapStackChips(null, CONTROLLER_STACKS, { doc }), []);
   assert.deepEqual(
