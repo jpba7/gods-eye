@@ -24,6 +24,12 @@
 #radio-panel .panel-header {
   margin-bottom: 0;
 }
+/* Only the desktop Earth shell explains the section (earth-shell.css). */
+.radio-panel-icon,
+.radio-panel-name,
+.radio-panel-hint {
+  display: none;
+}
 .radio-layer-state {
   color: var(--text-dim);
   font: 8px/1 var(--font-mono);

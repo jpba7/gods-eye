@@ -1,3 +1,7 @@
+import { configurePhotorealStreaming } from './tileStreaming.js';
+
+export { installTileFailureRecovery } from './tileStreaming.js';
+
 const clean = (value) => String(value || '').trim();
 
 /**
@@ -52,7 +56,10 @@ export async function loadPhotorealisticTileset(
 
   for (const attempt of attempts) {
     try {
-      const tileset = await attempt.create();
+      const tileset = configurePhotorealStreaming(
+        Cesium,
+        await attempt.create(),
+      );
       return { tileset, route: attempt.route, errors };
     } catch (error) {
       errors.push(error instanceof Error ? error : new Error(String(error)));

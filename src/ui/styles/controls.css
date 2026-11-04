@@ -700,6 +700,12 @@ html:not([lang='en']) .pp-slider-row > .pp-slider-mini-label {
   cursor: not-allowed;
 }
 
+/* The compact dock row has no room for the description line; the desktop
+   shell's Visual drawer shows it (earth-shell.css). */
+.map-stack-chip-desc {
+  display: none;
+}
+
 .map-stack-chip-req {
   font-size: 7px;
   letter-spacing: 0.3px;

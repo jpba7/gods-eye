@@ -1,5 +1,5 @@
 /** Own Scene panel listeners and presentation through project reads and actions. */
-import { t, msg } from '../i18n/index.js';
+import { formatNumber, t, msg } from '../i18n/index.js';
 import {
   sceneElements,
   renderSceneOptions,
@@ -9,6 +9,10 @@ import {
   presentSceneProgress,
   presentSceneRuntime,
 } from './scenePresentation.js';
+
+/** Shots the Earth shell's Scenes drawer lists before "Show all". */
+export const SCENE_SHOT_PREVIEW_COUNT = 6;
+const SHOT_LIST_EXPANDED = 'scene-shot-list--expanded';
 
 export class SceneControls {
   constructor({ read, actions, subscribe, elements = sceneElements() }) {
@@ -57,6 +61,8 @@ export class SceneControls {
       );
       if (!this.destroyed) elements.file.value = '';
     });
+    this.shotToggle = this.createShotToggle();
+    this.updateShotToggle();
     if (!subscribe) {
       this.updateStatus(t('Ready'));
       this.setProgress(0);
@@ -194,6 +200,47 @@ export class SceneControls {
       load: (sceneId, shotId) => this.run('load', sceneId, shotId),
       remove: (sceneId, shotId) => this.deleteShot(sceneId, shotId),
     });
+    this.updateShotToggle();
+  }
+
+  /**
+   * "Show all (N)" under the shot list. Only the Earth shell's Scenes drawer
+   * shows it and folds the list to its first shots (earth-shell.css); other
+   * layouts keep the full list.
+   */
+  createShotToggle() {
+    const list = this.elements.shots;
+    if (!list?.parentNode || typeof list.after !== 'function') return null;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'scene-shot-toggle';
+    button.hidden = true;
+    button.setAttribute('aria-controls', list.id || 'scene-shot-list');
+    list.after(button);
+    this.listen(button, 'click', () => {
+      list.classList.toggle(
+        SHOT_LIST_EXPANDED,
+        !list.classList.contains(SHOT_LIST_EXPANDED),
+      );
+      this.updateShotToggle();
+    });
+    this.removers.push(() => button.remove());
+    return button;
+  }
+
+  updateShotToggle() {
+    const button = this.shotToggle;
+    if (this.destroyed || !button) return;
+    const state = this.read();
+    const count =
+      state.scenes.find((scene) => scene.id === state.selectedSceneId)?.shots
+        .length || 0;
+    const expanded = this.elements.shots.classList.contains(SHOT_LIST_EXPANDED);
+    button.hidden = count <= SCENE_SHOT_PREVIEW_COUNT;
+    button.setAttribute('aria-expanded', String(expanded));
+    button.textContent = expanded
+      ? t('Show fewer')
+      : t('Show all ({count})', { count: formatNumber(count) });
   }
 
   setButtons(running) {

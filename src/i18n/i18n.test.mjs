@@ -129,9 +129,9 @@ test('applyDocumentLanguage sets lang and dir', () => {
 });
 
 test('t() returns English text in English and translates in Russian', () => {
-  assert.equal(t('POWERED UP'), 'POWERED UP');
+  assert.equal(t('Provider Settings'), 'Provider Settings');
   setLocale('ru');
-  assert.notEqual(t('POWERED UP'), 'POWERED UP');
+  assert.notEqual(t('Provider Settings'), 'Provider Settings');
 });
 
 test('t() interpolates named values and keeps unknown names literal', () => {
@@ -154,46 +154,49 @@ test('tn() picks English and Russian plural forms', () => {
   const label = (count) =>
     tn(
       count,
-      'POWER UP · {count} KEY WAITING',
-      'POWER UP · {count} KEYS WAITING',
+      'Provider Settings · {count} key missing',
+      'Provider Settings · {count} keys missing',
     );
-  assert.equal(label(1), 'POWER UP · 1 KEY WAITING');
-  assert.equal(label(3), 'POWER UP · 3 KEYS WAITING');
+  assert.equal(label(1), 'Provider Settings · 1 key missing');
+  assert.equal(label(3), 'Provider Settings · 3 keys missing');
   setLocale('ru');
-  assert.match(label(1), / 1 КЛЮЧ(?![А-ЯЁ])/);
-  assert.match(label(3), / 3 КЛЮЧА(?![А-ЯЁ])/);
-  assert.match(label(5), / 5 КЛЮЧЕЙ(?![А-ЯЁ])/);
-  assert.match(label(21), / 21 КЛЮЧ(?![А-ЯЁ])/);
+  assert.match(label(1), / 1 ключ(?![а-яё])/);
+  assert.match(label(3), / 3 ключа(?![а-яё])/);
+  assert.match(label(5), / 5 ключей(?![а-яё])/);
+  assert.match(label(21), / 21 ключ(?![а-яё])/);
 });
 
 test('tn() picks the Portuguese one, many and other forms', () => {
   const label = (count) =>
     tn(
       count,
-      'POWER UP · {count} KEY WAITING',
-      'POWER UP · {count} KEYS WAITING',
+      'Provider Settings · {count} key missing',
+      'Provider Settings · {count} keys missing',
     );
   setLocale('pt');
-  assert.equal(label(0), 'ATIVAR · 0 CHAVE PENDENTE');
-  assert.equal(label(1), 'ATIVAR · 1 CHAVE PENDENTE');
-  assert.equal(label(3), 'ATIVAR · 3 CHAVES PENDENTES');
-  assert.equal(label(1_000_000), 'ATIVAR · 1000000 DE CHAVES PENDENTES');
+  assert.equal(label(0), 'Configurações de provedores · 0 chave faltando');
+  assert.equal(label(1), 'Configurações de provedores · 1 chave faltando');
+  assert.equal(label(3), 'Configurações de provedores · 3 chaves faltando');
+  assert.equal(
+    label(1_000_000),
+    'Configurações de provedores · 1000000 de chaves faltando',
+  );
 });
 
 test('tn() picks the four Ukrainian plural forms', () => {
   const label = (count) =>
     tn(
       count,
-      'POWER UP · {count} KEY WAITING',
-      'POWER UP · {count} KEYS WAITING',
+      'Provider Settings · {count} key missing',
+      'Provider Settings · {count} keys missing',
     );
   setLocale('uk');
-  assert.match(label(1), / 1 КЛЮЧ(?![А-ЯҐЄІЇ])/);
-  assert.match(label(3), / 3 КЛЮЧІ(?![А-ЯҐЄІЇ])/);
-  assert.match(label(5), / 5 КЛЮЧІВ(?![А-ЯҐЄІЇ])/);
-  assert.match(label(11), / 11 КЛЮЧІВ(?![А-ЯҐЄІЇ])/);
-  assert.match(label(21), / 21 КЛЮЧ(?![А-ЯҐЄІЇ])/);
-  assert.match(label(1.5), / 1\.5 КЛЮЧА(?![А-ЯҐЄІЇ])/);
+  assert.match(label(1), / 1 ключ(?![а-яґєії])/);
+  assert.match(label(3), / 3 ключі(?![а-яґєії])/);
+  assert.match(label(5), / 5 ключів(?![а-яґєії])/);
+  assert.match(label(11), / 11 ключів(?![а-яґєії])/);
+  assert.match(label(21), / 21 ключ(?![а-яґєії])/);
+  assert.match(label(1.5), / 1\.5 ключа(?![а-яґєії])/);
 });
 
 test('t() context separates identical English with different meanings', () => {
@@ -238,8 +241,8 @@ function fakeElement({ text = '', attributes = {} } = {}) {
 }
 
 test('applyDocumentTranslations translates opted-in text and attributes in place', () => {
-  const label = fakeElement({ text: '\n  POWERED\n  UP  ' });
-  const pin = fakeElement({ attributes: { title: 'POWERED UP' } });
+  const label = fakeElement({ text: '\n  Provider\n  Settings  ' });
+  const pin = fakeElement({ attributes: { title: 'Provider Settings' } });
   const unknown = fakeElement({ text: 'No such message' });
   const doc = {
     querySelectorAll(selector) {
@@ -255,8 +258,8 @@ test('applyDocumentTranslations translates opted-in text and attributes in place
   );
   setLocale('ru');
   assert.equal(applyDocumentTranslations(doc), 2);
-  assert.equal(label.textContent, t('POWERED UP'));
-  assert.equal(pin.attrs.get('title'), t('POWERED UP'));
+  assert.equal(label.textContent, t('Provider Settings'));
+  assert.equal(pin.attrs.get('title'), t('Provider Settings'));
   assert.equal(unknown.textContent, 'No such message');
 });
 

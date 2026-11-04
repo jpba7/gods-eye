@@ -3,6 +3,21 @@ import { applyModelAtmosphereWorkaround } from './atmosphereCompat.js';
 import { StarrySky } from '../sky/starrySky.js';
 
 const PINCH_ZOOM_MULTIPLIER = 8;
+/**
+ * Highest device pixel ratio the globe renders at. Cesium's default renders
+ * at CSS pixels (ratio 1), which on a laptop with 125–150% display scaling
+ * stretches a smaller image over the screen, and requests coarser tiles too.
+ * Full resolution up to 1.5 keeps it sharp there, while Retina-class screens
+ * (ratio 2+) are capped instead of drawing 4x the pixels.
+ */
+export const MAX_RENDER_PIXEL_RATIO = 1.5;
+
+/** Cesium `resolutionScale` that renders at `min(ratio, MAX_RENDER_PIXEL_RATIO)`. */
+export function renderResolutionScale(devicePixelRatio) {
+  const ratio = Number(devicePixelRatio);
+  if (!Number.isFinite(ratio) || ratio <= MAX_RENDER_PIXEL_RATIO) return 1;
+  return MAX_RENDER_PIXEL_RATIO / ratio;
+}
 const MAX_PINCH_PIXEL_DELTA = 120;
 
 function boundedPinchDelta(delta) {
@@ -123,6 +138,8 @@ export function applicationViewerOptions(creditContainer) {
     skyBox: new StarrySky(),
     creditContainer,
     msaaSamples: 4,
+    // Device pixels, capped by resolutionScale (see MAX_RENDER_PIXEL_RATIO).
+    useBrowserRecommendedResolution: false,
     contextOptions: { webgl: { preserveDrawingBuffer: true } },
   };
 }
@@ -137,6 +154,7 @@ export function createApplicationViewer({ container, creditContainer }) {
   );
   try {
     viewer.targetFrameRate = 60;
+    viewer.resolutionScale = renderResolutionScale(globalThis.devicePixelRatio);
     // A phone pinch spans fewer screen pixels than desktop zoom gestures.
     // Keep Cesium's distance-aware zoom and collision limits, with less travel
     // required on touch-first screens. Mouse/trackpad sensitivity stays native.
