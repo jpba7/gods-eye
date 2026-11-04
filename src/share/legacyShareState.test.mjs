@@ -87,11 +87,11 @@ function assertLegacyRoundTrip(hash) {
   return { parsed, state, encoded };
 }
 
-test('the HAL example survives the round trip and shrinks to 39 characters', () => {
+test('the HAL example survives the round trip and shrinks to 35 characters', () => {
   const { parsed, state, encoded } = assertLegacyRoundTrip(HAL_EXAMPLE_HASH);
   assert.equal(HAL_EXAMPLE_HASH.length, 302);
-  assert.equal(encoded.length, 39);
-  assert.equal(encoded, 'ARCg-SQYrah3ILAJKB4wO1IEAIQAEGIBNMgBC1o');
+  assert.equal(encoded.length, 35);
+  assert.equal(encoded, 'ARCg-SQYrah3ILAJKB4wO1IEAIQAEGIBNBA');
   assert.equal(parsed.roll, 360);
   assert.equal(state.roll, 0);
   assert.deepEqual(state.layerState.enabledLayerIds, [
@@ -128,11 +128,11 @@ test('links from earlier long-form versions keep their historical meaning', () =
     assertLegacyRoundTrip(hash);
   }
   // A pre-v2 link's omitted settings are written explicitly, so the compact
-  // form keeps the fallbacks the long form gives them (ko=5, kf=16, scf=35).
+  // form keeps the fallbacks the long form gives them (ko=5, kf=16).
   const old = fromLegacyShareState(parseLegacy('lat=10&lon=20'));
   assert.deepEqual(
-    [old.detectionOutsideOpacityPct, old.detectionFadePct, old.scopeFeatherPct],
-    [5, 16, 35],
+    [old.detectionOutsideOpacityPct, old.detectionFadePct],
+    [5, 16],
   );
   assert.deepEqual(
     [old.bloomIntensity, old.bloomVersion],
@@ -235,9 +235,6 @@ function generatedLegacyHash(random) {
     detectionFadePct: int(0, 40),
     detectionOutsideOpacityPct: int(0, 100),
     celestialRingEnabled: random() < 0.5,
-    scopeEnabled: random() < 0.5,
-    scopeFeatherPct: int(0, 200),
-    scopeTerminusPct: random() < 0.3 ? int(94, 100) : null,
     mapStack: pick(random, VIEW_MAPS),
   });
   if (random() < 0.8) {

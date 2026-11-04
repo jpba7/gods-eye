@@ -5,6 +5,9 @@
  * present them. Nothing here applies while another surface owns the screen or
  * the Cyber skin is selected, because the shell removes its class then.
  */
+/* The Visual drawer's own presentation; style.css is kept to imports only. */
+@import './earth-visual.css';
+
 #earth-topbar,
 #earth-rail,
 #earth-drawer,
@@ -358,75 +361,16 @@ body.earth-shell .earth-filter-field {
   background: var(--earth-field);
   border-radius: 20px;
 }
-body.earth-shell .earth-switch-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  background: var(--earth-surface-2);
-  border: 1px solid var(--earth-border);
-  border-radius: 12px;
-}
-body.earth-shell .earth-switch-text {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 2px;
-}
-body.earth-shell .earth-switch-name {
-  font: 500 14px var(--font-sans);
-}
-body.earth-shell .earth-switch-hint {
-  color: var(--earth-text-3);
-  font: 400 12px/1.4 var(--font-sans);
-}
-body.earth-shell .earth-switch {
-  position: relative;
-  flex: none;
-  width: 40px;
-  height: 24px;
-  padding: 0;
-  background: var(--earth-border-strong);
-  border: 0;
-  border-radius: 12px;
-  cursor: pointer;
-}
-body.earth-shell .earth-switch::after {
-  content: '';
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 18px;
-  height: 18px;
-  background: var(--earth-text);
-  border-radius: 50%;
-  transition: left var(--transition-fast);
-}
-body.earth-shell .earth-switch[aria-checked='true'] {
-  background: var(--earth-accent);
-}
-body.earth-shell .earth-switch[aria-checked='true']::after {
-  left: 19px;
-  background: var(--earth-surface);
-}
-
 /* ── Old chrome the shell replaces ─────────────────────────────────────── */
 body.earth-shell #title-bar,
 body.earth-shell #style-indicator,
 body.earth-shell #location-bar {
   display: none !important;
 }
-body.earth-shell:not(.earth-hud-visible) #intel-hud {
+/* The spy-satellite HUD belongs to the classic layout; the status bar
+   carries its coordinates here. */
+body.earth-shell #intel-hud {
   display: none !important;
-}
-body.earth-shell.earth-hud-visible #intel-hud {
-  top: var(--earth-top);
-  right: 72px;
-  bottom: var(--earth-status);
-  left: var(--earth-rail);
-}
-body.earth-shell.earth-hud-visible[data-earth-section] #intel-hud {
-  left: calc(var(--earth-rail) + var(--earth-drawer));
 }
 
 /* ── Panels: hidden unless their section is open ───────────────────────── */

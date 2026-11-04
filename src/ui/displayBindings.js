@@ -1,7 +1,6 @@
-import { clampScopeFeatherPct } from '../scopeMaskPolicy.js';
 import { createFrameRateMonitor } from './frameRateMonitor.js';
 import { bindApplicationShortcuts } from './visualInput.js';
-import { bindDisplayControls, syncScopeControls } from './displayControls.js';
+import { bindDisplayControls } from './displayControls.js';
 import { canonicalizeDensity } from '../data/detectionPolicy.js';
 
 /** Own keyboard/display event subscriptions; settings remain with their state owners. */
@@ -49,12 +48,7 @@ export class DisplayBindings {
     return this.readState()._detectionAllocationBtns;
   }
   _initUI() {
-    const {
-      cycleDetectionMode,
-      setScopeMaskEnabled,
-      isScopeMaskEnabled,
-      setScopeMaskFeather,
-    } = this.services;
+    const { cycleDetectionMode } = this.services;
     this._applicationShortcuts?.destroy();
     this._frameRateMonitor?.destroy();
     this._frameRateMonitor = createFrameRateMonitor({
@@ -93,11 +87,6 @@ export class DisplayBindings {
       },
     });
 
-    syncScopeControls(
-      this._scopeBtn,
-      this._scopeFeatherSlider,
-      isScopeMaskEnabled(),
-    );
     this._displayControls?.destroy();
     this._displayControls = bindDisplayControls({
       elements: {
@@ -106,8 +95,6 @@ export class DisplayBindings {
         bloomSlider: this._bloomSlider,
         sharpenButton: this._sharpenBtn,
         sharpenSlider: this._sharpenSlider,
-        scopeToggle: this._scopeBtn,
-        scopeFeatherSlider: this._scopeFeatherSlider,
         hudLayout: this._hudLayoutSelect,
         hudButton: this._hudBtn,
         sonarButton: this._cyberSonarBtn,
@@ -139,20 +126,6 @@ export class DisplayBindings {
         toggleSharpen: () => {
           this.shareLinkManager?.claimRestoreLane?.('visual');
           this._setSharpenEnabled(!this.sharpenEnabled);
-        },
-        setScopeEnabled: (enabled) => {
-          this.shareLinkManager?.claimRestoreLane?.('visual');
-          setScopeMaskEnabled(enabled);
-          syncScopeControls(this._scopeBtn, this._scopeFeatherSlider, enabled);
-          this._syncShareState();
-        },
-        setScopeFeather: (value) => {
-          this.shareLinkManager?.claimRestoreLane?.('visual');
-          const pct = clampScopeFeatherPct(value);
-          if (this._scopeFeatherValue)
-            this._scopeFeatherValue.textContent = `${pct}%`;
-          setScopeMaskFeather(pct / 100);
-          this._syncShareState();
         },
         setSharpenIntensity: (pct) => {
           this.shareLinkManager?.claimRestoreLane?.('visual');
