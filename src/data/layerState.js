@@ -125,8 +125,8 @@ function booleanOption(
  * different things inside a single schema version. Both sides of the codec read
  * this function so they cannot disagree about which it is.
  *
- * (This is the same rule `scf` follows in sharelink.js by hand. `models3d` is the
- * first option in THIS codec to need it — flipped to default-ON on 2026-08-22.)
+ * (The long form's `ko` follows the same rule by hand. `models3d` is the first
+ * option in THIS codec to need it — flipped to default-ON on 2026-08-22.)
  */
 function absentTokenValue(spec) {
   return Object.hasOwn(spec, 'absentValue')

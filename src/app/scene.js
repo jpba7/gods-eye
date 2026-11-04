@@ -7,7 +7,10 @@ import {
 import { registerDataCredits } from '../data/dataCredits.js';
 import { configureCreditKeyboardAccess } from '../creditKeyboard.js';
 import { MapStackController } from '../mapStackController.js';
-import { loadPhotorealisticTileset } from '../mapStartup.js';
+import {
+  installTileFailureRecovery,
+  loadPhotorealisticTileset,
+} from '../mapStartup.js';
 import { initLogoGaze } from '../logoGaze.js';
 import {
   uninstallRenderGovernor,
@@ -79,6 +82,13 @@ export async function createApplicationScene({
   signal.throwIfAborted();
   if (tileset) {
     viewer.scene.primitives.add(tileset);
+    // Cesium never re-requests a tile that failed once, so one network blip
+    // or an expired Google session froze that area at a coarse level.
+    const recovery = installTileFailureRecovery(tileset, {
+      states: Cesium.Cesium3DTileContentState,
+      requestRender: governorRequestRender,
+    });
+    defer(() => recovery.destroy());
     // NOTE: Cesium World Terrain intentionally disabled — conflicts with Google 3D Tiles at high zoom.
     // Google Photorealistic 3D Tiles provide their own terrain/elevation.
     viewer.scene.globe.show = false;

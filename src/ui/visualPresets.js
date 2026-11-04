@@ -60,7 +60,7 @@ export const GLOBAL_POST_DEFAULTS = {
   detectionDensity: MILITARY_DETECTION_PRESET.densityPct,
   detectionAllocation: 'ELASTIC',
   detectionFadePct: 7,
-  detectionOutsideOpacityPct: 1,
+  detectionOutsideOpacityPct: 100,
   celestialRing: false,
 };
 

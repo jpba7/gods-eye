@@ -4,38 +4,99 @@ import {
   writeStoredCloudVoiceAuthMode,
 } from './voice/cloudVoiceAuth.js';
 
+import {
+  keyRemindersMuted,
+  onKeyRemindersChange,
+  readKeyReminders,
+  setKeyReminderMuted,
+  setKeyRemindersOff,
+} from './ui/keyReminders.js';
+
 /**
- * The POWER UP surface — paste a key, get a power.
+ * Provider Settings — paste a key, get a provider.
  *
- * A small chip sits bottom-right whenever the app is running under the dev
- * server with keys still missing. It opens a dialog rendered ENTIRELY from
- * GET /api/setup/status (the registry lives in src/keySetupCore.mjs and this
- * module never duplicates it): one row per key, what it unlocks, where to get
- * it, and a paste field. SAVE posts to /api/setup/keys, which writes the
+ * A key button sits in the top bar whenever the app runs under the dev server.
+ * It opens a dialog rendered ENTIRELY from GET /api/setup/status (the registry
+ * lives in src/keySetupCore.mjs and this module never duplicates it): the
+ * providers in groups, one plain status each, what the key unlocks, where to
+ * get it, and a paste field. Save posts to /api/setup/keys, which writes the
  * repo-root .env and restarts the dev server — Vite's client then reloads the
  * page itself, and the pasted key is simply *on*. No hand-edited env files.
  *
+ * Only an essential key (Google Maps) that is missing puts a count on the
+ * button, and the person can turn that reminder off (src/ui/keyReminders.js).
+ *
  * The surface self-destructs where it cannot work: a prod build (no endpoint)
  * or a LAN visitor (loopback-only endpoint) fails the status fetch, and both
- * the chip and the dialog are removed outright.
+ * the button and the dialog are removed outright.
  */
 
 import { t, msg, tn, registerUnsavedWork } from './i18n/index.js';
 
+/** Panel groups, in order. Rows with an unknown group join the last one. */
+export const KEY_SETUP_GROUPS = Object.freeze([
+  Object.freeze({ id: 'globe', label: msg('3D globe'), optional: false }),
+  Object.freeze({ id: 'voice', label: msg('Voice assistant'), optional: true }),
+  Object.freeze({ id: 'data', label: msg('Data layers'), optional: true }),
+]);
+
 /**
- * Chip label — pure, exported for tests (keySetup.test.mjs pins the English).
- * @param {{total?: number, setCount?: number}|null} status
+ * The one status a provider row shows — pure, exported for tests. `tone` is
+ * the colour: 'ok' (configured), 'attention' (an essential key is missing and
+ * its reminder is on) or 'neutral' (anything else that is not configured).
+ * `label` is English source text for t().
+ * @param {{set?: boolean, managed?: string, essential?: boolean}} key
+ * @param {boolean} [muted] Reminders about this key are off.
+ * @returns {{tone: 'ok'|'attention'|'neutral', label: string, reminding: boolean}}
+ */
+export function keyRowStatus(key, muted = false) {
+  if (key?.set)
+    return key.managed === 'external'
+      ? {
+          tone: 'ok',
+          label: msg('Configured outside this app'),
+          reminding: false,
+        }
+      : { tone: 'ok', label: msg('Configured'), reminding: false };
+  if (key?.essential && !muted)
+    return { tone: 'attention', label: msg('Not configured'), reminding: true };
+  return {
+    tone: 'neutral',
+    label: key?.essential
+      ? msg('Not configured')
+      : msg('Not configured (optional)'),
+    reminding: false,
+  };
+}
+
+/**
+ * Ids of the missing keys the button reminds about — pure, exported for
+ * tests: essential, not configured, and not muted.
+ * @param {{keys?: Array<object>}|null} status
+ * @param {(id: string) => boolean} [isMuted]
+ * @returns {string[]}
+ */
+export function missingKeyReminders(status, isMuted = () => false) {
+  return (status?.keys || [])
+    .filter((key) => keyRowStatus(key, isMuted(key.id)).reminding)
+    .map((key) => key.id);
+}
+
+/**
+ * Button label — pure, exported for tests (keySetup.test.mjs pins the English).
+ * @param {{keys?: Array<object>}|null} status
+ * @param {(id: string) => boolean} [isMuted]
  * @returns {string}
  */
-export function keySetupChipLabel(status) {
-  const missing = Math.max(0, (status?.total || 0) - (status?.setCount || 0));
+export function keySetupChipLabel(status, isMuted) {
+  const missing = missingKeyReminders(status, isMuted).length;
   return missing > 0
     ? tn(
         missing,
-        'POWER UP · {count} KEY WAITING',
-        'POWER UP · {count} KEYS WAITING',
+        'Provider Settings · {count} key missing',
+        'Provider Settings · {count} keys missing',
       )
-    : t('POWERED UP');
+    : t('Provider Settings');
 }
 
 /**
@@ -215,7 +276,18 @@ export function stripKeylessBasemapFromHash(hash) {
   }
 }
 
-const TIER_DOTS = Object.freeze({ metered: '🔴', paid: '🔴', free: '🟡' });
+/** Short cost note per tier; the title keeps the longer explanation. */
+const TIER_LABELS = Object.freeze({
+  metered: msg('Needs a billing account'),
+  paid: msg('Optional paid token'),
+  free: msg('Free key'),
+});
+
+const TIER_TITLES = Object.freeze({
+  metered: msg('Metered — a billing-enabled account'),
+  paid: msg('Optional paid token — public access works without one'),
+  free: msg('Free key — register, paste, done'),
+});
 
 function updateCloudVoiceAuthControl(auth, busy = false) {
   const mode = readStoredCloudVoiceAuthMode();
@@ -223,10 +295,10 @@ function updateCloudVoiceAuthControl(auth, busy = false) {
   const toggle = auth.querySelector('[data-cloud-voice-auth-toggle]');
   state.textContent =
     mode === 'oauth'
-      ? t('VOICE AUTH · CHATGPT OAUTH')
-      : t('VOICE AUTH · API KEY');
+      ? t('Voice sign-in: ChatGPT OAuth')
+      : t('Voice sign-in: API key');
   toggle.textContent =
-    mode === 'oauth' ? t('USE API KEY') : t('USE CHATGPT OAUTH');
+    mode === 'oauth' ? t('Use API key') : t('Use ChatGPT OAuth');
   toggle.title =
     mode === 'oauth'
       ? t('Use OPENAI_API_KEY for the next cloud voice session')
@@ -237,68 +309,110 @@ function updateCloudVoiceAuthControl(auth, busy = false) {
   toggle.setAttribute('aria-disabled', String(busy));
 }
 
-/** Build one key row. All content is our own registry text, set via textContent. */
-function buildRow(documentRef, key) {
-  const row = documentRef.createElement('section');
-  row.className = 'key-setup-row';
+function element(documentRef, tag, className, text) {
+  const node = documentRef.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+/**
+ * Build one key row. All content is our own registry text, set via textContent.
+ * @param {Document} documentRef
+ * @param {object} key One entry of the status payload.
+ * @param {{off: boolean, muted: string[]}} reminders
+ */
+function buildRow(documentRef, key, reminders) {
+  const muted = reminders.off || reminders.muted.includes(key.id);
+  const state = keyRowStatus(key, muted);
+  const name = key.name || key.title;
+  const row = element(documentRef, 'section', 'key-setup-row');
   row.dataset.keyId = key.id;
   row.dataset.set = String(Boolean(key.set));
+  row.dataset.tone = state.tone;
   if (key.managed) row.dataset.managed = key.managed;
   const external = key.managed === 'external';
 
-  const head = documentRef.createElement('div');
-  head.className = 'key-setup-row-head';
-  const led = documentRef.createElement('span');
-  led.className = 'key-setup-led';
-  led.setAttribute('aria-hidden', 'true');
-  const title = documentRef.createElement('strong');
-  title.textContent = key.title; // i18n-ignore: provider product name
-  const tier = documentRef.createElement('span');
-  tier.className = 'key-setup-tier';
-  tier.textContent = TIER_DOTS[key.tier] || '';
-  tier.title =
-    key.tier === 'metered'
-      ? t('Metered — a billing-enabled account')
-      : key.tier === 'paid'
-        ? t('Optional paid token — public access works without one')
-        : t('Free key — register, paste, done');
-  head.append(led, title, tier);
+  const head = element(documentRef, 'div', 'key-setup-row-head');
+  // i18n-ignore: provider product name
+  const title = element(documentRef, 'strong', 'key-setup-name', name);
+  const status = element(documentRef, 'span', 'key-setup-status');
+  status.dataset.tone = state.tone;
+  const dot = element(documentRef, 'span', 'key-setup-dot');
+  dot.setAttribute('aria-hidden', 'true');
+  status.append(
+    dot,
+    element(documentRef, 'span', 'key-setup-status-label', t(state.label)),
+  );
+  if (external)
+    status.title = t(
+      'Supplied by your environment, Keychain, or launcher — change it where it was set',
+    );
+  const get = element(
+    documentRef,
+    'a',
+    'key-setup-get',
+    key.set ? t('Manage') : t('Get a key'),
+  );
+  get.href = key.getUrl;
+  get.target = '_blank';
+  get.rel = 'noopener noreferrer';
+  const arrow = element(documentRef, 'span', 'key-setup-get-arrow', '↗');
+  arrow.setAttribute('aria-hidden', 'true');
+  get.append(arrow);
+  head.append(title, status, get);
+
+  const unlocks = element(
+    documentRef,
+    'p',
+    'key-setup-unlocks',
+    t(key.unlocks),
+  );
+
+  const meta = element(documentRef, 'p', 'key-setup-meta');
+  if (TIER_LABELS[key.tier]) {
+    const tier = element(
+      documentRef,
+      'span',
+      'key-setup-tier',
+      t(TIER_LABELS[key.tier]),
+    );
+    tier.title = t(TIER_TITLES[key.tier]);
+    meta.append(tier);
+  }
   if (key.clientExposed) {
-    const exposed = documentRef.createElement('span');
-    exposed.className = 'key-setup-exposed';
-    exposed.textContent = t('browser-side');
+    // A fact about how the key works, not a warning: it ships to the browser,
+    // so the provider-side restriction is what protects it.
+    const exposed = element(
+      documentRef,
+      'span',
+      'key-setup-exposed',
+      t('Used in the browser: restrict it to your site at the provider'),
+    );
     exposed.title = t(
       'This key runs in the browser by design — restrict it at the provider (see SECURITY.md)',
     );
-    head.append(exposed);
+    meta.append(exposed);
   }
   if (external) {
     // Externally supplied credentials (shell env, Keychain, a launcher) are
     // facts this panel reports, never values it rewrites or deletes.
-    const badge = documentRef.createElement('span');
-    badge.className = 'key-setup-external';
-    badge.textContent = t('configured externally');
-    badge.title = t(
-      'Supplied by your environment, Keychain, or launcher — change it where it was set',
+    meta.append(
+      element(
+        documentRef,
+        'span',
+        'key-setup-external',
+        t(
+          'Supplied by your environment, Keychain, or launcher — change it where it was set',
+        ),
+      ),
     );
-    head.append(badge);
   }
-  const get = documentRef.createElement('a');
-  get.className = 'key-setup-get';
-  get.href = key.getUrl;
-  get.target = '_blank';
-  get.rel = 'noopener noreferrer';
-  get.textContent = key.set ? t('MANAGE ↗') : t('GET KEY ↗');
-  head.append(get);
-
-  const unlocks = documentRef.createElement('p');
-  unlocks.className = 'key-setup-unlocks';
-  unlocks.textContent = t(key.unlocks);
 
   row.append(head, unlocks);
+  if (meta.childNodes?.length ?? meta.children?.length) row.append(meta);
   if (!external) {
-    const fields = documentRef.createElement('div');
-    fields.className = 'key-setup-fields';
+    const fields = element(documentRef, 'div', 'key-setup-fields');
     for (const envVar of key.envVars) {
       const input = documentRef.createElement('input');
       // Passwords-style so a pasted key never shows on a shared or recorded
@@ -313,35 +427,90 @@ function buildRow(documentRef, key) {
         : t('paste {envVar}', { envVar });
       fields.append(input);
     }
-    if (key.managed === 'file') {
-      const remove = documentRef.createElement('button');
-      remove.type = 'button';
-      remove.className = 'key-setup-remove';
-      remove.dataset.keySetupRemove = JSON.stringify(key.envVars);
-      remove.textContent = t('REMOVE');
-      remove.title = t("Remove {title} from this app's saved keys", {
-        title: key.title,
-      });
-      fields.append(remove);
-    }
     row.append(fields);
   }
+  const actions = element(documentRef, 'div', 'key-setup-row-actions');
+  if (!external && key.managed === 'file') {
+    const remove = element(
+      documentRef,
+      'button',
+      'key-setup-remove',
+      t('Remove'),
+    );
+    remove.type = 'button';
+    remove.dataset.keySetupRemove = JSON.stringify(key.envVars);
+    remove.title = t("Remove {title} from this app's saved keys", {
+      title: name,
+    });
+    actions.append(remove);
+  }
+  // Only a key that reminds (or was silenced by itself) offers the switch;
+  // with every reminder off, the footer switch is the one to turn back on.
+  if (!key.set && key.essential && !reminders.off) {
+    const own = reminders.muted.includes(key.id);
+    const mute = element(
+      documentRef,
+      'button',
+      'key-setup-mute',
+      own ? t('Remind me again') : t("Don't remind me"),
+    );
+    mute.type = 'button';
+    mute.dataset.keySetupMute = key.id;
+    mute.setAttribute('aria-pressed', String(own));
+    mute.title = t('Reminders about this key are kept in this browser');
+    actions.append(mute);
+  }
+  if (actions.children?.length ?? actions.childNodes?.length)
+    row.append(actions);
   if (key.id === 'openai') {
-    const auth = documentRef.createElement('div');
-    auth.className = 'key-setup-cloud-auth';
-    const state = documentRef.createElement('span');
-    state.className = 'key-setup-cloud-auth-state';
-    const toggle = documentRef.createElement('button');
+    const auth = element(documentRef, 'div', 'key-setup-cloud-auth');
+    const authState = element(
+      documentRef,
+      'span',
+      'key-setup-cloud-auth-state',
+    );
+    const toggle = element(
+      documentRef,
+      'button',
+      'key-setup-cloud-auth-toggle',
+    );
     toggle.type = 'button';
-    toggle.className = 'key-setup-cloud-auth-toggle';
     toggle.dataset.cloudVoiceAuthToggle = 'true';
-    auth.append(state, toggle);
+    auth.append(authState, toggle);
     updateCloudVoiceAuthControl(auth);
     row.append(auth);
   }
   return row;
 }
 
+/**
+ * Group the rows: one section per KEY_SETUP_GROUPS entry that has rows, its
+ * heading saying whether the whole group is optional.
+ */
+function buildGroups(documentRef, keys, reminders) {
+  const known = new Set(KEY_SETUP_GROUPS.map((group) => group.id));
+  const fallback = KEY_SETUP_GROUPS.at(-1).id;
+  const sections = [];
+  for (const group of KEY_SETUP_GROUPS) {
+    const members = keys.filter(
+      (key) => (known.has(key.group) ? key.group : fallback) === group.id,
+    );
+    if (!members.length) continue;
+    const section = element(documentRef, 'section', 'key-setup-group');
+    section.dataset.group = group.id;
+    const heading = element(documentRef, 'h3', 'key-setup-group-title');
+    heading.append(element(documentRef, 'span', '', t(group.label)));
+    if (group.optional)
+      heading.append(
+        element(documentRef, 'span', 'key-setup-optional', t('Optional')),
+      );
+    section.append(heading);
+    for (const key of members)
+      section.append(buildRow(documentRef, key, reminders));
+    sections.push(section);
+  }
+  return sections;
+}
 /**
  * Move the existing setup action with the theme, retaining its listeners:
  * Cyber puts it in the top toolbar, every other theme keeps it first in its
@@ -443,21 +612,51 @@ export async function initKeySetup({
       updateCloudVoiceAuthControl(auth, oauthBusy);
   };
 
+  const chipBadge = chip.querySelector?.('[data-key-setup-chip-badge]');
+  const remindersSwitch = root.querySelector('[data-key-setup-reminders]');
+
   const render = (nextStatus) => {
     if (disposed) return;
     status = nextStatus;
-    chipLabel.textContent = keySetupChipLabel(status);
-    chip.title = t('Project keys: {status}', {
-      status: keySetupChipLabel(status),
-    });
-    chip.setAttribute('aria-label', chip.title);
-    // Fully powered is the owner's clean screen: the chip retires. The dialog
-    // stays reachable this session (and via ?setup=1) to swap or verify keys.
-    chip.hidden = status.setCount >= status.total;
+    const reminders = readKeyReminders();
+    const isMuted = (id) => keyRemindersMuted(id);
+    const label = keySetupChipLabel(status, isMuted);
+    chipLabel.textContent = label;
+    chip.title = label;
+    chip.setAttribute('aria-label', label);
+    if (chipBadge) {
+      const missing = missingKeyReminders(status, isMuted).length;
+      chipBadge.textContent = missing ? String(missing) : '';
+      chipBadge.hidden = missing === 0;
+    }
+    // The button is the way into the dialog, so it stays: quiet when nothing
+    // essential is missing, with a count when something is.
+    chip.hidden = false;
+    remindersSwitch?.setAttribute('aria-checked', String(!reminders.off));
     if (!rowsHost) return;
+    // A re-render (a reminder switched) must not drop a pasted, unsaved key.
+    const pasted = new Map();
+    for (const input of rowsHost.querySelectorAll?.('input[data-env-var]') ||
+      [])
+      if (input.value) pasted.set(input.dataset.envVar, input.value);
+    const focusedMute =
+      documentRef.activeElement?.dataset?.keySetupMute || null;
     rowsHost.textContent = '';
-    for (const key of status.keys || [])
-      rowsHost.append(buildRow(documentRef, key));
+    for (const section of buildGroups(
+      documentRef,
+      status.keys || [],
+      reminders,
+    ))
+      rowsHost.append(section);
+    for (const input of rowsHost.querySelectorAll?.('input[data-env-var]') ||
+      [])
+      if (pasted.has(input.dataset.envVar))
+        input.value = pasted.get(input.dataset.envVar);
+    if (focusedMute)
+      (
+        rowsHost.querySelector?.(`[data-key-setup-mute="${focusedMute}"]`) ||
+        remindersSwitch
+      )?.focus?.({ preventScroll: true });
     syncCloudVoiceAuth();
   };
 
@@ -589,8 +788,17 @@ export async function initKeySetup({
     );
   };
 
+  const onRemindersSwitch = () => {
+    if (disposed) return;
+    setKeyRemindersOff(!readKeyReminders().off);
+  };
+  const stopListeningForReminders = onKeyRemindersChange(() => {
+    if (status) render(status);
+  });
+
   chip.addEventListener('click', openDialog);
   closeButton?.addEventListener('click', close);
+  remindersSwitch?.addEventListener('click', onRemindersSwitch);
   applyButton?.addEventListener('click', onApply);
   root.dataset.ready = 'true';
   // Remove buttons are rendered per row; delegate so re-renders stay wired.
@@ -678,7 +886,7 @@ export async function initKeySetup({
           if (!available) {
             say(
               t('ChatGPT sign-in timed out. Click {button} to try again.', {
-                button: t('USE CHATGPT OAUTH'),
+                button: t('Use ChatGPT OAuth'),
               }),
             );
             return;
@@ -698,6 +906,13 @@ export async function initKeySetup({
           if (!disposed) syncCloudVoiceAuth();
         }
       })();
+      return;
+    }
+    const muteButton = event.target?.closest?.('[data-key-setup-mute]');
+    if (muteButton) {
+      if (disposed) return;
+      const id = muteButton.dataset.keySetupMute;
+      setKeyReminderMuted(id, !readKeyReminders().muted.includes(id));
       return;
     }
     const button = event.target?.closest?.('[data-key-setup-remove]');
@@ -724,8 +939,7 @@ export async function initKeySetup({
 
   render(status);
 
-  // Re-entry for a fully-keyed setup, demos, and support: ?setup=1 opens the
-  // dialog even though the chip has retired.
+  // Demos and support: ?setup=1 opens the dialog straight away.
   try {
     if (
       new URLSearchParams(globalThis.location?.search || '').get('setup') ===
@@ -742,6 +956,8 @@ export async function initKeySetup({
     chip.removeEventListener('click', openDialog);
     closeButton?.removeEventListener('click', close);
     applyButton?.removeEventListener('click', onApply);
+    remindersSwitch?.removeEventListener('click', onRemindersSwitch);
+    stopListeningForReminders();
   };
   return { open: openDialog, close, render, destroy };
 }

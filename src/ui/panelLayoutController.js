@@ -1,6 +1,22 @@
 /** Own rail measurement, layout scheduling and dock tray observation. */
 import { layoutLeftPanelRail, layoutRightPanelRail } from './panelRails.js';
 import { syncRadioPanelPlacement } from './radioPanelPlacement.js';
+
+/**
+ * The HUD presentation the rail layout should plan around. While the desktop
+ * Earth shell is active (body.earth-shell, see earthShell.js) its drawers own
+ * panel placement and the Tactical HUD is not on screen, so the rails must not
+ * budget space for it: Tactical's space-based auto-collapse would otherwise
+ * collapse the very panels an open drawer shows, leaving it empty.
+ * @param {{visible: boolean, variant: string}} hud
+ * @param {{classList?: DOMTokenList}|null|undefined} body
+ * @returns {{visible: boolean, variant: string}}
+ */
+export function railLayoutHud(hud, body = globalThis.document?.body) {
+  return body?.classList?.contains('earth-shell')
+    ? { ...hud, visible: false }
+    : hud;
+}
 const COCKPIT_LAYOUT_SETTLE_MS = 240;
 /**
  * Fixed UI regions that can occupy the left accordion's vertical lane.
@@ -299,7 +315,7 @@ export class PanelLayoutController {
       stack: this._rightPanelStack,
       obstacles: document.querySelectorAll(RIGHT_STACK_OBSTACLE_SELECTOR),
       windowRef: window,
-      hud: this.readHud(),
+      hud: railLayoutHud(this.readHud()),
       preferredPanelId: this._rightStackPreferredPanelId,
       onCollapse: (panel) => this._syncPanelCollapseButton(panel),
       onRetry: () => this._scheduleRightPanelLayout(),
@@ -433,7 +449,7 @@ export class PanelLayoutController {
       stack: this._leftPanelStack,
       obstacles: document.querySelectorAll(LEFT_STACK_OBSTACLE_SELECTOR),
       windowRef: window,
-      hud: this.readHud(),
+      hud: railLayoutHud(this.readHud()),
       preferredPanelId: this._leftStackPreferredPanelId,
       onCollapse: (panel) => this._syncPanelCollapseButton(panel),
       onRetry: () => this._scheduleLeftPanelLayout(),

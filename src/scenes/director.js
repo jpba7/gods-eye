@@ -64,6 +64,16 @@ import {
   SceneDocumentError,
 } from '../director/document.js';
 import { sceneSaveFailureReason } from './sceneSaveError.js';
+import {
+  SCENE_SUGGESTION_THEMES,
+  SUGGESTION_FLIGHT_SEC,
+  SUGGESTION_TOUR_SCENE_PREFIX,
+  findSuggestion,
+  findSuggestionTheme,
+  suggestionCamera,
+  suggestionShot,
+} from './suggestions.js';
+import { mountSceneSuggestions } from '../ui/sceneSuggestions.js';
 
 /** @constant {string} localStorage key for the serialized project */
 const STORAGE_KEY = 'godsEyeView.sceneProject.v2';
@@ -242,6 +252,7 @@ export class SceneDirector {
     this._removeCameraInput?.();
     this._cameraMotion?.destroy();
     this._sharing?.destroy();
+    this._unmountSuggestions?.();
     this._bundleAssets?.clear();
     this._interactions?.destroy();
     this._dataPacks?.destroy();
@@ -410,6 +421,12 @@ export class SceneDirector {
    */
   _initUI() {
     this._sharing?.mount();
+    this._unmountSuggestions = mountSceneSuggestions({
+      themes: SCENE_SUGGESTION_THEMES,
+      fly: (id) => this.flyToSuggestion(id),
+      save: (id) => this.saveSuggestion(id),
+      tour: (id) => this.playSuggestionTour(id),
+    });
     this._controls = new SceneControls({
       subscribe: (listener) => this.subscribe(listener),
       read: () => ({
@@ -1000,6 +1017,123 @@ export class SceneDirector {
         }),
       );
     }
+  }
+
+  /**
+   * Fly to a suggested place (suggestions.js). Only the camera moves: the
+   * project, visual state and layers stay as they are. A newer LOAD or
+   * suggestion supersedes this one.
+   * @param {string} suggestionId
+   * @returns {Promise<{started: boolean, reason?: string}>}
+   */
+  flyToSuggestion(suggestionId) {
+    const suggestion = findSuggestion(suggestionId);
+    if (this._destroyed || !suggestion)
+      return Promise.resolve({ started: false, reason: 'not-found' });
+    if (this._running)
+      return Promise.resolve({ started: false, reason: 'already-running' });
+    if (!this._claimCameraOwnership())
+      return Promise.resolve({ started: false, reason: 'camera-unavailable' });
+    this._bumpSceneSeekGeneration();
+    this._cancelActiveSceneTravel();
+    this._setSceneMediaPlayback();
+    this._interactions?.clear();
+    this._dataPacks?.clear();
+    this._loadAbort?.abort();
+    this._loadAbort = null;
+    this._clock.stopShot();
+    const token = this._loadToken(++this._loadGeneration);
+    this._updateStatus(t('Flying to {place}', { place: t(suggestion.name) }));
+    return this._trackWork(
+      this._flyCamera(
+        suggestionCamera(suggestion),
+        SUGGESTION_FLIGHT_SEC,
+        token,
+      ).then(() => {
+        if (token.cancelled) return { started: false, reason: 'superseded' };
+        this._updateStatus(t('Ready'));
+        return { started: true };
+      }),
+    );
+  }
+
+  /**
+   * Save a suggested place as a new scene of one shot, in the current look.
+   * The shot leaves layers alone, like every suggestion.
+   * @param {string} suggestionId
+   * @returns {{id: string, title: string}|null} The new scene.
+   */
+  saveSuggestion(suggestionId) {
+    const suggestion = findSuggestion(suggestionId);
+    if (this._destroyed || this._running || !suggestion) return null;
+    const title = t(suggestion.name);
+    const scene = {
+      id: uid('scene'),
+      title,
+      releaseLayerIds: [],
+      appliedShotPacks: [],
+      shots: [
+        normalizeShot(
+          suggestionShot(suggestion, {
+            title,
+            visual: this.styleManager.getVisualState?.(),
+          }),
+          0,
+        ),
+      ],
+    };
+    this._project.scenes.push(scene);
+    this._selectedSceneId = scene.id;
+    this._selectedShotId = scene.shots[0].id;
+    const saved = this._saveProject();
+    this._publish({ type: 'scene-created', scene });
+    if (!saved) return null;
+    this._updateStatus(t('Saved as scene: {scene}', { scene: title }));
+    return { id: scene.id, title };
+  }
+
+  /**
+   * Play a suggestion theme as a tour. The tour is an ordinary scene: it is
+   * added to the project the first time (in the Photorealistic 3D map when it
+   * is available), so it can be edited, replayed or deleted like any other.
+   * @param {string} themeId
+   * @returns {Promise<{started: boolean, reason?: string, shots?: number}>}
+   */
+  playSuggestionTour(themeId) {
+    const theme = findSuggestionTheme(themeId);
+    if (this._destroyed || !theme)
+      return Promise.resolve({ started: false, reason: 'not-found' });
+    if (this._running)
+      return Promise.resolve({ started: false, reason: 'already-running' });
+    const id = `${SUGGESTION_TOUR_SCENE_PREFIX}${theme.id}`;
+    let scene = this._project.scenes.find((item) => item.id === id);
+    if (!scene) {
+      const current = this.styleManager.getVisualState?.();
+      const visual =
+        current && this._isMapStackAvailable('photoreal')
+          ? { ...current, mapStack: 'photoreal' }
+          : current;
+      scene = {
+        id,
+        title: t('Tour: {theme}', { theme: t(theme.label) }),
+        releaseLayerIds: [],
+        appliedShotPacks: [],
+        shots: theme.places.map((place, index) =>
+          normalizeShot(
+            suggestionShot(place, { title: t(place.name), visual }),
+            index,
+          ),
+        ),
+      };
+      this._project.scenes.push(scene);
+      this._saveProject();
+      this._publish({ type: 'scene-created', scene });
+    }
+    this._selectedSceneId = scene.id;
+    this._selectedShotId = scene.shots[0]?.id || null;
+    this._renderSceneSelect();
+    this._renderShotList();
+    return this.startScene(scene.id, { single: true });
   }
 
   /**

@@ -181,25 +181,18 @@ export class StyleManager extends ShellFacade {
       viewer,
       mapStackController,
       services: {
-        setScopeTerminusOverride: services.setScopeTerminusOverride,
-        clampScopeTerminusPct: services.clampScopeTerminusPct,
         getDetectionMode: services.getDetectionMode,
         getDetectionTuning: services.getDetectionTuning,
         getKeyholeFadeTuning: services.getKeyholeFadeTuning,
-        getScopeMaskFeather: services.getScopeMaskFeather,
-        getScopeTerminusOverride: services.getScopeTerminusOverride,
         governorRequestRender: services.governorRequestRender,
         holdContinuousRender: services.holdContinuousRender,
         isCelestialRingStyleSupported: services.isCelestialRingStyleSupported,
-        isScopeMaskEnabled: services.isScopeMaskEnabled,
         readDetectionDiagnostics: services.readDetectionDiagnostics,
         releaseContinuousRender: services.releaseContinuousRender,
         setDetectionModeByLabel: services.setDetectionModeByLabel,
         setDetectionStyle: services.setDetectionStyle,
         setDetectionTuning: services.setDetectionTuning,
         setKeyholeFadeTuning: services.setKeyholeFadeTuning,
-        setScopeMaskEnabled: services.setScopeMaskEnabled,
-        setScopeMaskFeather: services.setScopeMaskFeather,
       },
       elements: {
         _bloomBtn: this._bloomBtn,
@@ -234,9 +227,6 @@ export class StyleManager extends ShellFacade {
         _hudLayoutRow: this._hudLayoutRow,
         _hudLayoutSelect: this._hudLayoutSelect,
         _ppToggles: this._ppToggles,
-        _scopeBtn: this._scopeBtn,
-        _scopeFeatherSlider: this._scopeFeatherSlider,
-        _scopeFeatherValue: this._scopeFeatherValue,
         _sharpenBtn: this._sharpenBtn,
         _sharpenSlider: this._sharpenSlider,
         _sharpenSliderRow: this._sharpenSliderRow,
@@ -522,9 +512,6 @@ export class StyleManager extends ShellFacade {
       viewer,
       services: {
         cycleDetectionMode: services.cycleDetectionMode,
-        setScopeMaskEnabled: services.setScopeMaskEnabled,
-        isScopeMaskEnabled: services.isScopeMaskEnabled,
-        setScopeMaskFeather: services.setScopeMaskFeather,
       },
       elements: {
         _locationSearch: this._locationSearch,
@@ -532,8 +519,6 @@ export class StyleManager extends ShellFacade {
         _bloomSlider: this._bloomSlider,
         _sharpenBtn: this._sharpenBtn,
         _sharpenSlider: this._sharpenSlider,
-        _scopeBtn: this._scopeBtn,
-        _scopeFeatherSlider: this._scopeFeatherSlider,
         _hudLayoutSelect: this._hudLayoutSelect,
         _hudBtn: this._hudBtn,
         _cyberSonarBtn: this._cyberSonarBtn,
@@ -550,7 +535,6 @@ export class StyleManager extends ShellFacade {
         _detectionOpacitySlider: this._detectionOpacitySlider,
         _celestialBtn: this._celestialBtn,
         _models3dBtn: this._models3dBtn,
-        _scopeFeatherValue: this._scopeFeatherValue,
         _sharpenSliderValue: this._sharpenSliderValue,
         _detectionDensityValue: this._detectionDensityValue,
       },
@@ -853,7 +837,7 @@ export class StyleManager extends ShellFacade {
     );
     // One span holds both mode descriptions around a <br>; keep the <br>.
     const standbyDescription = document.querySelector(
-      '#context-mode-standby span',
+      '#context-mode-standby > span',
     );
     if (standbyDescription) {
       standbyDescription.replaceChildren(

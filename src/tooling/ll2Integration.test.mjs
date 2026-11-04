@@ -99,18 +99,22 @@ test('actual setup rendering distinguishes optional paid LL2 from unrelated free
   });
   assert.ok(setup);
   try {
-    const ll2 = rows.children.find(
-      (row) => row.dataset.keyId === 'launch-library',
-    );
-    const free = rows.children.find((row) => row.dataset.keyId === 'mapillary');
+    // Rows sit inside their group section, after its heading.
+    const allRows = rows.children.flatMap((group) => group.children);
+    const ll2 = allRows.find((row) => row.dataset.keyId === 'launch-library');
+    const free = allRows.find((row) => row.dataset.keyId === 'mapillary');
+    const part = (row, className) =>
+      row.children.find((child) => child.className === className);
     const tier = (row) =>
-      row.children[0].children.find(
+      part(row, 'key-setup-meta').children.find(
         (child) => child.className === 'key-setup-tier',
       );
     assert.match(tier(ll2).title, /optional paid token/i);
-    assert.match(ll2.children[1].textContent, /leave blank/i);
-    assert.match(ll2.children[1].textContent, /no key/i);
+    assert.match(part(ll2, 'key-setup-unlocks').textContent, /leave blank/i);
+    assert.match(part(ll2, 'key-setup-unlocks').textContent, /no key/i);
     assert.equal(tier(free).title, 'Free key — register, paste, done');
+    // Both are optional extras: neither nags while it is missing.
+    for (const row of [ll2, free]) assert.equal(row.dataset.tone, 'neutral');
     const serialized = JSON.stringify(status);
     assert.ok(!serialized.includes('owned-fixture-token'));
   } finally {

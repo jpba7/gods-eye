@@ -105,22 +105,6 @@ test('Nepal locator token is valid in v2 share links', () => {
   assert.equal(parsed.layerStateInvalid, false);
 });
 
-test('scope feather above 100% survives share parsing and serialization', () => {
-  const manager = makeManager('#v=2&lat=10&lon=20&sc=0&scf=200');
-  const parsed = manager.parseInitialHash();
-  assert.equal(parsed.scopeEnabled, false);
-  assert.equal(parsed.scopeFeatherPct, 200);
-  assert.equal(makeManager('#lat=10&lon=20&scf=175').parseInitialHash().scopeFeatherPct, 175);
-  assert.equal(makeManager('#lat=10&lon=20&scf=999').parseInitialHash().scopeFeatherPct, 200);
-  manager.onToggleChange(false, true, { scopeEnabled: false, scopeFeatherPct: 200 });
-  const params = manager._buildHashParams();
-  assert.equal(params.get('sc'), '0');
-  assert.equal(params.get('scf'), '200');
-  manager.onToggleChange(false, true, { scopeFeatherPct: 999 });
-  assert.equal(manager._buildHashParams().get('scf'), '200');
-  clearTimeout(manager._debounceTimer);
-});
-
 test('share-link serialization emits the current celestial state', () => {
   const manager = makeManager();
   manager.onToggleChange(false, false, { celestialRingEnabled: false });
@@ -383,52 +367,6 @@ test('keyhole fade controls default and round-trip as normalized percentages', (
   assert.equal(params.get('ko'), '30');
 });
 
-// ── `sce` is a BAND, not a free number (review round 2) ───────────────────────
-//
-// The terminus is documented and supported as 94..100. Parsing clamped to
-// 0..100, so `sce=0` produced an unsupported sub-94 terminus — a hole in the
-// mask, not a scope — and the next hash write serialized it straight back out.
-
-test('sce is clamped into the supported 94..100 band on the way in', () => {
-  assert.equal(makeManager('#lat=10&lon=20&sce=97').parseInitialHash().scopeTerminusPct, 97);
-  assert.equal(makeManager('#lat=10&lon=20&sce=94').parseInitialHash().scopeTerminusPct, 94);
-  assert.equal(makeManager('#lat=10&lon=20&sce=100').parseInitialHash().scopeTerminusPct, 100);
-  assert.equal(makeManager('#lat=10&lon=20&sce=0').parseInitialHash().scopeTerminusPct, 94,
-    'sce=0 must not create a sub-94 terminus');
-  assert.equal(makeManager('#lat=10&lon=20&sce=93').parseInitialHash().scopeTerminusPct, 94);
-  assert.equal(makeManager('#lat=10&lon=20&sce=-40').parseInitialHash().scopeTerminusPct, 94);
-  assert.equal(makeManager('#lat=10&lon=20&sce=500').parseInitialHash().scopeTerminusPct, 100);
-  assert.equal(makeManager('#lat=10&lon=20&sce=96.6').parseInitialHash().scopeTerminusPct, 97,
-    'fractional percents round into the band');
-});
-
-test('an absent or non-numeric sce stays adaptive, never a pinned value', () => {
-  assert.equal(makeManager('#lat=10&lon=20').parseInitialHash().scopeTerminusPct, null);
-  assert.equal(makeManager('#lat=10&lon=20&sce=abc').parseInitialHash().scopeTerminusPct, null,
-    'junk is not a pin — absent semantics win');
-  assert.equal(makeManager('#lat=10&lon=20&sce=').parseInitialHash().scopeTerminusPct, null);
-});
-
-test('serialization writes only in-band sce values, and omits an adaptive one', () => {
-  const manager = makeManager();
-  manager.onToggleChange(false, false, { scopeTerminusPct: 0 });
-  clearTimeout(manager._debounceTimer);
-  manager._updateHash();
-  assert.equal(new URLSearchParams(window.location.hash.slice(1)).get('sce'), '94',
-    'an out-of-band value must be floored on write, not round-tripped');
-
-  manager.onToggleChange(false, false, { scopeTerminusPct: 500 });
-  clearTimeout(manager._debounceTimer);
-  manager._updateHash();
-  assert.equal(new URLSearchParams(window.location.hash.slice(1)).get('sce'), '100');
-
-  manager.onToggleChange(false, false, { scopeTerminusPct: null });
-  clearTimeout(manager._debounceTimer);
-  manager._updateHash();
-  assert.equal(new URLSearchParams(window.location.hash.slice(1)).has('sce'), false,
-    'adaptive stays ABSENT so a shared link never freezes the ramp');
-});
-
 test('share-link restore forces a final stationary render for Google 3D Tiles', () => {
   const calls = { flyTo: null, setView: null, renders: 0 };
   const viewer = {
@@ -519,9 +457,7 @@ test('every explicit visual UI gesture claims restore authority before it mutate
     ['cycleDetection: () => {', 'toggleCctv: () =>', 'cycleDetectionMode()', 'detection hotkey'],
     ['toggleBloom:', 'setBloomIntensity:', 'this._setBloomEnabled(', 'toggleBloom control'],
     ['setBloomIntensity:', 'toggleSharpen:', 'this._setBloomIntensity(', 'setBloomIntensity control'],
-    ['toggleSharpen:', 'setScopeEnabled:', 'this._setSharpenEnabled(', 'toggleSharpen control'],
-    ['setScopeEnabled:', 'setScopeFeather:', 'setScopeMaskEnabled(', 'setScopeEnabled control'],
-    ['setScopeFeather:', 'setSharpenIntensity:', 'setScopeMaskFeather(', 'setScopeFeather control'],
+    ['toggleSharpen:', 'setSharpenIntensity:', 'this._setSharpenEnabled(', 'toggleSharpen control'],
     ['setSharpenIntensity:', 'setHudLayout:', 'this._applySharpenIntensity(', 'setSharpenIntensity control'],
     ['setHudLayout:', 'toggleCleanView:', 'this._setHudVariant(', 'setHudLayout control'],
     ['setDensity:', 'setAllocation:', 'this._applyDetectionDensityFromUi()', 'setDensity control'],

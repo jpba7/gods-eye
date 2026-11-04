@@ -1,0 +1,332 @@
+/* ── Earth shell: Visual drawer (src/ui/earthShell.js) ─────────────────────
+ * The Display panel's toggles read as graphite cards: a title row with a
+ * switch, a one-line hint (.pp-hint, shown only here), then the settings.
+ * Everything is scoped to the open Visual section, so the classic HUD layout,
+ * Cockpit and the Cyber skin keep their own presentation.
+ */
+body.earth-shell[data-earth-section='visual']
+  #right-context-rail
+  > #pp-toggles {
+  gap: 8px;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+/* The drawer has one scroll container: the rail. */
+body.earth-shell[data-earth-section='visual'] #pp-toggles .pp-panel-body {
+  display: contents !important;
+}
+
+body.earth-shell[data-earth-section='visual'] #pp-toggles > .pp-header-row {
+  min-height: 0;
+  margin: 10px 2px 2px;
+  padding: 0 !important;
+}
+body.earth-shell[data-earth-section='visual'] #pp-toggles .pp-header-label {
+  color: var(--earth-text-3);
+  font: 600 12px/1.3 var(--font-sans);
+  letter-spacing: 0.06em;
+}
+body.earth-shell[data-earth-section='visual'] #pp-toggles .panel-divider {
+  display: none;
+}
+
+/* Cards */
+body.earth-shell[data-earth-section='visual'] #pp-toggles .pp-toggle-group {
+  width: 100%;
+  overflow: hidden;
+  background: var(--earth-surface-2);
+  border: 1px solid var(--earth-border);
+  border-radius: 12px;
+}
+body.earth-shell[data-earth-section='visual']
+  #pp-toggles
+  .pp-toggle-group:has(> .pp-toggle-btn.active) {
+  border-color: rgba(138, 180, 248, 0.45);
+}
+body.earth-shell[data-earth-section='visual'] #pp-toggles .pp-toggle-btn {
+  position: relative;
+  width: 100%;
+  min-height: 46px;
+  gap: 10px;
+  padding: 10px 64px 10px 14px;
+  color: var(--earth-text);
+  background: transparent;
+  border: 0;
+  border-radius: 0 !important;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  /* Dense detection pulses a green glow in the classic HUD. */
+  animation: none;
+}
+body.earth-shell[data-earth-section='visual'] #pp-toggles .pp-toggle-btn:hover {
+  background: rgba(232, 234, 237, 0.04);
+}
+body.earth-shell[data-earth-section='visual']
+  #pp-toggles
+  .pp-toggle-btn:focus-visible {
+  outline: 2px solid var(--earth-accent);
+  outline-offset: -2px;
+}
+body.earth-shell[data-earth-section='visual'] #pp-toggles .pp-icon {
+  flex: none;
+  width: 20px;
+  color: var(--earth-text-2);
+  font-size: 17px;
+  text-align: center;
+  text-shadow: none;
+}
+body.earth-shell[data-earth-section='visual']
+  #pp-toggles
+  .pp-icon.material-symbols-outlined {
+  width: 20px;
+  font-size: 20px;
+}
+body.earth-shell[data-earth-section='visual']
+  #pp-toggles
+  .pp-toggle-btn.active
+  .pp-icon {
+  color: var(--earth-accent);
+}
+body.earth-shell[data-earth-section='visual'] #pp-toggles .pp-label {
+  color: var(--earth-text);
+  font: 500 14px/1.3 var(--font-sans);
+  letter-spacing: normal;
+  text-transform: none;
+}
+/* Detection names its mode in capitals (DENSE, SPARSE…); read it as a word. */
+body.earth-shell[data-earth-section='visual'] #detection-toggle .pp-label {
+  text-transform: lowercase;
+}
+body.earth-shell[data-earth-section='visual']
+  #detection-toggle
+  .pp-label::first-letter {
+  text-transform: uppercase;
+}
+
+/* On/off controls show a switch, like the layer rows. */
+body.earth-shell[data-earth-section='visual']
+  #pp-toggles
+  :is(
+    #detection-toggle,
+    #models3d-toggle,
+    #draw-toggle,
+    #celestial-toggle,
+    #performance-toggle,
+    #bloom-toggle,
+    #sharpen-toggle
+  )::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  width: 36px;
+  height: 20px;
+  margin-top: -10px;
+  background: var(--earth-border-strong);
+  border-radius: 10px;
+  transition: background var(--transition-fast);
+}
+body.earth-shell[data-earth-section='visual']
+  #pp-toggles
+  :is(
+    #detection-toggle,
+    #models3d-toggle,
+    #draw-toggle,
+    #celestial-toggle,
+    #performance-toggle,
+    #bloom-toggle,
+    #sharpen-toggle
+  )::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 33px;
+  width: 14px;
+  height: 14px;
+  margin-top: -7px;
+  background: var(--earth-text);
+  border-radius: 50%;
+  transition:
+    right var(--transition-fast),
+    background var(--transition-fast);
+}
+body.earth-shell[data-earth-section='visual']
+  #pp-toggles
+  :is(
+    #detection-toggle,
+    #models3d-toggle,
+    #draw-toggle,
+    #celestial-toggle,
+    #performance-toggle,
+    #bloom-toggle,
+    #sharpen-toggle
+  ).active::before {
+  background: var(--earth-accent);
+}
+body.earth-shell[data-earth-section='visual']
+  #pp-toggles
+  :is(
+    #detection-toggle,
+    #models3d-toggle,
+    #draw-toggle,
+    #celestial-toggle,
+    #performance-toggle,
+    #bloom-toggle,
+    #sharpen-toggle
+  ).active::after {
+  right: 17px;
+  background: var(--earth-surface);
+}
+
+/* One-line hints, under the card title. */
+.pp-hint {
+  display: none;
+}
+body.earth-shell[data-earth-section='visual'] #pp-toggles .pp-hint {
+  display: block;
+  margin: -6px 0 0;
+  padding: 0 14px 10px 44px;
+  color: var(--earth-text-3);
+  font: 400 12px/1.4 var(--font-sans);
+}
+
+/* Settings rows */
+body.earth-shell[data-earth-section='visual'] #pp-toggles .pp-slider-row {
+  gap: 10px;
+  min-width: 0;
+  padding: 8px 14px;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--earth-border);
+  border-radius: 0 !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+body.earth-shell[data-earth-section='visual']
+  #pp-toggles
+  .pp-slider-mini-label {
+  flex: none;
+  min-width: 78px;
+  color: var(--earth-text-2);
+  font: 500 12px/1.3 var(--font-sans);
+  letter-spacing: normal;
+  text-transform: none;
+}
+body.earth-shell[data-earth-section='visual'] #pp-toggles .pp-slider-value {
+  min-width: 38px;
+  color: var(--earth-text-2);
+  font: 500 12px/1.3 var(--font-sans);
+  text-align: right;
+}
+body.earth-shell[data-earth-section='visual'] #pp-toggles .gev-segmented {
+  flex: 1;
+  border-color: var(--earth-border-strong);
+  border-radius: 8px;
+}
+body.earth-shell[data-earth-section='visual'] #pp-toggles .gev-segment {
+  min-height: 30px;
+  color: var(--earth-text-2);
+  background: transparent;
+  font: 500 12px/1.2 var(--font-sans);
+  letter-spacing: normal;
+  text-transform: none;
+}
+body.earth-shell[data-earth-section='visual']
+  #pp-toggles
+  .gev-segment[aria-checked='true'] {
+  color: var(--earth-accent-strong);
+  background: var(--earth-accent-soft);
+}
+body.earth-shell[data-earth-section='visual']
+  #pp-toggles
+  :is(.pp-text-input, .pp-select) {
+  min-height: 32px;
+  color: var(--earth-text);
+  background-color: var(--earth-field);
+  border: 1px solid var(--earth-border-strong);
+  border-radius: 8px;
+  font: 400 13px var(--font-sans);
+  letter-spacing: normal;
+}
+body.earth-shell[data-earth-section='visual']
+  #pp-toggles
+  .pp-mode-btn:not(.gev-segment) {
+  color: var(--earth-text);
+  background: transparent;
+  border: 1px solid var(--earth-border-strong);
+  border-radius: 8px;
+  font: 500 12px var(--font-sans);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* HUD: the spy-satellite overlay is not shown in this layout, so only the
+   style choice (and the way into Cyber) remains. */
+body.earth-shell[data-earth-section='visual'] #pp-toggles #hud-toggle {
+  display: none !important;
+}
+body.earth-shell[data-earth-section='visual'] #pp-toggles #hud-layout-row {
+  display: flex;
+  order: -1;
+  border-top: 0;
+}
+body.earth-shell[data-earth-section='visual'] #pp-toggles #hud-layout-hint {
+  margin: 0;
+  padding-left: 14px;
+}
+
+/* Clean UI is a bare button with its hint as the next sibling. */
+body.earth-shell[data-earth-section='visual'] #pp-toggles #clean-view-toggle {
+  background: var(--earth-surface-2);
+  border: 1px solid var(--earth-border);
+  border-bottom: 0;
+  border-radius: 12px 12px 0 0 !important;
+}
+body.earth-shell[data-earth-section='visual'] #pp-toggles #clean-view-hint {
+  margin-top: -14px;
+  background: var(--earth-surface-2);
+  border: 1px solid var(--earth-border);
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+}
+
+/* Live status lines of the draw and import tools. */
+body.earth-shell[data-earth-section='visual'] #pp-toggles .draw-hint {
+  color: var(--earth-text-3);
+  font: 400 12px/1.4 var(--font-sans);
+  letter-spacing: normal;
+}
+
+/* Style parameters, shown under a preset that has some. */
+body.earth-shell[data-earth-section='visual'] #pp-toggles #param-slider-panel {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  background: var(--earth-surface-2);
+  border: 1px solid var(--earth-border);
+  border-radius: 12px;
+}
+body.earth-shell[data-earth-section='visual'] #pp-toggles .param-panel-title {
+  color: var(--earth-text-3);
+  font: 600 12px/1.3 var(--font-sans);
+  letter-spacing: 0.06em;
+}
+
+/* Presets: compact rows so the settings below get the room. */
+body.earth-shell[data-earth-section='visual'] #control-panel .style-btn {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 38px;
+  padding: 6px 8px;
+}
+body.earth-shell[data-earth-section='visual']
+  #control-panel
+  .style-btn
+  .btn-key {
+  display: none;
+}

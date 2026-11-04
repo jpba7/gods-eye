@@ -12,6 +12,7 @@
 
 import { keySetupRequirementEnvVars } from './keySetupCore.mjs';
 import { t } from './i18n/index.js';
+import { keyRemindersMuted } from './ui/keyReminders.js';
 
 export const MAP_STACK_CHIP_CLASS = 'map-stack-chip';
 export const PRESENTED_MAP_STACK_IDS = Object.freeze([
@@ -32,7 +33,7 @@ export const PRESENTED_MAP_STACK_IDS = Object.freeze([
  * controller's `unavailableReason` rather than assuming one.
  * @param {{id: string, label: string, available?: boolean, requiresIon?: boolean, unavailableReason?: string|null}} stack - Stack descriptor from `getStacks()`.
  * @param {string|null} activeId - Currently active stack id.
- * @returns {{id: string, label: string, available: boolean, active: boolean, requiresIon: boolean, requirement: string, unavailableHint: string, title: string}}
+ * @returns {{id: string, label: string, description: string, detail: string, available: boolean, active: boolean, requiresIon: boolean, requirement: string, unavailableHint: string, title: string}}
  */
 export function mapStackChipModel(stack, activeId) {
   const available = stack?.available !== false;
@@ -49,16 +50,25 @@ export function mapStackChipModel(stack, activeId) {
   const unavailableHint = available
     ? ''
     : String(stack?.unavailableReason || fallbackReason);
+  const description = stack?.description ? t(String(stack.description)) : '';
   return {
     id: String(stack?.id ?? ''),
     label,
+    description,
+    // The picker's second line: what the source is, or why it cannot be used.
+    detail: available ? description : unavailableHint,
     available,
     active: !!stack?.id && stack.id === activeId,
     requiresIon,
     // Dropdown parity: unavailable options read "<label> · ion key". A chip has
     // no room for that, so an ion-backed stack gets a compact badge; every
-    // unavailable chip carries the real reason in its tooltip.
-    requirement: !available && requiresIon ? 'ION' : '',
+    // unavailable chip carries the real reason in its tooltip. The badge is a
+    // reminder, so it goes when reminders about the ion token are off
+    // (src/ui/keyReminders.js); the tooltip still says why.
+    requirement:
+      !available && requiresIon && !keyRemindersMuted('cesium-ion')
+        ? 'ION'
+        : '',
     unavailableHint,
     title: available ? label : unavailableHint,
   };
@@ -136,6 +146,13 @@ export function renderMapStackChips(
     label.className = 'map-stack-chip-label';
     label.textContent = model.label;
     chip.appendChild(label);
+
+    if (model.detail) {
+      const detail = ownerDoc.createElement('span');
+      detail.className = 'map-stack-chip-desc';
+      detail.textContent = model.detail;
+      chip.appendChild(detail);
+    }
 
     if (model.requirement) {
       const requirement = ownerDoc.createElement('span');

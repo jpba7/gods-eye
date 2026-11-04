@@ -116,8 +116,8 @@ probability of about 255 in 256 (many of them already fail as base64url).
 | 22  | `detectionAllocation`        | enum  | style       | ELASTIC, WEIGHTED                                                 |
 | 23  | `detectionFadePct`           | uint  | style       | 0–40                                                              |
 | 24  | `detectionOutsideOpacityPct` | uint  | style       | 0–100                                                             |
-| 25  | `scopeFeatherPct`            | uint  | 100         | 0–200                                                             |
-| 26  | `scopeTerminusPct`           | uint  | none        | 94–100; absent is the adaptive terminus                           |
+| 25  | `scopeFeatherPct`            | uint  | 100         | 0–200 (retired)                                                   |
+| 26  | `scopeTerminusPct`           | uint  | none        | 94–100 (retired)                                                  |
 | 27  | `styleParams`                | LEN   | style       | packed `(token, value × 100)` pairs                               |
 
 Field 1 absent means `thing` when field 13 is present and `place` otherwise,
@@ -132,8 +132,16 @@ style also extends the pinned style-defaults table.
 `hudVariant` code 1 (`operator`) is retired: the app no longer offers that
 layout and restores it as `tactical`. The code stays reserved.
 
+The Scope mask was removed from the app, so flag bit 4 `scopeEnabled` and
+fields 25 `scopeFeatherPct` and 26 `scopeTerminusPct` are retired: the app no
+longer writes them (they stay at their defaults, so new codes omit them) and
+ignores them when a link carries them. They stay in the table so older codes
+keep decoding with the same meaning. The long form's `sc`, `scf` and `sce`
+keys are ignored the same way.
+
 Flag bits (field 9): 0 `bloom`, 1 `sharpen`, 2 `hudVisible`, 3
-`celestialRing` (each defaulting by style), 4 `scopeEnabled` (default on).
+`celestialRing` (each defaulting by style), 4 `scopeEnabled` (default on;
+retired).
 
 ### Style defaults
 
@@ -171,6 +179,9 @@ for it.) In v1:
 These are frozen like every other default: the codec reads them from the
 app's tables today, and a test pins them, so if a table moves the old values
 are frozen in the codec rather than changing what shared links mean.
+The first of these: the app's OUTSIDE opacity default moved from 1 to 100
+when the Scope mask was removed, so the codec keeps 1 as the omitted meaning
+of `detectionOutsideOpacityPct` and new codes write 100 explicitly.
 
 ### Precision
 

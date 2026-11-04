@@ -29,7 +29,6 @@ import {
   migrateDetectionState,
   normalizeAllocationStrategy,
 } from '../data/detectionPolicy.js';
-import { clampScopeFeatherPct } from '../scopeMaskPolicy.js';
 import { VIEW_STYLES } from '../view/index.js';
 import { RETIRED_STYLES } from '../visualStylePolicy.js';
 import {
@@ -79,9 +78,14 @@ const COORDINATE_SCALE = 1e4;
 const MAX_ALTITUDE_M = 1e9;
 const MAX_FOLLOW_RANGE_M = 1e8;
 const MAX_UNSIGNED_SETTING = 1e6;
-/** Terminus pin range; mirrors SCOPE_TERMINUS_MIN/MAX_PCT in scopeMask.js. */
+/**
+ * The Scope mask was removed from the app (2026-11). Its fields (flag bit 4,
+ * fields 25 and 26) stay in the format so older links keep decoding with the
+ * same meaning; the app no longer writes or applies them.
+ */
 const SCOPE_TERMINUS_MIN_PCT = 94;
 const SCOPE_TERMINUS_MAX_PCT = 100;
+const SCOPE_FEATHER_MAX_PCT = 200;
 const NAME_GRAMMAR = /^[A-Za-z0-9_-]{1,32}$/;
 const MAX_OPTION_VALUE_CHARS = 256;
 
@@ -544,7 +548,9 @@ export const SHARE_VIEW_STYLE_DEFAULTS = Object.freeze(
             g.detectionAllocation,
           ),
           detectionFadePct: g.detectionFadePct,
-          detectionOutsideOpacityPct: g.detectionOutsideOpacityPct,
+          // Frozen: links written before the app default moved to 100 (2026-11)
+          // omitted the then-default 1, so an omitted field keeps meaning 1.
+          detectionOutsideOpacityPct: 1,
           // Leaving Normal switches the ring off (VisualSettings.setStyle).
           celestialRing: style === 'normal' ? g.celestialRing : false,
           styleParams: Object.freeze(normalizeStyleParams(style, params)),
@@ -718,7 +724,13 @@ export function normalizeShareViewState(input = {}) {
     100,
   );
   state.scopeFeatherPct = finite(source.scopeFeatherPct)
-    ? clampScopeFeatherPct(Number(source.scopeFeatherPct))
+    ? Math.max(
+        0,
+        Math.min(
+          SCOPE_FEATHER_MAX_PCT,
+          Math.round(Number(source.scopeFeatherPct)),
+        ),
+      )
     : d.scopeFeatherPct;
   state.scopeTerminusPct = intOr(
     source.scopeTerminusPct,

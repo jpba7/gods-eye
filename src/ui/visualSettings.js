@@ -1,5 +1,3 @@
-import { clampScopeFeatherPct } from '../scopeMaskPolicy.js';
-import { syncScopeControls } from './displayControls.js';
 import { STYLE_STATUS_LABELS } from './visualPresets.js';
 import { RETIRED_STYLES } from '../visualStylePolicy.js';
 import { syncSegmentedControl } from './segmentedControl.js';
@@ -48,12 +46,8 @@ const DETECTION_ALLOCATION_STORAGE_KEY = 'gev:detection-allocation:v1';
 /** Own visual preferences, detection overrides and display-control state. */
 export class VisualSettings {
   async restoreShareState(state) {
-    const {
-      setScopeMaskEnabled,
-      setScopeMaskFeather,
-      setScopeTerminusOverride,
-      clampScopeTerminusPct,
-    } = this.services;
+    // Older links may still carry the retired Scope keys (sc, scf, sce); they
+    // are ignored.
     const {
       style,
       bloom,
@@ -69,9 +63,6 @@ export class VisualSettings {
       detectionFadePct,
       detectionOutsideOpacityPct,
       celestialRing,
-      scopeEnabled,
-      scopeFeatherPct,
-      scopeTerminusPct,
       mapStack,
       panelState,
       styleParams,
@@ -147,24 +138,6 @@ export class VisualSettings {
         syncShare: false,
         focus: false,
       });
-    }
-    if (typeof scopeEnabled === 'boolean') {
-      setScopeMaskEnabled(scopeEnabled);
-      syncScopeControls(this._scopeBtn, this._scopeFeatherSlider, scopeEnabled);
-    }
-    if (typeof scopeFeatherPct === 'number' && this._scopeFeatherSlider) {
-      const pct = clampScopeFeatherPct(scopeFeatherPct);
-      this._scopeFeatherSlider.value = String(pct);
-      if (this._scopeFeatherValue)
-        this._scopeFeatherValue.textContent = `${pct}%`;
-      setScopeMaskFeather(pct / 100);
-    }
-    // null restores the altitude-adaptive ramp; a number pins the terminus
-    // (clamped to the supported 94..100 band, same as the `sce` hash key).
-    if (scopeTerminusPct === null) setScopeTerminusOverride(null);
-    else if (typeof scopeTerminusPct === 'number') {
-      const pinned = clampScopeTerminusPct(scopeTerminusPct);
-      setScopeTerminusOverride(pinned == null ? null : pinned / 100);
     }
     const mapStackRestore = mapStack
       ? this._setMapStack(mapStack, { syncShare: false })
@@ -879,12 +852,7 @@ export class VisualSettings {
   }
 
   _readShareState() {
-    const {
-      getDetectionTuning,
-      isScopeMaskEnabled,
-      getScopeMaskFeather,
-      getScopeTerminusOverride,
-    } = this.services;
+    const { getDetectionTuning } = this.services;
     const detection = this._shareableDetectionState();
     return {
       bloomEnabled: this.bloomEnabled,
@@ -900,17 +868,10 @@ export class VisualSettings {
         detectionAllocation: getDetectionTuning().allocationStrategy,
         detectionFadePct: parseInt(this._detectionFadeSlider?.value || '7', 10),
         detectionOutsideOpacityPct: parseInt(
-          this._detectionOpacitySlider?.value || '1',
+          this._detectionOpacitySlider?.value || '100',
           10,
         ),
         celestialRingEnabled: this.celestialRingEnabled,
-        scopeEnabled: isScopeMaskEnabled(),
-        scopeFeatherPct: Math.round(getScopeMaskFeather() * 100),
-        // null when adaptive — the share layer omits `sce` entirely in that case.
-        scopeTerminusPct:
-          getScopeTerminusOverride() == null
-            ? null
-            : Math.round(getScopeTerminusOverride() * 100),
         mapStack: this.mapStackController?.getActiveId?.() || 'photoreal',
       },
     };
@@ -1218,12 +1179,7 @@ export class VisualSettings {
   }
 
   getVisualState() {
-    const {
-      getDetectionTuning,
-      getDetectionMode,
-      isScopeMaskEnabled,
-      getScopeMaskFeather,
-    } = this.services;
+    const { getDetectionTuning, getDetectionMode } = this.services;
     const styleParams = {};
     for (const [styleName, stage] of Object.entries(this.stages)) {
       const shader = STYLES[styleName];
@@ -1259,17 +1215,12 @@ export class VisualSettings {
           10,
         ),
       },
-      scope: {
-        enabled: isScopeMaskEnabled(),
-        featherPct: Math.round(getScopeMaskFeather() * 100),
-      },
       mapStack: this.mapStackController?.getActiveId?.() || 'photoreal',
       styleParams,
     };
   }
 
   async applyVisualState(state = {}, { isCurrent = null } = {}) {
-    const { setScopeMaskEnabled, setScopeMaskFeather } = this.services;
     const superseded = () => typeof isCurrent === 'function' && !isCurrent();
     if (superseded()) return false;
 
@@ -1313,23 +1264,8 @@ export class VisualSettings {
       this._updateHudButtonState();
     }
 
-    const scopeState = state.scope || {};
-    if (typeof scopeState.enabled === 'boolean') {
-      setScopeMaskEnabled(scopeState.enabled);
-      syncScopeControls(
-        this._scopeBtn,
-        this._scopeFeatherSlider,
-        scopeState.enabled,
-      );
-    }
-    if (typeof scopeState.featherPct === 'number' && this._scopeFeatherSlider) {
-      const pct = clampScopeFeatherPct(scopeState.featherPct);
-      this._scopeFeatherSlider.value = String(pct);
-      if (this._scopeFeatherValue)
-        this._scopeFeatherValue.textContent = `${pct}%`;
-      setScopeMaskFeather(pct / 100);
-    }
-
+    // Scenes saved before the Scope mask was removed may carry `scope`; it
+    // is ignored.
     const detectionState = state.detection || {};
     if (
       typeof detectionState.density === 'number' &&

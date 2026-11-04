@@ -16,14 +16,10 @@ export function keyRequirementText(id) {
     : '';
 }
 
-/** The key's product name in title case: GOOGLE MAPS → Google Maps. */
+/** The key's product name as people write it: Google Maps, OpenAI, NASA FIRMS. */
 function keyName(id) {
   const entry = KEY_SETUP_KEYS.find((candidate) => candidate.id === id);
-  return entry
-    ? entry.title
-        .toLowerCase()
-        .replace(/\b\w/g, (letter) => letter.toUpperCase())
-    : null;
+  return entry ? entry.name : null;
 }
 
 /**

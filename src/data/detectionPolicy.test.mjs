@@ -42,28 +42,28 @@ test('strict keyhole fading bypasses the aircraft floor for themed brackets', ()
   assert.equal(detectionBracketAlpha('AIR', 1, 0, true), 1);
 });
 
-test('the bracket floor anchor mirrors the real keyhole default it is calibrated to', () => {
-  // detectionPolicy stays Cesium-free, so the anchor is a mirror. If the keyhole
-  // default ever moves, this fails rather than silently shifting the shipped
-  // look — the whole point of the anchor is that 0.35 lands AT the default.
-  assert.equal(AIRCRAFT_BRACKET_FLOOR_ANCHOR, KEYHOLE_OUTSIDE_OPACITY_DEFAULT);
+test('the 100% OUTSIDE default keeps brackets as visible as their labels', () => {
+  // Since the Scope mask was removed the first-run OUTSIDE opacity is 100%: the
+  // floor equals full opacity, so nothing outside the keyhole is dimmed.
+  assert.equal(KEYHOLE_OUTSIDE_OPACITY_DEFAULT, 1);
+  assert.equal(aircraftBracketAlphaFloor(KEYHOLE_OUTSIDE_OPACITY_DEFAULT), 1);
 });
 
-test('the default OUTSIDE setting reproduces the approved 0.35 floor exactly', () => {
-  // Byte-identical at the default, at every keyhole alpha, with the setting
-  // passed explicitly and with it omitted. The owner approved this look; only
-  // the off-default range is allowed to change.
-  assert.equal(aircraftBracketAlphaFloor(KEYHOLE_OUTSIDE_OPACITY_DEFAULT), AIRCRAFT_BRACKET_ALPHA_FLOOR);
+test('the 1% calibration point reproduces the approved 0.35 floor exactly', () => {
+  // Byte-identical at the anchor, at every keyhole alpha, with the setting
+  // passed explicitly and with it omitted. The owner approved this look at 1%;
+  // an operator who chooses 1% still gets it.
+  assert.equal(aircraftBracketAlphaFloor(AIRCRAFT_BRACKET_FLOOR_ANCHOR), AIRCRAFT_BRACKET_ALPHA_FLOOR);
   for (const alpha of [0.01, 0.05, 0.2, 0.34, 0.35, 0.36, 0.7, 1]) {
     assert.equal(
-      detectionBracketAlpha('AIR', alpha, KEYHOLE_OUTSIDE_OPACITY_DEFAULT),
+      detectionBracketAlpha('AIR', alpha, AIRCRAFT_BRACKET_FLOOR_ANCHOR),
       Math.max(AIRCRAFT_BRACKET_ALPHA_FLOOR, alpha),
-      `alpha ${alpha}: the default must reproduce the flat-0.35 result exactly`,
+      `alpha ${alpha}: the anchor must reproduce the flat-0.35 result exactly`,
     );
     assert.equal(
       detectionBracketAlpha('AIR', alpha),
-      detectionBracketAlpha('AIR', alpha, KEYHOLE_OUTSIDE_OPACITY_DEFAULT),
-      `alpha ${alpha}: omitting the setting must mean the default, not zero`,
+      detectionBracketAlpha('AIR', alpha, AIRCRAFT_BRACKET_FLOOR_ANCHOR),
+      `alpha ${alpha}: omitting the setting must mean the anchor, not zero`,
     );
   }
 });
