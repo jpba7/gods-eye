@@ -410,6 +410,11 @@ html:not([lang='en']) #scene-panel .scene-controls .scene-btn {
   background: rgba(0, 8, 14, 0.65);
 }
 
+/* "Show all" belongs to the Earth shell's Scenes drawer (earth-shell.css). */
+.scene-shot-toggle {
+  display: none;
+}
+
 /* ── Suggested scenes (src/ui/sceneSuggestions.js) ─── */
 .scene-suggestions {
   display: flex;

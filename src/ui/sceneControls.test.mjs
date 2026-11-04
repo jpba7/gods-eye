@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createStateChannel } from '../app/stateChannel.js';
-import { SceneControls } from './sceneControls.js';
+import { SCENE_SHOT_PREVIEW_COUNT, SceneControls } from './sceneControls.js';
 import { SceneDirector } from '../scenes/director.js';
 
 function fixture() {
@@ -51,6 +51,11 @@ function fixture() {
     }
     click() {
       this.dispatchEvent(new Event('click'));
+    }
+    after(node) {
+      const siblings = this.parentNode.children;
+      siblings.splice(siblings.indexOf(this) + 1, 0, node);
+      node.parentNode = this.parentNode;
     }
   }
   const saved = { document: globalThis.document, window: globalThis.window };
@@ -431,6 +436,45 @@ test('Scene controls consume current state, preserve rows on progress, and unsub
     assert.equal(f.elements.status.textContent, 'Project exported');
     assert.equal(owner.unsubscribe, null);
     channel.destroy();
+  } finally {
+    f.restore();
+  }
+});
+
+test('a long shot list offers Show all / Show fewer, and a short one does not', () => {
+  const f = fixture();
+  try {
+    f.owner.destroy();
+    const parent = f.document.createElement('div');
+    parent.appendChild(f.elements.shots);
+    const scene = f.state.scenes[0];
+    const shot = scene.shots[0];
+    scene.shots = Array.from({ length: 8 }, (_, index) => ({
+      ...shot,
+      id: `shot-${index}`,
+    }));
+    const owner = new SceneControls({
+      read: () => f.state,
+      actions: f.actions,
+      elements: f.elements,
+    });
+    const toggle = parent.children[1];
+    assert.equal(toggle.className, 'scene-shot-toggle');
+    assert.equal(toggle.hidden, false);
+    assert.equal(toggle.textContent, 'Show all (8)');
+    assert.equal(toggle['aria-expanded'], 'false');
+    toggle.click();
+    assert.equal(
+      f.elements.shots.classList.contains('scene-shot-list--expanded'),
+      true,
+    );
+    assert.equal(toggle.textContent, 'Show fewer');
+    assert.equal(toggle['aria-expanded'], 'true');
+    scene.shots = scene.shots.slice(0, SCENE_SHOT_PREVIEW_COUNT);
+    owner.renderShotList();
+    assert.equal(toggle.hidden, true);
+    owner.destroy();
+    assert.equal(parent.children.length, 1, 'destroy removes the toggle');
   } finally {
     f.restore();
   }
