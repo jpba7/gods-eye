@@ -3144,5 +3144,15 @@
   "Dictate a message": "Надиктовать сообщение",
   "Stop dictation (Ctrl+M)": "Остановить диктовку (Ctrl+M)",
   "Performance": "Производительность",
-  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "Режим производительности: облегчённые 3D-тайлы и сглаживание для более плавного движения"
+  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "Режим производительности: облегчённые 3D-тайлы и сглаживание для более плавного движения",
+  "NEEDS A KEY": "НУЖЕН КЛЮЧ",
+  "Add it in Provider Settings": "Добавьте его в «Настройках провайдеров»",
+  "{layers} — add it in Provider Settings": "{layers} — добавьте ключ в «Настройках провайдеров»",
+  "Live contacts": "Контакты онлайн",
+  "Space missions": "Космические миссии",
+  "Environmental": "Природа",
+  "Earth watch": "Дозор Земли",
+  "Active events": "Активные события",
+  "Explore manually": "Изучить вручную",
+  "Dismiss": "Скрыть"
 }

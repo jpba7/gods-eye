@@ -2928,5 +2928,15 @@
   "Dictate a message": "聽寫訊息",
   "Stop dictation (Ctrl+M)": "停止聽寫 (Ctrl+M)",
   "Performance": "效能",
-  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "效能模式：更輕量的 3D 圖磚與反鋸齒，讓移動更流暢"
+  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "效能模式：更輕量的 3D 圖磚與反鋸齒，讓移動更流暢",
+  "NEEDS A KEY": "需要密鑰",
+  "Add it in Provider Settings": "請在服務商設置中添加",
+  "{layers} — add it in Provider Settings": "{layers}：請在服務商設置中添加",
+  "Live contacts": "實時目標",
+  "Space missions": "太空任務",
+  "Environmental": "環境",
+  "Earth watch": "地球監測",
+  "Active events": "活躍事件",
+  "Explore manually": "手動探索",
+  "Dismiss": "關閉"
 }

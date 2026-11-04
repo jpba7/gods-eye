@@ -3072,5 +3072,15 @@
   "Dictate a message": "Ditar uma mensagem",
   "Stop dictation (Ctrl+M)": "Parar ditado (Ctrl+M)",
   "Performance": "Desempenho",
-  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "Modo desempenho: tiles 3D mais leves e anti-aliasing mais barato para um movimento mais fluido"
+  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "Modo desempenho: tiles 3D mais leves e anti-aliasing mais barato para um movimento mais fluido",
+  "NEEDS A KEY": "PRECISA DE UMA CHAVE",
+  "Add it in Provider Settings": "Adicione em \"Configurações de provedores\"",
+  "{layers} — add it in Provider Settings": "{layers} — adicione em \"Configurações de provedores\"",
+  "Live contacts": "Contatos ao vivo",
+  "Space missions": "Missões espaciais",
+  "Environmental": "Ambiental",
+  "Earth watch": "Vigilância da Terra",
+  "Active events": "Eventos ativos",
+  "Explore manually": "Explorar manualmente",
+  "Dismiss": "Fechar"
 }

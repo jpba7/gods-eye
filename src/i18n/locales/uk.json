@@ -3144,5 +3144,15 @@
   "Dictate a message": "Надиктувати повідомлення",
   "Stop dictation (Ctrl+M)": "Зупинити диктування (Ctrl+M)",
   "Performance": "Продуктивність",
-  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "Режим продуктивності: полегшені 3D-тайли та згладжування для плавнішого руху"
+  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "Режим продуктивності: полегшені 3D-тайли та згладжування для плавнішого руху",
+  "NEEDS A KEY": "ПОТРІБЕН КЛЮЧ",
+  "Add it in Provider Settings": "Додайте його в «Налаштуваннях постачальників»",
+  "{layers} — add it in Provider Settings": "{layers} — додайте ключ у «Налаштуваннях постачальників»",
+  "Live contacts": "Контакти онлайн",
+  "Space missions": "Космічні місії",
+  "Environmental": "Довкілля",
+  "Earth watch": "Спостереження за Землею",
+  "Active events": "Активні події",
+  "Explore manually": "Дослідити вручну",
+  "Dismiss": "Закрити"
 }

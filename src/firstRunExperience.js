@@ -43,15 +43,57 @@ const ENVIRONMENTAL_LABEL_KEYS = Object.freeze({
   ACTIVE_EVENTS: msg('ACTIVE EVENTS'),
 });
 
+// The same names in sentence case, for the desktop shell (body.earth-shell),
+// whose type is sentence case throughout.
+const ENVIRONMENTAL_SHELL_LABEL_KEYS = Object.freeze({
+  ENVIRONMENTAL: msg('Environmental'),
+  EARTH_WATCH: msg('Earth watch'),
+  ACTIVE_EVENTS: msg('Active events'),
+});
+
 /**
  * @param {string} [choice]
- * @returns {{title: string}} The label set the constant above selects.
+ * @returns {{title: string, shellTitle: string}} The label set the constant
+ *   above selects: the classic capitals and the desktop shell's sentence case.
  */
 export function environmentalLabel(choice = ENVIRONMENTAL_LABEL_CHOICE) {
-  const key =
-    ENVIRONMENTAL_LABEL_KEYS[choice] || ENVIRONMENTAL_LABEL_KEYS.ENVIRONMENTAL;
-  return { title: t(key) };
+  const known = Object.hasOwn(ENVIRONMENTAL_LABEL_KEYS, choice)
+    ? choice
+    : 'ENVIRONMENTAL';
+  return {
+    title: t(ENVIRONMENTAL_LABEL_KEYS[known]),
+    shellTitle: t(ENVIRONMENTAL_SHELL_LABEL_KEYS[known]),
+  };
 }
+
+/** Class the desktop shell puts on <body> (src/ui/earthShell.js). */
+const EARTH_SHELL_CLASS = 'earth-shell';
+
+/**
+ * Card text that reads in capitals in the classic look and in sentence case in
+ * the desktop shell: [selector, classic key, shell key]. The shell comes and
+ * goes with the viewport width and the Cyber skin, so both are kept and the
+ * card repaints when the body class changes. The ENVIRONMENTAL title is added
+ * at init from environmentalLabel().
+ */
+const SHELL_CASE_TEXT = Object.freeze([
+  [
+    '[data-first-run-choice="contacts"] strong',
+    msg('LIVE CONTACTS'),
+    msg('Live contacts'),
+  ],
+  [
+    '[data-first-run-choice="space-missions"] strong',
+    msg('SPACE MISSIONS'),
+    msg('Space missions'),
+  ],
+  [
+    '[data-first-run-choice="explore"] strong',
+    msg('EXPLORE MANUALLY'),
+    msg('Explore manually'),
+  ],
+  ['.first-run-dismiss-touch', msg('DISMISS'), msg('Dismiss')],
+]);
 
 /*
  * MISSION → APP STATE, AND WHAT IT IS ALLOWED TO PERSIST
@@ -112,13 +154,11 @@ export const FIRST_RUN_MISSIONS = Object.freeze({
     //
     // Keyless, FIRMS is honest where it counts — its own layer row reads
     // "UNAVAILABLE · NASA FIRMS · LIVE · KEY REQUIRED", and the quakes half of
-    // the tile still delivers in full. What is NOT honest is the GLOBAL status
-    // chip, which has no key-required terminal state and folds that row into
-    // "LOAD FAILED". That aggregation is the defect, not this preset: fixing it
-    // means a KEY REQUIRED terminal state in src/loadingFeedback.js, a state
-    // machine shared by every layer and not a thing to refactor the night
-    // before a launch. LEDGERED post-launch. Until it lands, keyless visitors
-    // are judged on the layer row, which tells them the truth.
+    // the tile still delivers in full. The GLOBAL status chip used to fold
+    // that row into "LOAD FAILED"; it now ends the batch on its neutral
+    // key-required state ("NEEDS A KEY", naming the layer and Provider
+    // Settings — see src/loadingFeedback.js), so a keyless visitor is told
+    // the same truth at the chip as at the row.
     layerIds: Object.freeze(['earthquakes', 'local-firms']),
     busyKey: msg('Scanning active events…'),
   }),
@@ -357,11 +397,30 @@ export function initFirstRunExperience({
   // The tile name is owner-switchable from one constant, so paint it from the
   // module rather than trusting the markup to match. The description and the
   // tile subcopy are data-i18n-runtime in welcome.html and translated here.
-  const environmentalTitle = root.querySelector(
-    '[data-first-run-environmental-title]',
-  );
-  if (environmentalTitle)
-    environmentalTitle.textContent = environmentalLabel().title;
+  const environmental = environmentalLabel();
+  const caseTargets = [
+    ...SHELL_CASE_TEXT.map(([selector, classic, shell]) => [
+      root.querySelector(selector),
+      t(classic),
+      t(shell),
+    ]),
+    [
+      root.querySelector('[data-first-run-environmental-title]'),
+      environmental.title,
+      environmental.shellTitle,
+    ],
+  ].filter(([element]) => element);
+  // Capitals in the classic look, sentence case in the desktop shell.
+  const syncShellCase = () => {
+    const shell = Boolean(
+      documentRef.body?.classList?.contains(EARTH_SHELL_CLASS),
+    );
+    for (const [element, classic, sentence] of caseTargets) {
+      const text = shell ? sentence : classic;
+      if (element.textContent !== text) element.textContent = text;
+    }
+  };
+  syncShellCase();
   const environmentalSub = root.querySelector(
     '[data-first-run-environmental-title] + small',
   );
@@ -641,7 +700,12 @@ export function initFirstRunExperience({
 
   const surfaceObserver =
     typeof globalThis.MutationObserver === 'function'
-      ? new globalThis.MutationObserver(syncToExclusiveSurfaces)
+      ? new globalThis.MutationObserver(() => {
+          // The same class watch tells the card when the desktop shell starts
+          // or stops presenting it.
+          syncShellCase();
+          syncToExclusiveSurfaces();
+        })
       : null;
   // Attributes only, no subtree: this is a class watch on one element, so it
   // costs nothing per frame and never asks the render governor for a frame.

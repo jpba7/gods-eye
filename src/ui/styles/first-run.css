@@ -411,6 +411,159 @@ body.scene-playback-mode #first-run-launcher {
   }
 }
 
+/* ── Desktop shell (body.earth-shell, src/ui/earthShell.js) ────────────────
+   The same card in the shell's voice: graphite surfaces, one blue accent,
+   sans-serif sentence case (the tile names are swapped in by
+   src/firstRunExperience.js). Layout and behaviour are unchanged; the classic,
+   Cyber and phone looks never carry this class. */
+body.earth-shell #first-run-launcher {
+  padding: 24px;
+  color: var(--earth-text);
+  background: var(--earth-surface);
+  border: 1px solid var(--earth-border);
+  border-radius: 16px;
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.55),
+    0 2px 6px rgba(0, 0, 0, 0.3);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  font-family: var(--font-sans);
+}
+/* Terminal decoration: the scanline and the MISSION CONTROL kicker. */
+body.earth-shell .first-run-scanline,
+body.earth-shell .first-run-header {
+  display: none;
+}
+body.earth-shell #first-run-launcher h2 {
+  margin-top: 0;
+  color: var(--earth-text);
+  font: 500 22px/1.3 var(--font-sans);
+  letter-spacing: normal;
+}
+body.earth-shell #first-run-description {
+  margin-top: 6px;
+  color: var(--earth-text-2);
+  font-size: 14px;
+  line-height: 1.45;
+}
+body.earth-shell .first-run-choices {
+  gap: 8px;
+  margin-top: 18px;
+  scrollbar-color: var(--earth-border-strong) transparent;
+}
+body.earth-shell .first-run-choices::-webkit-scrollbar-thumb {
+  background: var(--earth-border-strong);
+}
+body.earth-shell .first-run-choices button {
+  gap: 14px;
+  min-height: 60px;
+  padding: 10px 14px;
+  color: var(--earth-text);
+  background: var(--earth-surface-2);
+  border: 1px solid var(--earth-border);
+  border-radius: 12px;
+}
+body.earth-shell .first-run-choices button:hover,
+body.earth-shell .first-run-choices button:focus-visible {
+  background: var(--earth-field);
+  border-color: var(--earth-border-strong);
+  transform: none;
+}
+body.earth-shell .first-run-choices button.first-run-explore {
+  background: transparent;
+}
+body.earth-shell .first-run-choices button.first-run-explore:hover,
+body.earth-shell .first-run-choices button.first-run-explore:focus-visible {
+  background: var(--earth-surface-2);
+}
+body.earth-shell
+  .first-run-choices
+  button
+  > .material-symbols-outlined:first-child {
+  color: var(--earth-accent);
+  font-size: 22px;
+}
+body.earth-shell .first-run-choices strong {
+  font: 500 15px/1.3 var(--font-sans);
+  letter-spacing: normal;
+}
+body.earth-shell .first-run-choices small {
+  color: var(--earth-text-3);
+  font-size: 13px;
+  line-height: 1.35;
+}
+body.earth-shell .first-run-arrow {
+  color: var(--earth-text-3);
+  font-size: 18px;
+}
+body.earth-shell .first-run-choices button:hover .first-run-arrow,
+body.earth-shell .first-run-choices button:focus-visible .first-run-arrow {
+  color: var(--earth-accent);
+}
+body.earth-shell .first-run-footer {
+  margin-top: 16px;
+  color: var(--earth-text-3);
+  font: 400 13px/1.3 var(--font-sans);
+  letter-spacing: normal;
+  text-transform: none;
+}
+body.earth-shell .first-run-suppress {
+  color: var(--earth-text-2);
+  font-size: 13px;
+  letter-spacing: normal;
+}
+body.earth-shell .first-run-suppress:hover {
+  color: var(--earth-text);
+}
+body.earth-shell .first-run-suppress input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--earth-accent);
+}
+body.earth-shell .first-run-dismiss {
+  color: var(--earth-accent);
+  font-weight: 500;
+}
+body.earth-shell .first-run-dismiss:hover,
+body.earth-shell .first-run-dismiss:focus-visible {
+  color: var(--earth-accent-strong);
+}
+body.earth-shell .first-run-note {
+  margin-top: 10px;
+  color: var(--earth-text-3);
+  font: 400 13px/1.4 var(--font-sans);
+}
+body.earth-shell #first-run-launcher[data-state='loading'] .first-run-note {
+  color: var(--earth-accent);
+}
+@media (max-height: 620px) {
+  body.earth-shell #first-run-launcher {
+    padding: 16px 18px;
+  }
+  body.earth-shell #first-run-launcher h2 {
+    font-size: 18px;
+  }
+  body.earth-shell #first-run-description {
+    font-size: 13px;
+  }
+  body.earth-shell .first-run-choices {
+    margin-top: 12px;
+  }
+  body.earth-shell .first-run-choices button {
+    min-height: 48px;
+    padding: 6px 12px;
+  }
+  body.earth-shell .first-run-choices strong {
+    font-size: 14px;
+  }
+  body.earth-shell .first-run-choices small {
+    font-size: 12px;
+  }
+  body.earth-shell .first-run-footer {
+    margin-top: 10px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   #first-run-launcher,
   .first-run-choices button,

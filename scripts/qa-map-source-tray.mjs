@@ -37,6 +37,9 @@ const browser = await puppeteer.launch({
       ? ['--use-angle=metal', '--enable-gpu']
       : ['--use-gl=angle', '--use-angle=swiftshader']),
     '--no-sandbox',
+    // The checks compare English labels (ACQUIRING, LOAD FAILED, Expand
+    // Location); a browser in another language would otherwise pick its own.
+    '--lang=en-US',
   ],
 });
 const page = await browser.newPage();
@@ -180,10 +183,54 @@ const waitForShellSettled = () => page.waitForFunction(() => (
 ), { timeout: 10_000, polling: 100 });
 
 // The dock slides back into place when the layout leaves the phone shell.
+// Endless decoration (the Cyber voice scan in the dock) never settles, so only
+// finite animations and transitions count. A wait that still times out names
+// what was running and carries on: the checks after it are the assertions.
+const runningDockAnimations = () => page.evaluate(() => (
+  document.getElementById('command-dock').getAnimations({ subtree: true })
+    .filter((animation) => animation.playState === 'running'
+      && animation.effect?.getComputedTiming().iterations !== Infinity)
+    .map((animation) => `${animation.animationName || animation.transitionProperty}@${
+      animation.effect?.target?.id || animation.effect?.target?.className || '?'}`)
+));
 const waitForDockSettled = () => page.waitForFunction(() => (
   !document.getElementById('command-dock').getAnimations({ subtree: true })
-    .some((animation) => animation.playState === 'running')
-), { timeout: 5_000 });
+    .some((animation) => animation.playState === 'running'
+      && animation.effect?.getComputedTiming().iterations !== Infinity)
+), { timeout: 5_000 }).catch(async () => {
+  console.log(`  [NOTE] dock still animating after 5 s: ${(await runningDockAnimations()).join(', ')}`);
+});
+
+// WHERE THE TRAY LIVES NOW. Since the desktop shell (src/ui/earthShell.js),
+// the default skin at 721 px and wider presents Map Source in the shell's
+// Visual drawer and hides this dock tray and its Location sibling. The dock
+// tray still ships in two places: at desktop widths in the Cyber skin, which
+// the shell steps aside for, and on phones in the More sheet. So the desktop
+// checks run in Cyber, and the phone checks keep the default skin they always
+// had. The skin changes before a resize to desktop and after a resize to a
+// phone, so the shell never borrows panels mid-journey.
+let dockWidth = 1000;
+let defaultHudVariant = null;
+const presentDockTray = async () => {
+  defaultHudVariant ??= await page.evaluate(() => window.__godsEyeView.styleManager.hud.getVariant());
+  return page.evaluate(async (wanted) => {
+    const manager = window.__godsEyeView.styleManager;
+    if (manager.hud.getVariant() !== wanted) manager._setHudVariant(wanted);
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    return {
+      variant: manager.hud.getVariant(),
+      theme: document.documentElement.dataset.uiTheme || null,
+      shell: document.body.classList.contains('earth-shell'),
+      trayToggleRendered: Boolean(document.getElementById('control-panel-toggle')?.getClientRects().length),
+    };
+  }, dockWidth > 720 ? 'cyber' : defaultHudVariant);
+};
+const setDockViewport = async (width) => {
+  dockWidth = width;
+  if (width > 720) await presentDockTray();
+  await page.setViewport({ width, height: 900, deviceScaleFactor: 1 });
+  if (width <= 720) await presentDockTray();
+};
 
 const checkResponsiveStyleFocus = async (width) => {
   // The disclosure is only the starting boundary. Every style target below is
@@ -307,6 +354,42 @@ try {
   await page.waitForFunction(
     () => document.getElementById('loading-screen')?.classList.contains('hidden'),
     { timeout: 60_000 },
+  );
+
+  // The default skin at this width is the desktop shell: no dock tray, and
+  // the same five Map Source tiles in the Visual drawer instead.
+  const shellPresentation = await page.evaluate(async () => {
+    const rendered = (element) => Boolean(element?.getClientRects().length);
+    const before = {
+      shell: document.body.classList.contains('earth-shell'),
+      trayToggleRendered: rendered(document.getElementById('control-panel-toggle')),
+    };
+    document.querySelector('.earth-rail-btn[data-earth-section="visual"]')?.click();
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    const chips = [...document.querySelectorAll('#map-stack-chips .map-stack-chip')];
+    return {
+      ...before,
+      section: document.body.dataset.earthSection || null,
+      visibleIds: chips.filter(rendered).map((chip) => chip.dataset.stackId),
+    };
+  });
+  check(
+    'desktop shell hides the dock tray and presents the five sources in its Visual drawer',
+    shellPresentation.shell
+      && !shellPresentation.trayToggleRendered
+      && shellPresentation.section === 'visual'
+      && JSON.stringify(shellPresentation.visibleIds) === JSON.stringify([
+        'photoreal', 'bing-aerial', 'bing-labels', 'esri-imagery', 'osm',
+      ]),
+    JSON.stringify(shellPresentation),
+  );
+  await page.screenshot({ path: path.join(shotsDir, 'shell-visual-drawer.png') });
+  const dockPresentation = await presentDockTray();
+  check(
+    'Cyber presents the dock tray at desktop width, with the shell stepped aside',
+    dockPresentation.variant === 'cyber' && dockPresentation.theme === 'cyber' && !dockPresentation.shell
+      && dockPresentation.trayToggleRendered,
+    JSON.stringify(dockPresentation),
   );
 
   const presentation = await page.evaluate(() => ({
@@ -601,7 +684,12 @@ try {
     const grid = document.getElementById('style-buttons');
     const root = document.getElementById('gev-voice-control');
     const originalSetStyle = manager.setStyle;
-    const originalVoiceStart = voice.start;
+    // voiceCommands is the provider facade (src/voice/providerCommands.js);
+    // the held-Space timer calls start() on the mounted provider's controller,
+    // so that is the seam to stub. Assigning to the facade never reached it.
+    const voiceStarter = voice.session?.adapter?.controller || voice;
+    const originalVoiceStart = voiceStarter.start;
+    const hadOwnVoiceStart = Object.hasOwn(voiceStarter, 'start');
     const probe = { events: [], activations: [], voiceMutations: [], voiceStarts: [] };
     const voiceState = () => ({
       present: Boolean(voice && root), status: voice?.status, startEpoch: voice?.startEpoch,
@@ -625,7 +713,7 @@ try {
       probe.activations.push(args[0]);
       return originalSetStyle.apply(this, args);
     };
-    voice.start = async function (options) {
+    voiceStarter.start = async function (options) {
       probe.voiceStarts.push({
         options: { ...options },
         focusedStyle: document.activeElement?.dataset.style || null,
@@ -663,7 +751,8 @@ try {
     };
     probe.restore = () => {
       manager.setStyle = originalSetStyle;
-      voice.start = originalVoiceStart;
+      if (hadOwnVoiceStart) voiceStarter.start = originalVoiceStart;
+      else delete voiceStarter.start;
       observer.disconnect();
       for (const type of ['keydown', 'keyup']) document.removeEventListener(type, recordSpace, true);
       grid.removeEventListener('click', record, true);
@@ -1093,8 +1182,16 @@ try {
     await new Promise((resolve) => setTimeout(resolve, 120));
     const afterClick = await readTrayState();
     await page.mouse.move(20, 20); // leave the dock entirely → pointerleave
-    // Past the 420 ms unpinned close delay with room for a slow frame.
+    // Past the 420 ms unpinned close delay with room for a slow frame. The
+    // basemap switch the click starts can hold the main thread well past that
+    // on a loaded machine, so an unpinned tray gets up to 5 s to observably
+    // close (the check below still asserts it did); a pinned one is sampled
+    // after the same fixed second as before.
     await new Promise((resolve) => setTimeout(resolve, 1000));
+    await page.waitForFunction(() => {
+      const panel = document.getElementById('control-panel');
+      return panel.classList.contains('dock-pinned') || panel.classList.contains('collapsed');
+    }, { timeout: 4000, polling: 50 }).catch(() => {});
     return { afterClick, afterLeave: await readTrayState() };
   };
 
@@ -1189,7 +1286,7 @@ try {
 
   await checkResponsiveStyleFocus(1000);
 
-  await page.setViewport({ width: 620, height: 900, deviceScaleFactor: 1 });
+  await setDockViewport(620);
   await new Promise((resolve) => setTimeout(resolve, 180));
   await waitForShellSettled();
   await openPhoneMoreSheet();
@@ -1206,7 +1303,7 @@ try {
 
   await checkResponsiveStyleFocus(620);
 
-  await page.setViewport({ width: 480, height: 900, deviceScaleFactor: 1 });
+  await setDockViewport(480);
   await new Promise((resolve) => setTimeout(resolve, 180));
   const at480 = await trayMetrics();
   const allRectsInside = at480.chips.every((chip) => (
@@ -1228,7 +1325,7 @@ try {
 
   // Pinning and the compact wing are the narrow desktop dock (721–900 px);
   // phones use the tab bar instead.
-  await page.setViewport({ width: 800, height: 900, deviceScaleFactor: 1 });
+  await setDockViewport(800);
   await waitForShellSettled();
   await waitForDockSettled();
   await page.click('.dock-pin-btn[data-pin-target="control-panel"]');
@@ -1254,7 +1351,7 @@ try {
   // fallback requests Google 3D. A keyed run lands there; a keyless run keeps
   // its truthful OSM recovery. Either way, the active tile must reflect the
   // rendered source — never a hidden fifth source with a ROAD status.
-  await page.setViewport({ width: 1000, height: 900, deviceScaleFactor: 1 });
+  await setDockViewport(1000);
   const photorealAvailable = await page.$eval(
     '[data-stack-id="photoreal"]',
     (chip) => chip.getAttribute('aria-disabled') !== 'true',
@@ -1283,6 +1380,8 @@ try {
         () => document.getElementById('loading-screen')?.classList.contains('hidden'),
         { timeout: 60_000 },
       );
+      // A reload starts in the default skin again; the dock tray is Cyber's here.
+      await presentDockTray();
     }
     await page.waitForFunction(
       () => window.__godsEyeView.styleManager.mapStackController.getState()?.status !== 'switching',
@@ -1310,7 +1409,7 @@ try {
 
   // Location is a native disclosure: Enter is immediate, while Space waits for
   // key release. A repeated keydown must not toggle or claim voice early.
-  await page.setViewport({ width: 1000, height: 900, deviceScaleFactor: 1 });
+  await setDockViewport(1000);
   await page.mouse.move(20, 20);
   await page.evaluate(() => {
     const manager = window.__godsEyeView.styleManager;
@@ -1426,7 +1525,7 @@ try {
     check('Location: pin can be removed by keyboard', !(await locationState()).pinned);
 
     for (const width of [1000, 620, 480]) {
-      await page.setViewport({ width, height: 900, deviceScaleFactor: 1 });
+      await setDockViewport(width);
       await waitForShellSettled();
       if (width <= 720) {
         // Phones present Location as the Search tab's sheet: the keyboard opens
@@ -1562,7 +1661,7 @@ try {
       dataSetup.ready && dataSetup.productionUnchanged && dataSetup.durableUnchanged, JSON.stringify(dataSetup));
     if (dataSetup.ready) {
       for (const width of [1000, 620, 480]) {
-        await page.setViewport({ width, height: 900, deviceScaleFactor: 1 });
+        await setDockViewport(width);
         await waitForShellSettled();
         if (width <= 720 && !(await page.evaluate(() => document.body.dataset.mobileSheet === 'layers'))) {
           // Phones present Data Layers in the Layers tab's sheet.
@@ -1628,7 +1727,7 @@ try {
           && window.__qaDataFocus.durableBefore === localStorage.getItem('gev:layer-state:v2')
       )));
 
-      await page.setViewport({ width: 1000, height: 900, deviceScaleFactor: 1 });
+      await setDockViewport(1000);
       await waitForShellSettled();
       await page.evaluate(() => window.__godsEyeView.styleManager.setPanelCollapsed('data-panel', false, { persist: false, syncShare: false }));
       await page.focus('#data-panel .panel-collapse-btn');
@@ -1727,7 +1826,7 @@ try {
     });
     check('Data Layers: fixture teardown restores the original production registry and visibility',
       cleaned.complete && cleaned.productionUnchanged && cleaned.durableUnchanged, JSON.stringify(cleaned));
-    await page.setViewport({ width: 1000, height: 900, deviceScaleFactor: 1 });
+    await setDockViewport(1000);
   }
 
   check('no new page or console errors', consoleErrors.length === 0, consoleErrors.join(' | '));

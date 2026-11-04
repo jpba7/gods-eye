@@ -341,18 +341,101 @@ test('participant stats failure outranks a simultaneous visibility completion', 
   let state = reduceLoadingFeedback(createLoadingFeedbackState(), enabling, 0);
   state = reduceLoadingFeedback(state, enabling, 200);
 
-  const missingKey = aggregateLayerLoading([{
+  const feedDown = aggregateLayerLoading([{
     id: 'ais-live-vessels',
     name: 'AIS Vessels',
     enabled: true,
     lifecycleState: 'enabled',
-    stats: { loading: false, keyRequired: true },
+    stats: { loading: false, status: 'unavailable', error: 'Upstream closed' },
   }]);
-  state = reduceLoadingFeedback(state, missingKey, 250, {
+  state = reduceLoadingFeedback(state, feedDown, 250, {
     type: 'visibility', layerId: 'ais-live-vessels', enabled: true,
   });
 
   assert.equal(state.terminal, 'error');
+});
+
+// A layer held back only by a missing provider key ends the batch on a
+// neutral state that names the layer and where to add the key — the words of
+// the layer row's "Needs X — add it in Provider Settings" hint.
+function keylessBatch(keylessStats = { keyRequired: true, error: 'KEY REQUIRED' }) {
+  const enabling = aggregateLayerLoading([
+    { id: 'earthquakes', name: 'Earthquakes', lifecycleState: 'enabling' },
+    { id: 'local-firms', name: 'NASA FIRMS', lifecycleState: 'enabling' },
+  ]);
+  let state = reduceLoadingFeedback(createLoadingFeedbackState(), enabling, 0);
+  state = reduceLoadingFeedback(state, enabling, 200);
+  return { state, keyless: (quakeStats = { count: 40, lastUpdate: 1 }) => aggregateLayerLoading([
+    { id: 'earthquakes', name: 'Earthquakes', enabled: true, lifecycleState: 'enabled', stats: quakeStats },
+    { id: 'local-firms', name: 'NASA FIRMS', enabled: true, lifecycleState: 'enabled', stats: keylessStats },
+  ]) };
+}
+
+test('a layer that only lacks its key ends the batch as NEEDS A KEY, not LOAD FAILED', () => {
+  const { state: loading, keyless } = keylessBatch();
+  const settled = keyless();
+  const state = reduceLoadingFeedback(loading, settled, 400, {
+    type: 'visibility', layerId: 'local-firms', enabled: true,
+  });
+  assert.equal(state.terminal, 'key-required');
+  assert.equal(state.hideAt, 400 + LOADING_FAILURE_DWELL_MS, 'the hint gets time to be read');
+  assert.deepEqual(presentLoadingFeedback(state, settled, 400), {
+    state: 'key-required',
+    label: 'NEEDS A KEY',
+    detail: 'NASA FIRMS — add it in Provider Settings',
+  });
+  // The dwell holds, then the chip clears like any other end state.
+  assert.equal(reduceLoadingFeedback(state, settled, 400 + LOADING_FAILURE_DWELL_MS - 1), state);
+  assert.equal(reduceLoadingFeedback(state, settled, 400 + LOADING_FAILURE_DWELL_MS).phase, 'idle');
+});
+
+test('the missing-key outcome also covers a keyless layer reported as unavailable', () => {
+  const { state: loading, keyless } = keylessBatch({ keyRequired: true, status: 'unavailable' });
+  const settled = keyless();
+  const state = reduceLoadingFeedback(loading, settled, 400);
+  assert.equal(state.terminal, 'key-required');
+  assert.equal(presentLoadingFeedback(state, settled, 400).label, 'NEEDS A KEY');
+});
+
+test('a real failure beside a missing key still ends the batch as LOAD FAILED', () => {
+  const { state: loading, keyless } = keylessBatch();
+  const settled = keyless({ status: 'error', error: 'USGS feed down' });
+  const state = reduceLoadingFeedback(loading, settled, 400);
+  assert.equal(state.terminal, 'error');
+  assert.equal(presentLoadingFeedback(state, settled, 400).label, 'LOAD FAILED');
+
+  // So does a failure event from the other participant.
+  const { state: again, keyless: keylessAgain } = keylessBatch();
+  const failedEvent = reduceLoadingFeedback(again, keylessAgain(), 400, {
+    type: 'visibility-failed', layerId: 'earthquakes', enabled: true,
+  });
+  assert.equal(failedEvent.terminal, 'error');
+});
+
+test('a missing key outranks a cancellation in the same batch', () => {
+  const { state: loading, keyless } = keylessBatch();
+  const cancelled = reduceLoadingFeedback(loading, keyless(), 400, {
+    type: 'visibility-cancelled', layerId: 'earthquakes', enabled: true,
+  });
+  assert.equal(cancelled.terminal, 'key-required');
+});
+
+test('the missing-key end state names several layers and is not hidden by a notice', () => {
+  const enabling = aggregateLayerLoading(
+    ['a', 'b', 'c'].map((id) => ({ id, name: id.toUpperCase(), lifecycleState: 'enabling' })),
+  );
+  let state = reduceLoadingFeedback(createLoadingFeedbackState(), enabling, 0);
+  state = reduceLoadingFeedback(state, enabling, 200);
+  const settled = aggregateLayerLoading(
+    ['a', 'b', 'c'].map((id) => ({ id, name: id.toUpperCase(), enabled: true, lifecycleState: 'enabled', stats: { keyRequired: true } })),
+  );
+  state = reduceLoadingFeedback(state, settled, 300);
+  assert.equal(
+    presentLoadingFeedback(state, settled, 300).detail,
+    'A · B +1 — add it in Provider Settings',
+  );
+  const notice = createGlobalStatusNotice('Acquiring', 300, { state: 'acquiring', persistent: true });
+  assert.equal(presentGlobalLoadingStatus(notice, state, settled, 300).state, 'key-required');
 });
 
 test('retains the worst terminal outcome until every concurrent load drains', () => {

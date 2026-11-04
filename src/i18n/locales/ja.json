@@ -2928,5 +2928,15 @@
   "Dictate a message": "メッセージを音声入力",
   "Stop dictation (Ctrl+M)": "音声入力を停止 (Ctrl+M)",
   "Performance": "パフォーマンス",
-  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "パフォーマンスモード：3Dタイルとアンチエイリアスを軽くして動きを滑らかにします"
+  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "パフォーマンスモード：3Dタイルとアンチエイリアスを軽くして動きを滑らかにします",
+  "NEEDS A KEY": "キーが必要です",
+  "Add it in Provider Settings": "プロバイダー設定で追加してください",
+  "{layers} — add it in Provider Settings": "{layers}：プロバイダー設定で追加してください",
+  "Live contacts": "ライブコンタクト",
+  "Space missions": "宇宙ミッション",
+  "Environmental": "環境",
+  "Earth watch": "地球監視",
+  "Active events": "発生中のイベント",
+  "Explore manually": "手動で探索",
+  "Dismiss": "閉じる"
 }

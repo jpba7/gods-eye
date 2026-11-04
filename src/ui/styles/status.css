@@ -166,6 +166,22 @@ html:not([lang='en']) #global-loading-detail {
 #global-loading-status[data-state='cancelled'] #global-loading-detail {
   color: #ffd488;
 }
+/* A batch held back only by a missing key is a setup step, not a failure:
+   neutral colours, and the detail (which layers, where to add the key) stays
+   visible with room for the hint. */
+#global-loading-status[data-state='key-required'] {
+  border-color: rgba(214, 226, 236, 0.4);
+  color: rgba(226, 236, 244, 0.94);
+}
+#global-loading-status[data-state='key-required'] #global-loading-label {
+  color: rgba(226, 236, 244, 0.94);
+}
+#global-loading-status[data-state='key-required'] #global-loading-detail {
+  max-width: min(420px, 70vw);
+  color: rgba(190, 214, 230, 0.92);
+  font-weight: 500;
+  text-align: left;
+}
 #global-loading-status[data-state='acquiring'] {
   border-color: rgba(0, 212, 255, 0.42);
   box-shadow:

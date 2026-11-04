@@ -3000,5 +3000,15 @@
   "Dictate a message": "Nachricht diktieren",
   "Stop dictation (Ctrl+M)": "Diktieren beenden (Strg+M)",
   "Performance": "Leistung",
-  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "Leistungsmodus: leichtere 3D-Kacheln und Kantenglättung für flüssigere Bewegung"
+  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "Leistungsmodus: leichtere 3D-Kacheln und Kantenglättung für flüssigere Bewegung",
+  "NEEDS A KEY": "SCHLÜSSEL FEHLT",
+  "Add it in Provider Settings": "In den Anbieter-Einstellungen hinzufügen",
+  "{layers} — add it in Provider Settings": "{layers}: in den Anbieter-Einstellungen hinzufügen",
+  "Live contacts": "Live-Kontakte",
+  "Space missions": "Raummissionen",
+  "Environmental": "Umwelt",
+  "Earth watch": "Erdbeobachtung",
+  "Active events": "Aktive Ereignisse",
+  "Explore manually": "Manuell erkunden",
+  "Dismiss": "Schließen"
 }

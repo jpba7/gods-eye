@@ -82,16 +82,27 @@ export function normalizeLayerLoading(layer = {}) {
   };
 }
 
+/**
+ * A participant held back only by a missing provider key is a setup step, not
+ * a feed fault: the layer row already reads KEY REQUIRED, and its error text
+ * (FIRMS reports "KEY REQUIRED" there too) is that same state, so keyRequired
+ * classifies the record before error or unavailable do.
+ */
+function participantOutcome(record) {
+  if (record.keyRequired) return 'key-required';
+  if (record.error || record.unavailable) return 'error';
+  return null;
+}
+
 function terminalFromParticipantStats(summary, participantIds) {
   if (!participantIds?.length) return null;
   const participants = new Set(participantIds);
-  return summary.records.some(
-    (record) =>
-      participants.has(record.id) &&
-      (record.error || record.unavailable || record.keyRequired),
-  )
-    ? 'error'
-    : null;
+  let outcome = null;
+  for (const record of summary.records) {
+    if (participants.has(record.id))
+      outcome = mergeTerminalOutcome(outcome, participantOutcome(record));
+  }
+  return outcome;
 }
 
 /** Aggregate all manager layers without changing their lifecycle authority. */
@@ -195,7 +206,7 @@ export function presentGlobalLoadingStatus(
     summary,
     nowMs,
   );
-  if (['error', 'retry'].includes(loadingPresentation?.state))
+  if (['error', 'key-required', 'retry'].includes(loadingPresentation?.state))
     return loadingPresentation;
   return presentGlobalStatusNotice(notice, nowMs) || loadingPresentation;
 }
@@ -282,7 +293,9 @@ function terminalFromEvent(event) {
 }
 
 function mergeTerminalOutcome(current, next) {
-  const severity = { complete: 1, cancelled: 2, error: 3 };
+  // A missing key outranks a cancellation (it is the next step the user can
+  // take) but never hides a real failure of another participant.
+  const severity = { complete: 1, cancelled: 2, 'key-required': 3, error: 4 };
   if (!next) return current || null;
   if (!current || severity[next] > severity[current]) return next;
   return current;
@@ -348,8 +361,9 @@ export function reduceLoadingFeedback(previous, summary, nowMs, event = null) {
     const wasVisible = state.visible || now >= state.showAt;
     if (!wasVisible && terminal === 'complete')
       return createLoadingFeedbackState();
+    // The key hint names where to add the key, so it gets the longer dwell.
     const dwell =
-      terminal === 'error'
+      terminal === 'error' || terminal === 'key-required'
         ? LOADING_FAILURE_DWELL_MS
         : LOADING_TERMINAL_DWELL_MS;
     return {
@@ -372,6 +386,30 @@ export function reduceLoadingFeedback(previous, summary, nowMs, event = null) {
 
   if (state.phase === 'terminal' && now < state.hideAt) return state;
   return createLoadingFeedbackState();
+}
+
+/**
+ * The neutral end state of a batch held back by a missing provider key: which
+ * layers wait on one and where to add it, in the words of the layer row's
+ * "Needs X — add it in Provider Settings" hint. shellFeedback.js translates it.
+ */
+function presentKeyRequired(state, summary) {
+  const participants = new Set(state.activeIds || []);
+  const names = summary.records
+    .filter((record) => record.keyRequired && participants.has(record.id))
+    .map((record) => record.label);
+  const roster =
+    names.slice(0, 2).join(' · ') +
+    (names.length > 2 ? ` +${names.length - 2}` : '');
+  return {
+    state: 'key-required',
+    // i18n-ignore: translated in src/ui/shellFeedback.js
+    label: 'NEEDS A KEY',
+    // i18n-ignore: translated in src/ui/shellFeedback.js
+    detail: roster
+      ? `${roster} — add it in Provider Settings`
+      : 'Add it in Provider Settings',
+  };
 }
 
 /** Build the user-facing status copy for the current loading state. */
@@ -421,6 +459,8 @@ export function presentLoadingFeedback(state, summary, nowMs) {
   }
   if (!state?.visible) return null;
   if (state.phase === 'terminal') {
+    if (state.terminal === 'key-required')
+      return presentKeyRequired(state, summary);
     const labels = {
       complete: 'LOAD COMPLETE',
       cancelled: 'LOAD CANCELLED',

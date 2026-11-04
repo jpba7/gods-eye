@@ -21,6 +21,7 @@ const STATUS_LABEL_KEYS = Object.freeze({
   'LOAD COMPLETE': msg('LOAD COMPLETE'),
   'LOAD CANCELLED': msg('LOAD CANCELLED'),
   'LOAD FAILED': msg('LOAD FAILED'),
+  'NEEDS A KEY': msg('NEEDS A KEY'),
   'LIVE DATA OFF': msg('LIVE DATA OFF'),
   'MAPPED SITES LOADED': msg('MAPPED SITES LOADED'),
   'RETRYING MAPPED SITES': msg('RETRYING MAPPED SITES'),
@@ -79,8 +80,18 @@ function localizeStatusLabel(label) {
 const RETRY_DETAIL_RE =
   /^(?:(ALPR cameras) · )?(?:retrying in (\d+)s|(retry pending))$/;
 
+// The key-required end state: the layers waiting on a key, then where to add
+// it (loadingFeedback.js presentKeyRequired).
+const KEY_HINT_SUFFIX = ' — add it in Provider Settings';
+const KEY_HINT_ALONE = 'Add it in Provider Settings';
+
 function localizeStatusDetail(detail) {
   if (typeof detail !== 'string' || !detail) return detail;
+  if (detail === KEY_HINT_ALONE) return t('Add it in Provider Settings');
+  if (detail.endsWith(KEY_HINT_SUFFIX))
+    return t('{layers} — add it in Provider Settings', {
+      layers: localizeLayerRoster(detail.slice(0, -KEY_HINT_SUFFIX.length)),
+    });
   const match = detail.trim().match(RETRY_DETAIL_RE);
   if (match) {
     const [, prefix, seconds, pending] = match;
