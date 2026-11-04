@@ -290,7 +290,7 @@ export function createCodexOAuthLogin({
       finish(attempt, {
         code: 'CODEX_OAUTH_LOGIN_TIMEOUT',
         error:
-          'ChatGPT sign-in timed out. Click USE CHATGPT OAUTH to try again.',
+          'ChatGPT sign-in timed out. Click Use ChatGPT OAuth to try again.',
       });
       attempt.process?.cancel();
     }, loginTimeoutMs);

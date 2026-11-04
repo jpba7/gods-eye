@@ -23,7 +23,7 @@ The golden rule: **secret-bearing API keys stay on the server side.** The dev/pr
 | Key | Where it lives | How the browser uses it |
 |-----|----------------|--------------------------|
 | `OPENAI_API_KEY` | Server only | Browser fetches a short-lived **ephemeral** Realtime session token from `/api/realtime/token`; the real key never ships |
-| ChatGPT sign-in through Codex (optional, experimental) | Codex's own `auth.json` (`CODEX_HOME`, default `~/.codex`); GEV reads it server-side and never writes or refreshes it | Only after **USE CHATGPT OAUTH** is selected in Provider Settings: the server mints the same ephemeral Realtime token with the ChatGPT access token, for loopback clients only |
+| ChatGPT sign-in through Codex (optional, experimental) | Codex's own `auth.json` (`CODEX_HOME`, default `~/.codex`); GEV reads it server-side and never writes or refreshes it | Only after **Use ChatGPT OAuth** is selected in Provider Settings: the server mints the same ephemeral Realtime token with the ChatGPT access token, for loopback clients only |
 | `AISSTREAM_API_KEY` | Server only | Server holds the AISStream websocket; browser polls the same-origin `/api/vessels` cache |
 | OpenSky OAuth (`OPENSKY_CLIENT_ID/SECRET`) | Server only | Server mints + refreshes the token behind `/api/flights` |
 | `GOOGLE_MAPS_SERVER_API_KEY` (optional, #33) | Server only | Server calls Places (`/api/google/nearby-places`, `/api/google/text-search`), Geocoding (`/api/google/geocode`, `/api/google/reverse-geocode`) and the Street View fallback with this key; falls back to `GOOGLE_MAPS_API_KEY` when unset |
@@ -44,7 +44,7 @@ Never commit real keys. `.env` is gitignored; only `.env.example` (placeholder n
 
 The official Pinokio launcher stores optional values in its ignored local
 `pinokio/ENVIRONMENT` file and Vite explicitly denies that filename. Add,
-replace, or remove those values through the in-app **POWER UP → Provider
+replace, or remove those values through the in-app **Provider
 Settings** panel; the server restricts the file before writing and restarts the
 local app after a save. Do not submit credentials through Pinokio 8.0.40's
 native Configure form: that release targets the wrong file for this nested

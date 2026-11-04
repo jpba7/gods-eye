@@ -10,6 +10,12 @@
  * - **3D tile detail.** `maximumScreenSpaceError` 16 → 32 on every 3D tileset,
  *   so far fewer (and coarser) tiles are requested, decoded and drawn. Tilesets
  *   added later (map source switch) are picked up on the next frames.
+ * - **3D tile cache 1.5 GB + 1 GB overflow → 512 MB + 512 MB.** Google's
+ *   defaults may hold 2.5 GB of tiles, too much for a 4–6 GB laptop GPU that
+ *   also drives the browser; memory pressure there stalls every frame.
+ * - **Device pixels → CSS pixels.** The globe normally renders at the screen's
+ *   pixel ratio (up to 1.5); performance mode draws CSS pixels, which is
+ *   1.5–2.25x fewer fragments under 125–150% display scaling.
  *
  * The choice is remembered on this device. Quality mode restores each value
  * exactly as it was.
@@ -23,7 +29,15 @@ export const PERFORMANCE_PROFILE = Object.freeze({
   msaaSamples: 1,
   fxaa: true,
   maximumScreenSpaceError: 32,
+  cacheBytes: 512 * 1024 * 1024,
+  maximumCacheOverflowBytes: 512 * 1024 * 1024,
 });
+
+const TILESET_PROFILE_KEYS = Object.freeze([
+  'maximumScreenSpaceError',
+  'cacheBytes',
+  'maximumCacheOverflowBytes',
+]);
 
 function isTileset(primitive) {
   return (
@@ -74,7 +88,7 @@ export class RenderPerformance {
     this.storage = storage;
     this.enabled = false;
     this._saved = null;
-    this._tilesetSse = new Map();
+    this._tilesetSaved = new Map();
     this._frames = 0;
     this._removePreUpdate = null;
     this._onClick = () => this.setEnabled(!this.enabled);
@@ -98,10 +112,23 @@ export class RenderPerformance {
 
   _apply(scene) {
     const fxaa = scene.postProcessStages?.fxaa;
+    const viewer = this.viewer;
     this._saved = {
       msaaSamples: scene.msaaSamples,
       fxaa: fxaa ? fxaa.enabled : undefined,
+      resolution:
+        typeof viewer?.useBrowserRecommendedResolution === 'boolean'
+          ? {
+              useBrowserRecommendedResolution:
+                viewer.useBrowserRecommendedResolution,
+              resolutionScale: viewer.resolutionScale,
+            }
+          : null,
     };
+    if (this._saved.resolution) {
+      viewer.useBrowserRecommendedResolution = true;
+      viewer.resolutionScale = 1;
+    }
     scene.msaaSamples = PERFORMANCE_PROFILE.msaaSamples;
     if (fxaa) fxaa.enabled = PERFORMANCE_PROFILE.fxaa;
     this._scanTilesets(scene);
@@ -113,12 +140,19 @@ export class RenderPerformance {
 
   _scanTilesets(scene) {
     for (const tileset of collectTilesets(scene.primitives)) {
-      if (this._tilesetSse.has(tileset)) continue;
-      this._tilesetSse.set(tileset, tileset.maximumScreenSpaceError);
+      if (this._tilesetSaved.has(tileset)) continue;
+      const saved = {};
+      for (const key of TILESET_PROFILE_KEYS)
+        if (typeof tileset[key] === 'number') saved[key] = tileset[key];
+      this._tilesetSaved.set(tileset, saved);
       tileset.maximumScreenSpaceError = Math.max(
         tileset.maximumScreenSpaceError,
         PERFORMANCE_PROFILE.maximumScreenSpaceError,
       );
+      // The cache only ever shrinks here: a smaller one stays as it was.
+      for (const key of ['cacheBytes', 'maximumCacheOverflowBytes'])
+        if (typeof tileset[key] === 'number')
+          tileset[key] = Math.min(tileset[key], PERFORMANCE_PROFILE[key]);
     }
   }
 
@@ -130,12 +164,14 @@ export class RenderPerformance {
       const fxaa = scene.postProcessStages?.fxaa;
       if (fxaa && this._saved.fxaa !== undefined)
         fxaa.enabled = this._saved.fxaa;
+      if (this._saved.resolution)
+        Object.assign(this.viewer, this._saved.resolution);
     }
     this._saved = null;
-    for (const [tileset, sse] of this._tilesetSse) {
-      if (!tileset.isDestroyed?.()) tileset.maximumScreenSpaceError = sse;
+    for (const [tileset, saved] of this._tilesetSaved) {
+      if (!tileset.isDestroyed?.()) Object.assign(tileset, saved);
     }
-    this._tilesetSse.clear();
+    this._tilesetSaved.clear();
   }
 
   _syncButton() {

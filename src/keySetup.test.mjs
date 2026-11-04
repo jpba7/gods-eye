@@ -7,7 +7,11 @@ import {
   bindKeySetupPlacement,
   waitForChatGptOAuth,
   initKeySetup,
+  keyRowStatus,
+  missingKeyReminders,
+  KEY_SETUP_GROUPS,
 } from './keySetup.js';
+import { keySetupStatus } from './keySetupCore.mjs';
 import { describeUnsavedWork } from './i18n/index.js';
 
 test('setup placement moves the same button only in Cyber and disconnects on teardown', () => {
@@ -60,11 +64,52 @@ test('setup placement moves the same button only in Cyber and disconnects on tea
   assert.equal(disconnected, true);
 });
 
-test('the chip counts what is missing, and retires the count at zero', () => {
-  assert.equal(keySetupChipLabel({ setCount: 0, total: 8 }), 'POWER UP · 8 KEYS WAITING');
-  assert.equal(keySetupChipLabel({ setCount: 7, total: 8 }), 'POWER UP · 1 KEY WAITING');
-  assert.equal(keySetupChipLabel({ setCount: 8, total: 8 }), 'POWERED UP');
-  assert.equal(keySetupChipLabel(null), 'POWERED UP', 'no status is not a broken label');
+test('each row shows one status: configured, an essential key missing, or optional', () => {
+  assert.deepEqual(keyRowStatus({ set: true, managed: 'file', essential: true }), {
+    tone: 'ok',
+    label: 'Configured',
+    reminding: false,
+  });
+  assert.equal(keyRowStatus({ set: true, managed: 'external' }).label, 'Configured outside this app');
+  assert.deepEqual(keyRowStatus({ set: false, essential: true }), {
+    tone: 'attention',
+    label: 'Not configured',
+    reminding: true,
+  });
+  assert.deepEqual(keyRowStatus({ set: false, essential: true }, true), {
+    tone: 'neutral',
+    label: 'Not configured',
+    reminding: false,
+  }, 'a silenced essential key goes grey');
+  assert.deepEqual(keyRowStatus({ set: false }), {
+    tone: 'neutral',
+    label: 'Not configured (optional)',
+    reminding: false,
+  }, 'an optional key never nags');
+});
+
+test('the key button counts only essential keys whose reminder is on', () => {
+  const status = keySetupStatus({});
+  assert.deepEqual(missingKeyReminders(status), ['google-maps']);
+  assert.equal(keySetupChipLabel(status), 'Provider Settings · 1 key missing');
+  const keyed = keySetupStatus({ GOOGLE_MAPS_API_KEY: 'fixture' });
+  assert.deepEqual(missingKeyReminders(keyed), [], 'optional keys never count');
+  assert.equal(keySetupChipLabel(keyed), 'Provider Settings');
+  assert.deepEqual(missingKeyReminders(status, (id) => id === 'google-maps'), []);
+  assert.equal(keySetupChipLabel(status, () => true), 'Provider Settings');
+  assert.equal(keySetupChipLabel(null), 'Provider Settings', 'no status is not a broken label');
+});
+
+test('every visible provider sits in a known panel group', () => {
+  const groups = new Set(KEY_SETUP_GROUPS.map((group) => group.id));
+  for (const key of keySetupStatus({}).keys) {
+    assert.ok(groups.has(key.group), `${key.id} has group ${key.group}`);
+    assert.ok(key.name && key.name !== key.name.toUpperCase() || key.name === 'NASA FIRMS', key.id);
+  }
+  assert.deepEqual(
+    keySetupStatus({}).keys.filter((key) => key.essential).map((key) => key.id),
+    ['google-maps'],
+  );
 });
 
 test('collectKeyUpdates keeps only non-empty trimmed values', () => {

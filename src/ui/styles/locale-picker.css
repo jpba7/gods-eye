@@ -1,5 +1,5 @@
 /* ============================================================
-   Bottom-right corner row: the POWER UP chip (provider-settings.css)
+   Bottom-right corner row: the key button (provider-settings.css)
    and, in the very corner, the interface language picker
    (src/ui/localePicker.js). Logical properties throughout, so a
    right-to-left page mirrors the row and the list.
@@ -27,7 +27,7 @@
   display: flex;
 }
 
-/* Same HUD frame as #key-setup-chip, so the two read as one group. */
+/* The HUD frame of the corner row (the key button sits beside it). */
 .locale-picker-button {
   display: flex;
   align-items: center;
@@ -248,26 +248,13 @@ body.cockpit-mode .cockpit-position-readout {
   bottom: max(clamp(22px, 4vh, 42px), 3.5rem);
 }
 
-/* Below this width the full chip label runs into the centred dock: the chip
-   keeps its bolt, and its count stays in its title and aria-label. */
-@media (max-width: 1180px) {
-  #corner-actions #key-setup-chip [data-key-setup-chip-label] {
-    display: none;
-  }
-}
-
 @media (max-width: 767.98px) {
   /* Phone: the corner beside the dock, clear of the attribution above it.
-     There is room for one button across, so the chip stacks on the globe. */
+     There is room for one button across, so the key button stacks on the globe. */
   #corner-actions {
     inset-inline-end: 10px;
     inset-block-end: max(16px, env(safe-area-inset-bottom));
     flex-direction: column;
-  }
-
-  #corner-actions #key-setup-chip {
-    justify-content: center;
-    padding-inline: 0.5rem;
   }
 
   /* Phone: the globe alone; the label stays in aria-label. */

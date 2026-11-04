@@ -10,8 +10,16 @@ function collection(items) {
   return { length: items.length, get: (i) => items[i] };
 }
 
+const GB = 1024 * 1024 * 1024;
+
 function tileset(sse = 16) {
-  return { maximumScreenSpaceError: sse, tileLoad: {}, isDestroyed: () => false };
+  return {
+    maximumScreenSpaceError: sse,
+    cacheBytes: 1.5 * GB,
+    maximumCacheOverflowBytes: GB,
+    tileLoad: {},
+    isDestroyed: () => false,
+  };
 }
 
 function makeViewer(items) {
@@ -31,7 +39,12 @@ function makeViewer(items) {
       },
     },
   };
-  return { scene, listeners };
+  return {
+    scene,
+    listeners,
+    useBrowserRecommendedResolution: false,
+    resolutionScale: 0.75,
+  };
 }
 
 function memoryStorage(initial = {}) {
@@ -61,6 +74,14 @@ test('performance mode lowers MSAA and tile detail, quality restores them', () =
   assert.equal(viewer.scene.msaaSamples, PERFORMANCE_PROFILE.msaaSamples);
   assert.equal(viewer.scene.postProcessStages.fxaa.enabled, true);
   assert.equal(google.maximumScreenSpaceError, 32);
+  assert.equal(google.cacheBytes, PERFORMANCE_PROFILE.cacheBytes);
+  assert.equal(
+    google.maximumCacheOverflowBytes,
+    PERFORMANCE_PROFILE.maximumCacheOverflowBytes,
+  );
+  assert.ok(google.cacheBytes + google.maximumCacheOverflowBytes <= GB);
+  assert.equal(viewer.useBrowserRecommendedResolution, true);
+  assert.equal(viewer.resolutionScale, 1);
   assert.equal(storage.data['gev:render-performance:v1'], 'on');
   assert.equal(viewer.listeners.size, 1);
 
@@ -68,6 +89,10 @@ test('performance mode lowers MSAA and tile detail, quality restores them', () =
   assert.equal(viewer.scene.msaaSamples, 4);
   assert.equal(viewer.scene.postProcessStages.fxaa.enabled, false);
   assert.equal(google.maximumScreenSpaceError, 16);
+  assert.equal(google.cacheBytes, 1.5 * GB);
+  assert.equal(google.maximumCacheOverflowBytes, GB);
+  assert.equal(viewer.useBrowserRecommendedResolution, false);
+  assert.equal(viewer.resolutionScale, 0.75);
   assert.equal(storage.data['gev:render-performance:v1'], 'off');
   assert.equal(viewer.listeners.size, 0);
 });
@@ -95,6 +120,8 @@ test('a tileset already coarser than the profile keeps its value', () => {
     viewer: makeViewer([coarse]),
     storage: memoryStorage(),
   });
+  coarse.cacheBytes = 256 * 1024 * 1024;
   perf.setEnabled(true);
   assert.equal(coarse.maximumScreenSpaceError, 64);
+  assert.equal(coarse.cacheBytes, 256 * 1024 * 1024);
 });
