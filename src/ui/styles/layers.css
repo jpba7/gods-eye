@@ -1150,6 +1150,12 @@
   font-weight: 600;
   letter-spacing: 0.08em;
 }
+/* Sentence-case tab names and the guide belong to the desktop Earth shell,
+   which shows them in place of the caps labels and legend (earth-shell.css). */
+.context-mode-name,
+.context-empty-guide {
+  display: none;
+}
 .context-mode-view {
   min-height: 0;
 }

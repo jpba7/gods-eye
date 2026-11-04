@@ -377,3 +377,38 @@ test('open drawers end above the status bar whatever the rail engine sizes', () 
   assert.match(rule[1], /\n {2}height: auto !important;/);
   assert.match(rule[1], /overflow-y: auto;/);
 });
+
+test('the Context drawer scrolls in one box and keeps Radio reachable', () => {
+  const css = readFileSync(
+    new URL('./styles/earth-shell.css', import.meta.url),
+    'utf8',
+  ).replace(/\/\*[\s\S]*?\*\//g, '');
+  const rules = [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)];
+  const body = (selector) =>
+    rules.find(([, s]) => s.replace(/\s+/g, ' ').trim() === selector)?.[2] ??
+    '';
+  const context = "body.earth-shell[data-earth-section='context']";
+  // The panel's inner box is the scroller its own code moves (mission details
+  // back to the top, Radio controls into view); the rail and the lists inside
+  // it stop scrolling on their own.
+  assert.match(body(`${context} #right-context-rail`), /overflow: hidden;/);
+  assert.match(
+    body(
+      `${context} #right-context-rail > #global-context-panel > .global-context-panel-inner`,
+    ),
+    /overflow-y: auto;/,
+  );
+  assert.match(
+    body(
+      `${context} #right-context-rail :is(#military-awareness-panel, .space-mission-roster-list)`,
+    ),
+    /overflow: visible;/,
+  );
+  // The shell hides panel collapse buttons; Radio's is its only way in.
+  assert.match(
+    body(
+      `${context} #right-context-rail #global-context-panel #radio-panel .panel-collapse-btn`,
+    ),
+    /display: block !important;/,
+  );
+});
