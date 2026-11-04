@@ -362,7 +362,12 @@ function buildRow(documentRef, key, reminders) {
   get.append(arrow);
   head.append(title, status, get);
 
-  const unlocks = element(documentRef, 'p', 'key-setup-unlocks', t(key.unlocks));
+  const unlocks = element(
+    documentRef,
+    'p',
+    'key-setup-unlocks',
+    t(key.unlocks),
+  );
 
   const meta = element(documentRef, 'p', 'key-setup-meta');
   if (TIER_LABELS[key.tier]) {
@@ -455,10 +460,15 @@ function buildRow(documentRef, key, reminders) {
     mute.title = t('Reminders about this key are kept in this browser');
     actions.append(mute);
   }
-  if (actions.children?.length ?? actions.childNodes?.length) row.append(actions);
+  if (actions.children?.length ?? actions.childNodes?.length)
+    row.append(actions);
   if (key.id === 'openai') {
     const auth = element(documentRef, 'div', 'key-setup-cloud-auth');
-    const authState = element(documentRef, 'span', 'key-setup-cloud-auth-state');
+    const authState = element(
+      documentRef,
+      'span',
+      'key-setup-cloud-auth-state',
+    );
     const toggle = element(
       documentRef,
       'button',
@@ -489,9 +499,7 @@ function buildGroups(documentRef, keys, reminders) {
     const section = element(documentRef, 'section', 'key-setup-group');
     section.dataset.group = group.id;
     const heading = element(documentRef, 'h3', 'key-setup-group-title');
-    heading.append(
-      element(documentRef, 'span', '', t(group.label)),
-    );
+    heading.append(element(documentRef, 'span', '', t(group.label)));
     if (group.optional)
       heading.append(
         element(documentRef, 'span', 'key-setup-optional', t('Optional')),
@@ -634,7 +642,11 @@ export async function initKeySetup({
     const focusedMute =
       documentRef.activeElement?.dataset?.keySetupMute || null;
     rowsHost.textContent = '';
-    for (const section of buildGroups(documentRef, status.keys || [], reminders))
+    for (const section of buildGroups(
+      documentRef,
+      status.keys || [],
+      reminders,
+    ))
       rowsHost.append(section);
     for (const input of rowsHost.querySelectorAll?.('input[data-env-var]') ||
       [])

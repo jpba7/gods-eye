@@ -162,11 +162,11 @@ function presentProviders(state, isMuted) {
         keyRequired &&
         (on || provider.keyRejected || !isMuted(provider.requiresKeyId))
           ? 'error'
-        : on && provider.loading
-          ? 'loading'
-          : on
-            ? 'active'
-            : 'idle',
+          : on && provider.loading
+            ? 'loading'
+            : on
+              ? 'active'
+              : 'idle',
       busy: on && provider.loading === true,
     };
   });

@@ -345,11 +345,7 @@
   font: 400 12px/1.3 var(--font-sans);
 }
 
-:is(
-    .key-setup-remove,
-    .key-setup-mute,
-    .key-setup-cloud-auth-toggle
-  ) {
+:is(.key-setup-remove, .key-setup-mute, .key-setup-cloud-auth-toggle) {
   height: 30px;
   padding: 0 12px;
   color: var(--ks-text-2);
@@ -372,19 +368,19 @@
 
 :is(.key-setup-remove, .key-setup-mute, .key-setup-cloud-auth-toggle):hover,
 :is(
-    .key-setup-remove,
-    .key-setup-mute,
-    .key-setup-cloud-auth-toggle
-  ):focus-visible {
+  .key-setup-remove,
+  .key-setup-mute,
+  .key-setup-cloud-auth-toggle
+):focus-visible {
   background: rgba(232, 234, 237, 0.06);
   outline: none;
 }
 
 :is(
-    .key-setup-remove,
-    .key-setup-mute,
-    .key-setup-cloud-auth-toggle
-  ):focus-visible {
+  .key-setup-remove,
+  .key-setup-mute,
+  .key-setup-cloud-auth-toggle
+):focus-visible {
   border-color: var(--ks-accent);
 }
 
