@@ -1,5 +1,6 @@
 import { formatNumber, msg, t, tn, translateKnown } from '../i18n/index.js';
 import { keyGuidanceText, keyRequirementText } from './keyGuidance.js';
+import { keyRemindersMuted } from './keyReminders.js';
 
 // Street Level UI state to panel strings and flags. Pure, so it is testable.
 
@@ -130,8 +131,13 @@ export function translateStreetLevelError(text) {
   return text;
 }
 
-/** A chip is lit only while the layer and its provider are both on. */
-function presentProviders(state) {
+/**
+ * A chip is lit only while the layer and its provider are both on. A provider
+ * that is switched off and lacks its key reads as an error only while
+ * reminders about that key are on (src/ui/keyReminders.js); its tooltip still
+ * names the key either way.
+ */
+function presentProviders(state, isMuted) {
   const enabled = state.enabled === true;
   return (state.providers || []).map((provider) => {
     const keyRequired = provider.keyRequired === true;
@@ -152,8 +158,10 @@ function presentProviders(state) {
       title,
       active: on,
       disabled: false,
-      state: keyRequired
-        ? 'error'
+      state:
+        keyRequired &&
+        (on || provider.keyRejected || !isMuted(provider.requiresKeyId))
+          ? 'error'
         : on && provider.loading
           ? 'loading'
           : on
@@ -300,8 +308,14 @@ function coverageCountLine(coverage) {
   );
 }
 
-/** @param {{now?: number}} [options] Clock for the SINCE readout. */
-export function presentStreetLevelPanel(state, { now = Date.now() } = {}) {
+/**
+ * @param {{now?: number, isKeyReminderMuted?: (id: string) => boolean}} [options]
+ *   Clock for the SINCE readout; whether reminders about a key are off.
+ */
+export function presentStreetLevelPanel(
+  state,
+  { now = Date.now(), isKeyReminderMuted = keyRemindersMuted } = {},
+) {
   const keyRequired = state.keyRequired === true;
   const filter = state.filter || { pano: 'all', sinceDays: 0 };
   // A missing key says how to add it; a rejected key's own error names the fix.
@@ -311,7 +325,7 @@ export function presentStreetLevelPanel(state, { now = Date.now() } = {}) {
     keyRequired,
     status: presentStatus(state),
     controlsDisabled: keyRequired || (state.providers || []).length === 0,
-    providers: presentProviders(state),
+    providers: presentProviders(state, isKeyReminderMuted),
     error: keyMissing
       ? keyGuidance(state) || null
       : translateStreetLevelError(
