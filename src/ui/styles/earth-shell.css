@@ -900,10 +900,34 @@ body.earth-shell[data-earth-section='context']
   #right-context-rail
   .global-context-actions
   > #tr3b-toggle {
+  order: 1;
   flex: none;
   width: 36px;
   padding: 0;
   font-size: 16px;
+}
+/* Cockpit and the TR-3B chip share the first line; the site search takes a
+   line of its own, or joins the chip when Cockpit is not offered. */
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  .global-context-actions
+  > #cockpit-entry {
+  order: 0;
+  flex: 1 1 0;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  .global-context-actions
+  > #installations-search-btn {
+  order: 2;
+  flex: 1 1 100%;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  .global-context-actions:has(> #cockpit-entry[hidden])
+  > #installations-search-btn {
+  order: 0;
+  flex: 1 1 0;
 }
 body.earth-shell[data-earth-section='context']
   #right-context-rail
@@ -1279,6 +1303,326 @@ body.earth-shell[data-earth-section='context']
   .panel-collapse-btn:focus-visible::after {
   outline: 2px solid var(--earth-accent);
   outline-offset: -2px;
+}
+
+/* Radio and mission details, opened: the same pills, fields and type as the
+   rest of the drawer instead of the HUD's 7-9px terminal face. */
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  :is(
+    #radio-panel .radio-panel-inner > :not(.panel-header) button,
+    #space-mission-panel button
+  ) {
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 12px;
+  color: var(--earth-text);
+  background: transparent;
+  border: 1px solid var(--earth-border-strong);
+  border-radius: 18px;
+  box-shadow: none;
+  font: 500 12px/1.2 var(--font-sans);
+  letter-spacing: 0.02em;
+  text-shadow: none;
+  transform: none;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  :is(
+      #radio-panel .radio-panel-inner > :not(.panel-header) button,
+      #space-mission-panel button
+    ):hover:not(:disabled) {
+  color: var(--earth-text);
+  background: rgba(232, 234, 237, 0.06);
+  border-color: var(--earth-border-strong);
+  box-shadow: none;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  :is(
+      #radio-panel .radio-panel-inner > :not(.panel-header) button,
+      #space-mission-panel button
+    ):is(.active, [aria-pressed='true']) {
+  color: var(--earth-accent-strong);
+  background: var(--earth-accent-soft);
+  border-color: transparent;
+  box-shadow: none;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  :is(
+      #radio-panel .radio-panel-inner > :not(.panel-header) button,
+      #space-mission-panel button
+    ):disabled {
+  opacity: 0.45;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  :is(#radio-panel, #space-mission-panel)
+  :is(select, input[type='number']) {
+  height: 36px;
+  min-height: 36px;
+  padding: 0 10px;
+  color: var(--earth-text);
+  background-color: var(--earth-field);
+  border: 1px solid var(--earth-border-strong);
+  border-radius: 10px;
+  font: 400 13px/1.2 var(--font-sans);
+  letter-spacing: normal;
+}
+/* Small labels and readouts. */
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  :is(
+    #radio-panel .radio-filter-label,
+    #radio-panel .radio-volume-row,
+    #radio-panel .radio-tuner-header,
+    #radio-panel .radio-tuner-readout,
+    #radio-panel #radio-tuner-value,
+    #radio-panel .sdr-gain-row label,
+    #radio-panel .sdr-frequency-row label,
+    #radio-panel .sdr-adsb-stats,
+    #radio-panel #sdr-connection-state,
+    #space-mission-panel .space-mission-view-header,
+    #space-mission-panel .mission-data-section h4,
+    #space-mission-panel .mission-replay-speed-header,
+    #space-mission-panel .mission-replay-speed-scale
+  ) {
+  color: var(--earth-text-3);
+  font: 500 11px/1.3 var(--font-sans);
+  letter-spacing: 0.04em;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  :is(
+    #radio-panel .radio-playback-state,
+    #radio-panel .sdr-feed-status,
+    #radio-panel .radio-privacy,
+    #radio-panel .sdr-radio-card > p,
+    #radio-panel .radio-station-card span
+  ) {
+  margin: 0;
+  color: var(--earth-text-3);
+  font: 400 12px/1.45 var(--font-sans);
+  letter-spacing: normal;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #radio-panel
+  :is(.radio-playback-state, .sdr-feed-status).error {
+  color: #f28b82;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #radio-panel
+  :is(.radio-links a, .radio-volume-row output, .sdr-adsb-stats output) {
+  color: var(--earth-accent);
+  font: 500 12px/1.3 var(--font-sans);
+  letter-spacing: normal;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #radio-panel
+  :is(.radio-volume-row, .radio-directory-row, .radio-transport) {
+  gap: 8px;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #radio-panel
+  .radio-volume-row {
+  grid-template-columns: auto minmax(0, 1fr) 40px;
+  align-items: center;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #radio-panel
+  :is(.radio-station-card, .radio-tuner) {
+  padding: 12px 14px;
+  background: rgba(232, 234, 237, 0.04);
+  border: 1px solid var(--earth-border);
+  border-radius: 12px;
+  box-shadow: none;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #radio-panel
+  :is(.radio-station-card strong, .sdr-radio-heading strong) {
+  color: var(--earth-text);
+  font: 500 14px/1.3 var(--font-sans);
+  letter-spacing: normal;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #radio-panel
+  .sdr-radio-card {
+  gap: 10px;
+  margin-top: 4px;
+  padding: 14px 0 0;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--earth-border);
+  border-radius: 0;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #radio-panel
+  .sdr-radio-card
+  :is(.sdr-radio-actions, .sdr-mode-row, .sdr-gain-row, .sdr-frequency-row, .sdr-seek-row) {
+  gap: 8px;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #radio-panel
+  #sdr-connection-state.active {
+  color: #81c995;
+}
+
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  .space-mission-view-header {
+  padding: 0 0 8px;
+  border-top: 0;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  .space-mission-view-header
+  button {
+  width: 32px;
+  min-height: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(232, 234, 237, 0.08);
+  font-size: 18px;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  .space-mission-detail {
+  gap: 6px;
+  padding: 2px 0 16px;
+  color: var(--earth-text-3);
+  font: 400 12px/1.45 var(--font-sans);
+  letter-spacing: normal;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  .space-mission-detail
+  strong {
+  color: var(--earth-text);
+  font: 500 18px/1.3 var(--font-sans);
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  .space-mission-detail
+  span {
+  color: var(--earth-text-3);
+  font: inherit;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  .space-mission-detail
+  b {
+  color: var(--earth-text);
+  font: 500 13px/1.45 var(--font-sans);
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  .mission-data-section {
+  margin: 0 0 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--earth-border);
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  .mission-data-section
+  h4 {
+  margin: 0 0 8px;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  .mission-data-table {
+  color: var(--earth-text);
+  font: 400 12px/1.4 var(--font-sans);
+  letter-spacing: normal;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  .mission-data-table
+  :is(th, td) {
+  border-bottom-color: var(--earth-border);
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  .mission-data-table
+  :is(th, small, .mission-table-empty) {
+  color: var(--earth-text-3);
+  font: 400 11px/1.35 var(--font-sans);
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  .mission-replay-speed-control {
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  background: var(--earth-surface-2);
+  border: 1px solid var(--earth-border);
+  border-radius: 12px;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  :is(.mission-action-row, .space-mission-nav) {
+  gap: 8px;
+  margin: 0 0 12px;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  .mission-replay-button {
+  color: var(--earth-accent-strong);
+  background: var(--earth-accent-soft);
+  border-color: transparent;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  .mission-replay-speed-header
+  output {
+  color: var(--earth-accent);
+  font: 500 12px/1.3 var(--font-sans);
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  .mission-nav-button {
+  min-width: 96px;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  .mission-nav-index {
+  color: var(--earth-text-2);
+  font: 500 13px/1.2 var(--font-sans);
+  letter-spacing: normal;
+}
+body.earth-shell[data-earth-section='context']
+  #right-context-rail
+  #space-mission-panel
+  [data-mission-show-all] {
+  width: 100%;
 }
 
 /* ── Panel skin: quieter type, solid surfaces ──────────────────────────── */
