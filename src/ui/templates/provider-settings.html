@@ -1,30 +1,38 @@
-  <!-- POWER UP — in-app key setup. Dev-server only: src/keySetup.js removes
-       both the chip and this dialog outright when /api/setup/status is not
-       there to answer (prod builds, LAN visitors). Rows are rendered from
-       that payload, so the key registry lives in src/keySetupCore.mjs alone. -->
-  <!-- Bottom-right HUD row: the POWER UP chip (while keys are missing) and
-       the language picker that src/ui/localePicker.js renders into #locale-picker. -->
+  <!-- Provider Settings — in-app key setup. Dev-server only: src/keySetup.js
+       removes both the key button and this dialog outright when
+       /api/setup/status is not there to answer (prod builds, LAN visitors).
+       Rows are rendered from that payload, so the key registry lives in
+       src/keySetupCore.mjs alone. -->
+  <!-- Corner row (the top bar's right end in the desktop shell): the key
+       button, with a count only while an essential key is missing and its
+       reminder is on, and the language picker that src/ui/localePicker.js
+       renders into #locale-picker. -->
   <div id="corner-actions">
     <button id="key-setup-chip" type="button" hidden aria-haspopup="dialog" aria-controls="key-setup">
-      <span class="material-symbols-outlined" aria-hidden="true">bolt</span>
-      <span data-key-setup-chip-label data-i18n>POWER UP</span>
+      <span class="material-symbols-outlined" aria-hidden="true">key</span>
+      <span class="key-setup-chip-label" data-key-setup-chip-label data-i18n>Provider Settings</span>
+      <span class="key-setup-chip-badge" data-key-setup-chip-badge aria-hidden="true" hidden></span>
     </button>
     <div id="locale-picker"></div>
   </div>
   <aside id="key-setup" role="dialog" aria-labelledby="key-setup-title" aria-describedby="key-setup-description" hidden>
-    <div class="key-setup-scanline" aria-hidden="true"></div>
     <header class="key-setup-header">
-      <span class="key-setup-kicker" data-i18n>GROUND STATION · PROVIDER SETTINGS</span>
+      <div class="key-setup-titles">
+        <h2 id="key-setup-title" data-i18n>Provider Settings</h2>
+        <p id="key-setup-description" data-i18n>The globe works without keys. Each key switches on one more provider: it is saved on this computer and the server restarts by itself.</p>
+      </div>
       <button type="button" class="key-setup-close" data-key-setup-close aria-label="Close key setup" data-i18n-aria-label>
         <span class="material-symbols-outlined" aria-hidden="true">close</span>
       </button>
     </header>
-    <h2 id="key-setup-title" data-i18n>Power up the globe</h2>
-    <p id="key-setup-description" data-i18n>The globe already flies keyless. Every key below switches on another real feed — paste one and it's saved into this app's local configuration, then the server restarts itself. Server-side keys stay on this machine; Google Maps and Cesium ion run in the browser and must be provider-restricted. Keys you configured elsewhere are shown but never touched.</p>
     <div class="key-setup-rows" data-key-setup-rows></div>
     <div class="key-setup-footer">
-      <button type="button" class="key-setup-apply" data-key-setup-apply data-i18n>SAVE KEYS</button>
+      <button type="button" class="key-setup-reminders" role="switch" aria-checked="true" data-key-setup-reminders>
+        <span class="key-setup-switch" aria-hidden="true"></span>
+        <span data-i18n>Remind me about missing keys</span>
+      </button>
       <span class="key-setup-hint" data-i18n>ESC to close</span>
+      <button type="button" class="key-setup-apply" data-key-setup-apply data-i18n>Save keys</button>
     </div>
-    <p class="key-setup-note" data-key-setup-status role="status" aria-live="polite" data-i18n>The Google Maps key buys the photorealistic planet — everything else stacks on top.</p>
+    <p class="key-setup-note" data-key-setup-status role="status" aria-live="polite" data-i18n>Keys set outside this app are shown read-only.</p>
   </aside>

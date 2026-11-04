@@ -34,11 +34,20 @@ export const KEY_SETUP_APPEND_HEADER =
  * `clientExposed` marks the keys that are injected into the browser
  * bundle by design (restrict them at the provider, per SECURITY.md).
  * `hidden` keeps advanced configuration out of the panel and missing-key count.
+ * `name` is the product name as people write it (the panel and guidance
+ * sentences); `title` is the legacy all-caps label the AI tools still read.
+ * `group` places the row in the panel: 'globe' (the 3D globe itself), 'voice'
+ * (the voice assistant) or 'data' (data layers). `essential` marks the one key
+ * the panel reminds about while it is missing: without Google Maps there is no
+ * photorealistic globe. Every other key is an optional extra and never nags.
  */
 export const KEY_SETUP_KEYS = Object.freeze([
   Object.freeze({
     id: 'google-maps',
+    group: 'globe',
+    essential: true,
     title: 'GOOGLE MAPS', // i18n-ignore: provider product name
+    name: 'Google Maps', // i18n-ignore: provider product name
     unlocks: msg('The photorealistic 3D planet, place search + Street View'),
     getUrl: 'https://developers.google.com/maps/documentation/tile/get-api-key',
     envVars: Object.freeze(['GOOGLE_MAPS_API_KEY']),
@@ -47,7 +56,9 @@ export const KEY_SETUP_KEYS = Object.freeze([
   }),
   Object.freeze({
     id: 'google-maps-server',
+    group: 'globe',
     title: 'GOOGLE MAPS — SERVER', // i18n-ignore: provider product name; row is hidden
+    name: 'Google Maps (server)', // i18n-ignore: provider product name
     unlocks: msg(
       'Places context + Street View fallback; optional separate key',
     ),
@@ -59,7 +70,9 @@ export const KEY_SETUP_KEYS = Object.freeze([
   }),
   Object.freeze({
     id: 'openai',
+    group: 'voice',
     title: 'OPENAI', // i18n-ignore: provider product name
+    name: 'OpenAI', // i18n-ignore: provider product name
     unlocks: msg('Voice control — API key or ChatGPT OAuth'),
     getUrl: 'https://platform.openai.com/api-keys',
     envVars: Object.freeze(['OPENAI_API_KEY']),
@@ -67,7 +80,9 @@ export const KEY_SETUP_KEYS = Object.freeze([
   }),
   Object.freeze({
     id: 'gemini',
+    group: 'voice',
     title: 'GEMINI', // i18n-ignore: provider product name
+    name: 'Gemini', // i18n-ignore: provider product name
     unlocks: msg('Gemini Live voice control'),
     getUrl: 'https://aistudio.google.com/apikey',
     envVars: Object.freeze(['GEMINI_API_KEY']),
@@ -75,7 +90,9 @@ export const KEY_SETUP_KEYS = Object.freeze([
   }),
   Object.freeze({
     id: 'aisstream',
+    group: 'data',
     title: 'AISSTREAM', // i18n-ignore: provider product name
+    name: 'AISStream', // i18n-ignore: provider product name
     unlocks: msg('Live ships, worldwide'),
     getUrl: 'https://aisstream.io',
     envVars: Object.freeze(['AISSTREAM_API_KEY']),
@@ -83,7 +100,9 @@ export const KEY_SETUP_KEYS = Object.freeze([
   }),
   Object.freeze({
     id: 'firms',
+    group: 'data',
     title: 'NASA FIRMS', // i18n-ignore: provider product name
+    name: 'NASA FIRMS', // i18n-ignore: provider product name
     unlocks: msg('Live active-fire detections'),
     getUrl: 'https://firms.modaps.eosdis.nasa.gov/api/map_key/',
     envVars: Object.freeze(['FIRMS_MAP_KEY']),
@@ -91,7 +110,9 @@ export const KEY_SETUP_KEYS = Object.freeze([
   }),
   Object.freeze({
     id: 'tomtom',
+    group: 'data',
     title: 'TOMTOM', // i18n-ignore: provider product name
+    name: 'TomTom', // i18n-ignore: provider product name
     unlocks: msg('Real live traffic (keyless runs a simulation)'),
     getUrl: 'https://my.tomtom.com/keys',
     envVars: Object.freeze(['TOMTOM_API_KEY']),
@@ -99,7 +120,9 @@ export const KEY_SETUP_KEYS = Object.freeze([
   }),
   Object.freeze({
     id: 'cesium-ion',
+    group: 'globe',
     title: 'CESIUM ION', // i18n-ignore: provider product name
+    name: 'Cesium ion', // i18n-ignore: provider product name
     unlocks: msg('Bing imagery map stacks + world terrain'),
     getUrl: 'https://ion.cesium.com/tokens',
     envVars: Object.freeze(['CESIUM_ION_TOKEN']),
@@ -108,7 +131,9 @@ export const KEY_SETUP_KEYS = Object.freeze([
   }),
   Object.freeze({
     id: 'opensky',
+    group: 'data',
     title: 'OPENSKY', // i18n-ignore: provider product name
+    name: 'OpenSky', // i18n-ignore: provider product name
     unlocks: msg('More flight-polling credits (anonymous works without)'),
     getUrl: 'https://opensky-network.org',
     envVars: Object.freeze(['OPENSKY_CLIENT_ID', 'OPENSKY_CLIENT_SECRET']),
@@ -116,7 +141,9 @@ export const KEY_SETUP_KEYS = Object.freeze([
   }),
   Object.freeze({
     id: 'mapillary',
+    group: 'data',
     title: 'MAPILLARY', // i18n-ignore: provider product name
+    name: 'Mapillary', // i18n-ignore: provider product name
     unlocks: msg(
       'Street-level imagery and coverage in the Street Level layer. Free: register an app in the Mapillary developer dashboard and paste its Client Token',
     ),
@@ -127,7 +154,9 @@ export const KEY_SETUP_KEYS = Object.freeze([
   }),
   Object.freeze({
     id: 'launch-library',
+    group: 'data',
     title: 'LAUNCH LIBRARY', // i18n-ignore: provider product name
+    name: 'Launch Library', // i18n-ignore: provider product name
     unlocks: msg(
       'Public space-missions access needs no key. Leave blank for standard use; paid tokens only raise request limits.',
     ),
@@ -435,11 +464,7 @@ export function keySetupWithAlternatives(requirement, alternatives = []) {
     const entry = KEY_SETUP_KEYS.find(
       (candidate) => candidate.id === requiresKeyId,
     );
-    const name = entry
-      ? entry.title
-          .toLowerCase()
-          .replace(/\b\w/g, (letter) => letter.toUpperCase())
-      : null;
+    const name = entry ? entry.name : null;
     return name ? `light ${label} to use your ${name} key` : `light ${label}`;
   });
   if (!options.length) return requirement;
@@ -478,6 +503,9 @@ export function keySetupStatus(env = {}) {
     return {
       id: entry.id,
       title: entry.title,
+      name: entry.name,
+      group: entry.group,
+      essential: Boolean(entry.essential),
       unlocks: entry.unlocks,
       getUrl: entry.getUrl,
       envVars: [...entry.envVars],

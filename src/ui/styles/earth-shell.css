@@ -218,8 +218,11 @@ body.earth-shell #corner-actions :is(#key-setup-chip, .locale-picker-button) {
   font-family: var(--font-sans);
   letter-spacing: 0.02em;
 }
+/* Keys: a quiet icon button; its count badge is the only colour. */
 body.earth-shell #corner-actions #key-setup-chip {
-  color: var(--earth-amber);
+  width: 40px;
+  padding: 0;
+  border-radius: 50%;
 }
 
 /* ── Section rail ──────────────────────────────────────────────────────── */
