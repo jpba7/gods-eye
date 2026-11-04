@@ -218,8 +218,11 @@ body.earth-shell #corner-actions :is(#key-setup-chip, .locale-picker-button) {
   font-family: var(--font-sans);
   letter-spacing: 0.02em;
 }
+/* Keys: a quiet icon button; its count badge is the only colour. */
 body.earth-shell #corner-actions #key-setup-chip {
-  color: var(--earth-amber);
+  width: 40px;
+  padding: 0;
+  border-radius: 50%;
 }
 
 /* ── Section rail ──────────────────────────────────────────────────────── */
@@ -468,6 +471,10 @@ body.earth-shell[data-earth-section='context'] #right-context-rail {
   gap: 12px;
   width: var(--earth-drawer) !important;
   max-width: none !important;
+  /* The rail engine's focus layout sizes the rail for the floating HUD
+     corridor; here top and bottom decide, so the drawer ends above the
+     status bar and scrolls. */
+  height: auto !important;
   max-height: none !important;
   padding: 6px 12px 20px;
   box-sizing: border-box;
@@ -734,9 +741,12 @@ body.earth-shell[data-earth-section]
 body.earth-shell :is(#left-panel-stack, #right-context-rail, #control-panel) {
   letter-spacing: normal;
 }
+/* Icon glyphs are ligatures: they keep their own font and spacing. */
 body.earth-shell
   :is(#left-panel-stack, #right-context-rail, #control-panel)
-  :is(button, label, span, div, h3, h4, output, small) {
+  :is(button, label, span, div, h3, h4, output, small):not(
+    .material-symbols-outlined
+  ) {
   letter-spacing: 0.01em;
 }
 body.earth-shell #data-toggles .data-layer-group-heading {
@@ -842,10 +852,13 @@ body.earth-shell #data-toggles .data-toggle-row:has(.data-toggle-btn.active) {
   border-color: rgba(138, 180, 248, 0.45);
 }
 
-/* Section panels read in the interface face, not the terminal one. */
+/* Section panels read in the interface face, not the terminal one. Icon
+   glyphs keep the Material Symbols font, or they render as their names. */
 body.earth-shell[data-earth-section]
   :is(#left-panel-stack, #right-context-rail, #control-panel)
-  :is(button, label, span, div, h3, h4, output, small, select, input, p) {
+  :is(button, label, span, div, h3, h4, output, small, select, input, p):not(
+    .material-symbols-outlined
+  ) {
   font-family: var(--font-sans);
 }
 body.earth-shell[data-earth-section='scenes'] #scene-panel .panel-header,

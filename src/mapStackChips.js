@@ -12,6 +12,7 @@
 
 import { keySetupRequirementEnvVars } from './keySetupCore.mjs';
 import { t } from './i18n/index.js';
+import { keyRemindersMuted } from './ui/keyReminders.js';
 
 export const MAP_STACK_CHIP_CLASS = 'map-stack-chip';
 export const PRESENTED_MAP_STACK_IDS = Object.freeze([
@@ -61,8 +62,13 @@ export function mapStackChipModel(stack, activeId) {
     requiresIon,
     // Dropdown parity: unavailable options read "<label> · ion key". A chip has
     // no room for that, so an ion-backed stack gets a compact badge; every
-    // unavailable chip carries the real reason in its tooltip.
-    requirement: !available && requiresIon ? 'ION' : '',
+    // unavailable chip carries the real reason in its tooltip. The badge is a
+    // reminder, so it goes when reminders about the ion token are off
+    // (src/ui/keyReminders.js); the tooltip still says why.
+    requirement:
+      !available && requiresIon && !keyRemindersMuted('cesium-ion')
+        ? 'ION'
+        : '',
     unavailableHint,
     title: available ? label : unavailableHint,
   };

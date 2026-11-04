@@ -170,7 +170,7 @@ function createRealtimeTokenHandler({
       res.end(
         JSON.stringify({
           error:
-            'ChatGPT OAuth is required by GEV_PREFER_CODEX_OAUTH. Select USE CHATGPT OAUTH in Provider Settings.',
+            'ChatGPT OAuth is required by GEV_PREFER_CODEX_OAUTH. Select Use ChatGPT OAuth in Provider Settings.',
           code: 'CODEX_OAUTH_REQUIRED',
         }),
       );
