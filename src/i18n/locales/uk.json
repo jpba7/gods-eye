@@ -3144,5 +3144,10 @@
   "Dictate a message": "Надиктувати повідомлення",
   "Stop dictation (Ctrl+M)": "Зупинити диктування (Ctrl+M)",
   "Performance": "Продуктивність",
-  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "Режим продуктивності: полегшені 3D-тайли та згладжування для плавнішого руху"
+  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "Режим продуктивності: полегшені 3D-тайли та згладжування для плавнішого руху",
+  "Photorealistic 3D cities and terrain": "Фотореалістичні 3D-міста й рельєф",
+  "Satellite imagery through Cesium ion": "Супутникові знімки через Cesium ion",
+  "Satellite imagery with roads and place names": "Супутникові знімки з дорогами та назвами місць",
+  "Satellite imagery, no key needed": "Супутникові знімки, ключ не потрібен",
+  "Street map, no key needed": "Карта вулиць, ключ не потрібен"
 }

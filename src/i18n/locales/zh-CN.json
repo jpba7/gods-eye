@@ -2928,5 +2928,10 @@
   "Dictate a message": "听写消息",
   "Stop dictation (Ctrl+M)": "停止听写 (Ctrl+M)",
   "Performance": "性能",
-  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "性能模式：更轻量的 3D 瓦片和抗锯齿，让移动更流畅"
+  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "性能模式：更轻量的 3D 瓦片和抗锯齿，让移动更流畅",
+  "Photorealistic 3D cities and terrain": "照片级真实感的 3D 城市与地形",
+  "Satellite imagery through Cesium ion": "通过 Cesium ion 提供的卫星影像",
+  "Satellite imagery with roads and place names": "带道路和地名的卫星影像",
+  "Satellite imagery, no key needed": "卫星影像，无需密钥",
+  "Street map, no key needed": "街道地图，无需密钥"
 }

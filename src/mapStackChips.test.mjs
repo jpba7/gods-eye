@@ -78,9 +78,19 @@ function makeElement(tagName = 'div') {
 
 const doc = { createElement: (tagName) => makeElement(tagName) };
 
+const DETAIL_CLASS = 'map-stack-chip-desc';
+
 /** Text a chip renders, label + optional requirement badge. */
 const chipText = (chip) =>
-  chip.children.map((child) => child.textContent).join(' ');
+  chip.children
+    .filter((child) => child.className !== DETAIL_CLASS)
+    .map((child) => child.textContent)
+    .join(' ');
+
+/** The picker's second line: the description, or why the source is off. */
+const chipDetail = (chip) =>
+  chip.children.find((child) => child.className === DETAIL_CLASS)
+    ?.textContent ?? '';
 
 // Shaped exactly like MapStackController.getStacks() output.
 const CONTROLLER_STACKS = [
@@ -276,6 +286,11 @@ test('keyless ion stacks stay focusable, aria-disabled, and say why', () => {
     'Needs CESIUM_ION_TOKEN — add it in Provider Settings',
   );
   assert.equal(chipText(bingAerial), 'Bing Aerial ION');
+  assert.equal(
+    chipDetail(bingAerial),
+    'Needs CESIUM_ION_TOKEN — add it in Provider Settings',
+    'the reason is visible, not only in a tooltip',
+  );
 
   bingAerial.click();
   assert.deepEqual(
@@ -334,6 +349,8 @@ test("models carry the stack's own reason and never invent an active chip", () =
     {
       id: 'osm',
       label: 'OSM',
+      description: '',
+      detail: '',
       available: true,
       active: false,
       requiresIon: false,
@@ -379,6 +396,30 @@ test("models carry the stack's own reason and never invent an active chip", () =
   );
 
   assert.deepEqual(mapStackChipModels(undefined, 'osm'), []);
+});
+
+test('every shipped source explains itself in one line under its name', async () => {
+  const { MAP_STACKS } = await import('./maps/catalog.js');
+  const container = makeElement();
+  const stacks = MAP_STACKS.map((stack) => ({ ...stack, available: true }));
+  renderMapStackChips(container, stacks, { activeId: 'esri-imagery', doc });
+  assert.equal(container.children.length, PRESENTED_MAP_STACK_IDS.length);
+  for (const chip of container.children)
+    assert.ok(chipDetail(chip).length > 8, chip.dataset.stackId);
+  assert.equal(chipDetail(container.children[4]), 'Street map, no key needed');
+
+  // An unavailable source swaps its description for the reason.
+  renderMapStackChips(
+    container,
+    stacks.map((stack) =>
+      stack.id === 'photoreal'
+        ? { ...stack, available: false, unavailableReason: 'Needs a key' }
+        : stack,
+    ),
+    { activeId: 'esri-imagery', doc },
+  );
+  assert.equal(chipDetail(container.children[0]), 'Needs a key');
+  assert.equal(chipText(container.children[0]), 'Google 3D');
 });
 
 test('a missing row or document is inert rather than throwing during boot', () => {

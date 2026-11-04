@@ -3072,5 +3072,10 @@
   "Dictate a message": "Dicter un message",
   "Stop dictation (Ctrl+M)": "Arrêter la dictée (Ctrl+M)",
   "Performance": "Performances",
-  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "Mode performance : tuiles 3D plus légères et anticrénelage pour un mouvement plus fluide"
+  "Performance mode: lighter 3D tiles and anti-aliasing for smoother movement": "Mode performance : tuiles 3D plus légères et anticrénelage pour un mouvement plus fluide",
+  "Photorealistic 3D cities and terrain": "Villes et relief en 3D photoréaliste",
+  "Satellite imagery through Cesium ion": "Imagerie satellite via Cesium ion",
+  "Satellite imagery with roads and place names": "Imagerie satellite avec routes et noms de lieux",
+  "Satellite imagery, no key needed": "Imagerie satellite, sans clé",
+  "Street map, no key needed": "Plan des rues, sans clé"
 }
