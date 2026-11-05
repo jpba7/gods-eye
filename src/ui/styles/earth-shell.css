@@ -1794,8 +1794,168 @@ body.earth-shell[data-earth-section='context']
   > .panel-header {
   display: none !important;
 }
-body.earth-shell[data-earth-section='scenes'] .scene-shot-list {
-  max-height: 44vh;
+/* Scenes: suggestions lead and the panel's own controls follow. The drawer
+   is the one scroller, so the panel and its shot list grow to fit. */
+body.earth-shell[data-earth-section='scenes'] #scene-panel .scene-panel-inner {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+body.earth-shell[data-earth-section='scenes'] #scene-panel .scene-shot-list {
+  flex: none;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+}
+body.earth-shell[data-earth-section='scenes'] #scene-panel .scene-suggestions {
+  order: -2;
+  margin: 0 0 14px;
+  padding: 0 0 16px;
+  border-top: 0;
+  border-bottom: 1px solid var(--earth-border);
+}
+body.earth-shell[data-earth-section='scenes'] #scene-panel .scene-own-heading {
+  display: block;
+  order: -1;
+  margin-bottom: 10px;
+}
+body.earth-shell[data-earth-section='scenes']
+  #scene-panel
+  .scene-section-heading {
+  color: var(--earth-text-3);
+  font: 600 12px/1.3 var(--font-sans);
+  letter-spacing: 0.06em;
+}
+body.earth-shell[data-earth-section='scenes'] #scene-panel .scene-suggestion {
+  background: var(--earth-surface-2);
+  border-color: var(--earth-border);
+  border-radius: 12px;
+}
+/* The panel's own controls in the shell's graphite style: sentence case,
+   interface face, pill buttons like Play tour. Classic, Cyber and the phone
+   shell keep the terminal look from scenes.css and action-button.css. */
+body.earth-shell[data-earth-section='scenes']
+  #scene-panel
+  :is(.scene-btn, .gev-action-button, .scene-shot-toggle:not([hidden])) {
+  display: block;
+  min-height: 34px;
+  padding: 7px 14px;
+  color: var(--earth-text);
+  text-align: center;
+  background: transparent;
+  border: 1px solid var(--earth-border-strong);
+  border-radius: 17px;
+  font: 500 13px/1.3 var(--font-sans);
+  letter-spacing: normal;
+  text-transform: lowercase;
+  white-space: normal;
+}
+body.earth-shell[data-earth-section='scenes']
+  #scene-panel
+  :is(.scene-btn, .gev-action-button, .scene-shot-toggle)::first-letter {
+  text-transform: uppercase;
+}
+body.earth-shell[data-earth-section='scenes']
+  #scene-panel
+  :is(.scene-btn, .gev-action-button, .scene-shot-toggle):hover:not(
+    :disabled
+  ) {
+  color: var(--earth-text);
+  background: rgba(232, 234, 237, 0.06);
+  border-color: var(--earth-border-strong);
+}
+body.earth-shell[data-earth-section='scenes']
+  #scene-panel
+  :is(#scene-capture-btn, #scene-start-btn) {
+  color: var(--earth-accent);
+  background: var(--earth-accent-soft);
+  border-color: transparent;
+}
+body.earth-shell[data-earth-section='scenes']
+  #scene-panel
+  :is(#scene-capture-btn, #scene-start-btn):hover:not(:disabled) {
+  color: var(--earth-accent-strong);
+  background: var(--earth-accent-soft);
+  border-color: var(--earth-accent);
+}
+body.earth-shell[data-earth-section='scenes']
+  #scene-panel
+  :is(.scene-btn-danger, .gev-action-button--danger):hover:not(:disabled) {
+  color: #f28b82;
+  background: rgba(242, 139, 130, 0.12);
+  border-color: #f28b82;
+}
+body.earth-shell[data-earth-section='scenes']
+  #scene-panel
+  .gev-action-button--compact {
+  min-height: 28px;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+}
+body.earth-shell[data-earth-section='scenes'] #scene-panel #scene-select {
+  height: 40px;
+  padding: 0 12px;
+  overflow: hidden;
+  color: var(--earth-text);
+  text-overflow: ellipsis;
+  background-color: var(--earth-field);
+  border: 1px solid var(--earth-border-strong);
+  border-radius: 10px;
+  font: 400 14px var(--font-sans);
+  letter-spacing: normal;
+  text-transform: none;
+}
+body.earth-shell[data-earth-section='scenes'] #scene-panel .scene-shot-row {
+  padding: 10px 12px;
+  background: var(--earth-surface-2);
+  border-color: var(--earth-border);
+  border-radius: 12px;
+}
+body.earth-shell[data-earth-section='scenes']
+  #scene-panel
+  .scene-shot-row.active {
+  background: var(--earth-accent-soft);
+  border-color: rgba(138, 180, 248, 0.55);
+}
+body.earth-shell[data-earth-section='scenes']
+  #scene-panel
+  :is(.scene-shot-label, .scene-shot-rename) {
+  font: 500 13px/1.3 var(--font-sans);
+  letter-spacing: normal;
+}
+body.earth-shell[data-earth-section='scenes']
+  #scene-panel
+  :is(.scene-shot-meta, .scene-shot-empty, #scene-status) {
+  color: var(--earth-text-3);
+  font: 400 12px/1.4 var(--font-sans);
+  letter-spacing: normal;
+}
+body.earth-shell[data-earth-section='scenes'] #scene-panel .scene-progress {
+  height: 6px;
+  background: var(--earth-field);
+  border: 0;
+}
+body.earth-shell[data-earth-section='scenes'] #scene-panel #scene-progress-fill {
+  padding: 0;
+  overflow: hidden;
+  color: transparent;
+  background: var(--earth-accent);
+  text-shadow: none;
+}
+/* A long scene lists its first six shots (SCENE_SHOT_PREVIEW_COUNT in
+   sceneControls.js) and the selected one until "Show all" expands it. */
+body.earth-shell[data-earth-section='scenes']
+  #scene-panel
+  .scene-shot-list:not(.scene-shot-list--expanded)
+  > .scene-shot-row:nth-child(n + 7):not(.active) {
+  display: none;
+}
+body.earth-shell[data-earth-section='scenes']
+  #scene-panel
+  .scene-shot-toggle:not([hidden]) {
+  align-self: flex-start;
+  margin: -2px 0 10px;
 }
 body.earth-shell[data-earth-section='visual']
   #command-dock

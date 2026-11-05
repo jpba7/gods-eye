@@ -2023,3 +2023,69 @@ test('a caught run failure resolves as run-failed, not success (#971)', async ()
     );
   } finally { console.warn = warn; await director.destroy(); restore(); }
 });
+
+test('a suggested place flies only the camera and leaves the project, look and layers alone', async () => {
+  const { director, viewer, styleManager, dataManager, storage, restore } = makeDirector();
+  try {
+    const before = storage.getItem('godsEyeView.sceneProject.v2');
+    const result = await director.flyToSuggestion('christ-the-redeemer');
+    assert.deepEqual(result, { started: true });
+    assert.equal(viewer.flights.length, 1);
+    assert.equal(styleManager.visualStates.length, 0);
+    assert.equal(dataManager.setEnabledCalls.length, 0);
+    assert.equal(storage.getItem('godsEyeView.sceneProject.v2'), before);
+    assert.deepEqual(await director.flyToSuggestion('nowhere'), {
+      started: false,
+      reason: 'not-found',
+    });
+    director._running = true;
+    assert.equal((await director.flyToSuggestion('colosseum')).reason, 'already-running');
+    director._running = false;
+  } finally { await director.destroy(); restore(); }
+});
+
+test('saving a suggestion adds a one-shot scene that keeps the current look and no layers', async () => {
+  const { director, storage, restore } = makeDirector();
+  try {
+    const count = director._project.scenes.length;
+    const saved = director.saveSuggestion('taj-mahal');
+    assert.equal(saved.title, 'Taj Mahal');
+    assert.equal(director._project.scenes.length, count + 1);
+    const scene = director._project.scenes.at(-1);
+    assert.equal(scene.id, saved.id);
+    assert.equal(director._selectedSceneId, scene.id);
+    assert.equal(scene.shots.length, 1);
+    assert.deepEqual(scene.shots[0].layers, {});
+    assert.equal(scene.shots[0].visual.style, 'normal');
+    assert.ok(scene.shots[0].camera.alt > 145, 'the camera sits above the landmark');
+    const stored = JSON.parse(storage.getItem('godsEyeView.sceneProject.v2'));
+    assert.ok(stored.scenes.some((item) => item.id === scene.id));
+    assert.equal(director.saveSuggestion('nowhere'), null);
+  } finally { await director.destroy(); restore(); }
+});
+
+test('a suggestion tour plays as an ordinary scene, added once and in photoreal when available', async () => {
+  const { director, viewer, styleManager, restore } = makeDirector({
+    isMapStackAvailable: (id) => id === 'photoreal',
+  });
+  try {
+    director._sleep = async () => {};
+    const result = await director.playSuggestionTour('monuments');
+    assert.equal(result.started, true);
+    const tours = director._project.scenes.filter(
+      (scene) => scene.id === 'suggested-tour-monuments',
+    );
+    assert.equal(tours.length, 1);
+    assert.equal(tours[0].shots.length, 5);
+    assert.ok(tours[0].shots.every((shot) => shot.visual.mapStack === 'photoreal'));
+    assert.ok(tours[0].shots.every((shot) => Object.keys(shot.layers).length === 0));
+    assert.equal(viewer.flights.length, 5);
+    assert.equal(styleManager.visualStates.at(-1).mapStack, 'photoreal');
+    await director.playSuggestionTour('monuments');
+    assert.equal(
+      director._project.scenes.filter((scene) => scene.id === 'suggested-tour-monuments').length,
+      1,
+      'replaying reuses the saved tour',
+    );
+  } finally { await director.destroy(); restore(); }
+});
