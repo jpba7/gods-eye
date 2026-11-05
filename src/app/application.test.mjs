@@ -230,20 +230,13 @@ test('the viewer gets the starry sky as an option, which keeps the Sun and Moon'
   options.skyBox.destroy();
 });
 
-test('the globe renders at device pixels, capped for very dense screens', async () => {
-  const {
-    applicationViewerOptions,
-    renderResolutionScale,
-    MAX_RENDER_PIXEL_RATIO,
-  } = await import('./viewer.js');
+test('the globe renders at CSS pixels by default', async () => {
+  const { applicationViewerOptions } = await import('./viewer.js');
   const options = applicationViewerOptions({});
   options.skyBox.destroy();
-  // Cesium's default draws CSS pixels: blurry under 125–150% display scaling.
-  assert.equal(options.useBrowserRecommendedResolution, false);
-  for (const ratio of [1, 1.25, 1.5, undefined, Number.NaN])
-    assert.equal(renderResolutionScale(ratio), 1);
-  assert.equal(renderResolutionScale(2) * 2, MAX_RENDER_PIXEL_RATIO);
-  assert.equal(renderResolutionScale(3) * 3, MAX_RENDER_PIXEL_RATIO);
+  // Device pixels under 125–150% display scaling cost a 6 GB laptop GPU up
+  // to 2.25x the fragments; Cesium's CSS-pixel default stays the baseline.
+  assert.equal('useBrowserRecommendedResolution' in options, false);
 });
 
 function pinchFixture({ zoomEventTypes } = {}) {

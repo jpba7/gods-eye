@@ -13,9 +13,8 @@
  * - **3D tile cache 1.5 GB + 1 GB overflow → 512 MB + 512 MB.** Google's
  *   defaults may hold 2.5 GB of tiles, too much for a 4–6 GB laptop GPU that
  *   also drives the browser; memory pressure there stalls every frame.
- * - **Device pixels → CSS pixels.** The globe normally renders at the screen's
- *   pixel ratio (up to 1.5); performance mode draws CSS pixels, which is
- *   1.5–2.25x fewer fragments under 125–150% display scaling.
+ * - **CSS pixels.** The globe already renders at CSS pixels by default;
+ *   performance mode keeps it there even if something raised the resolution.
  *
  * The choice is remembered on this device. Quality mode restores each value
  * exactly as it was.
