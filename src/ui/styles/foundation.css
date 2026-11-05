@@ -71,6 +71,73 @@
   outline-offset: 2px;
 }
 
+/* The desktop shell (body.earth-shell) keeps the same :focus-visible ring,
+   still 2px and still unremovable, but in its one blue accent instead of
+   near-white, which read as heavy on its graphite dialogs. A text field gets
+   :focus-visible from any focus, including the one a dialog gives its first
+   field when it opens, so its ring hugs the field's own edge. The accent on
+   the shell surface is about 7:1. */
+body.earth-shell
+  :where(
+    button,
+    a[href],
+    input,
+    select,
+    textarea,
+    summary,
+    [tabindex],
+    [role='button'],
+    [role='checkbox'],
+    [role='combobox'],
+    [role='link'],
+    [role='listbox'],
+    [role='menuitem'],
+    [role='menuitemcheckbox'],
+    [role='menuitemradio'],
+    [role='option'],
+    [role='radio'],
+    [role='searchbox'],
+    [role='slider'],
+    [role='spinbutton'],
+    [role='switch'],
+    [role='tab'],
+    [role='textbox'],
+    [role='treeitem']
+  ):focus-visible {
+  outline: 2px solid var(--earth-accent) !important;
+}
+body.earth-shell
+  :where(
+    input:not(
+      [type='button'],
+      [type='checkbox'],
+      [type='color'],
+      [type='file'],
+      [type='image'],
+      [type='radio'],
+      [type='range'],
+      [type='reset'],
+      [type='submit']
+    ),
+    select,
+    textarea,
+    [role='combobox'],
+    [role='searchbox'],
+    [role='textbox']
+  ):focus-visible {
+  outline-offset: -1px;
+}
+/* The shell's two pill fields draw a borderless input inside a rounded
+   capsule, so the ring moves to the capsule rather than boxing the text. */
+body.earth-shell #earth-search:has(#earth-search-input:focus-visible),
+body.earth-shell .earth-filter-field:has(#earth-layer-filter:focus-visible) {
+  outline: 2px solid var(--earth-accent);
+  outline-offset: -1px;
+}
+body.earth-shell :is(#earth-search-input, #earth-layer-filter):focus-visible {
+  outline-color: transparent !important;
+}
+
 /* Native `<select>` popups are painted by the browser, not by this sheet: the
    closed control inherits its panel skin, but the option list falls back to the
    platform's light palette unless the control declares a scheme. Declare it on

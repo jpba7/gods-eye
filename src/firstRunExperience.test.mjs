@@ -13,11 +13,19 @@ import {
   FIRST_RUN_STORAGE_KEY,
   environmentalLabel,
   exclusiveSurfaceActive,
+  initFirstRunExperience,
   rememberFirstRunSessionDismissed,
   runFirstRunChoice,
   setFirstRunSuppressed,
   shouldShowFirstRun,
 } from './firstRunExperience.js';
+import { EARTH_SHELL_CLASS } from './ui/earthShell.js';
+import {
+  aggregateLayerLoading,
+  createLoadingFeedbackState,
+  presentLoadingFeedback,
+  reduceLoadingFeedback,
+} from './loadingFeedback.js';
 
 function memoryStorage(key, value = null) {
   const values = new Map(value == null ? [] : [[key, value]]);
@@ -632,11 +640,38 @@ test('the tile is the FULLY CONFIGURED experience: quakes and fires together', (
   const environmental = FIRST_RUN_MISSIONS.environmental;
   assert.deepEqual(environmental.layerIds, ['earthquakes', 'local-firms']);
 
-  // Keyless, the honest surface is the LAYER ROW ("KEY REQUIRED"), which the
-  // FIRMS layer already reports. The misleading part is the GLOBAL chip folding
-  // that row into LOAD FAILED — a defect in the shared state machine, ledgered
-  // post-launch, and the note must stay where the next editor will read it
-  // rather than being re-discovered as a launcher bug.
+  // Keyless, the LAYER ROW reads "KEY REQUIRED", and the GLOBAL chip must tell
+  // the same truth: the batch ends on the neutral key-required state, never
+  // on LOAD FAILED, while the quakes half of the tile loads in full.
+  const loading = aggregateLayerLoading([
+    { id: 'earthquakes', name: 'Earthquakes', lifecycleState: 'enabling' },
+    { id: 'local-firms', name: 'NASA FIRMS', lifecycleState: 'enabling' },
+  ]);
+  let state = reduceLoadingFeedback(createLoadingFeedbackState(), loading, 0);
+  state = reduceLoadingFeedback(state, loading, 200);
+  const keyless = aggregateLayerLoading([
+    {
+      id: 'earthquakes',
+      name: 'Earthquakes',
+      enabled: true,
+      lifecycleState: 'enabled',
+      stats: { count: 120, lastUpdate: 1 },
+    },
+    {
+      id: 'local-firms',
+      name: 'NASA FIRMS',
+      enabled: true,
+      lifecycleState: 'enabled',
+      stats: { keyRequired: true, error: 'KEY REQUIRED' },
+    },
+  ]);
+  state = reduceLoadingFeedback(state, keyless, 400);
+  const chip = presentLoadingFeedback(state, keyless, 400);
+  assert.equal(chip.state, 'key-required');
+  assert.equal(chip.label, 'NEEDS A KEY');
+  assert.equal(chip.detail, 'NASA FIRMS — add it in Provider Settings');
+
+  // The note beside the mission table points the next editor at the chip.
   const module = fs.readFileSync(
     new URL('./firstRunExperience.js', import.meta.url),
     'utf8',
@@ -647,7 +682,6 @@ test('the tile is the FULLY CONFIGURED experience: quakes and fires together', (
   );
   assert.match(table, /KEY REQUIRED/);
   assert.match(table, /src\/loadingFeedback\.js/);
-  assert.match(table, /LEDGERED post-launch/);
 });
 
 test('every visitor gets the same tile — there is no degraded keyless variant', async () => {
@@ -720,6 +754,11 @@ test('the fires/quakes tile name is switchable from one constant', () => {
     environmentalLabel().title,
     environmentalLabel(ENVIRONMENTAL_LABEL_CHOICE).title,
   );
+  // The desktop shell reads the same choice in sentence case.
+  assert.equal(environmentalLabel('ENVIRONMENTAL').shellTitle, 'Environmental');
+  assert.equal(environmentalLabel('EARTH_WATCH').shellTitle, 'Earth watch');
+  assert.equal(environmentalLabel('ACTIVE_EVENTS').shellTitle, 'Active events');
+  assert.equal(environmentalLabel('nonsense').shellTitle, 'Environmental');
 });
 
 // ── Defaults interplay: what a mission is allowed to persist ─────────────────
@@ -796,6 +835,96 @@ test('the decision table is written down where the next editor will read it', ()
 });
 
 // ── Markup, startup ordering, accessibility ─────────────────────────────────
+
+test('the desktop shell reads the tiles in sentence case and the classic look in capitals', () => {
+  const classList = (initial = []) => {
+    const names = new Set(initial);
+    return {
+      contains: (name) => names.has(name),
+      add: (name) => names.add(name),
+      remove: (name) => names.delete(name),
+    };
+  };
+  const node = (textContent = '') => ({
+    textContent,
+    dataset: {},
+    hidden: true,
+    classList: classList(),
+    addEventListener() {},
+    removeEventListener() {},
+    setAttribute() {},
+    remove() {},
+    contains: () => false,
+    getClientRects: () => [],
+    getBoundingClientRect: () => ({ left: 0, top: 0, width: 0, height: 0 }),
+    querySelectorAll: () => [],
+  });
+  const texts = {
+    '[data-first-run-choice="contacts"] strong': node('LIVE CONTACTS'),
+    '[data-first-run-choice="space-missions"] strong': node('SPACE MISSIONS'),
+    '[data-first-run-environmental-title]': node('ENVIRONMENTAL'),
+    '[data-first-run-choice="explore"] strong': node('EXPLORE MANUALLY'),
+    '.first-run-dismiss-touch': node('DISMISS'),
+  };
+  const root = node();
+  root.querySelector = (selector) => texts[selector] || null;
+  // The shell's own class name, so a rename there cannot silently strand the
+  // card in one case.
+  const body = { classList: classList([EARTH_SHELL_CLASS]) };
+  const documentRef = {
+    body,
+    activeElement: null,
+    getElementById: (id) => (id === 'first-run-launcher' ? root : null),
+    addEventListener() {},
+    removeEventListener() {},
+  };
+  const OriginalObserver = globalThis.MutationObserver;
+  let onBodyClass = null;
+  globalThis.MutationObserver = class {
+    constructor(callback) {
+      onBodyClass = callback;
+    }
+    observe() {}
+    disconnect() {}
+  };
+  const read = () =>
+    Object.fromEntries(
+      Object.entries(texts).map(([selector, element]) => [
+        selector,
+        element.textContent,
+      ]),
+    );
+  try {
+    const launcher = initFirstRunExperience({
+      styleManager: {},
+      dataManager: {},
+      documentRef,
+      location: { search: '?welcome=1' },
+    });
+    assert.ok(launcher, 'the launcher initialised against the fake document');
+    assert.deepEqual(Object.values(read()), [
+      'Live contacts',
+      'Space missions',
+      'Environmental',
+      'Explore manually',
+      'Dismiss',
+    ]);
+    // Narrowing the window (or picking Cyber) drops the shell class: capitals
+    // come back without a reload.
+    body.classList.remove(EARTH_SHELL_CLASS);
+    onBodyClass?.();
+    assert.deepEqual(Object.values(read()), [
+      'LIVE CONTACTS',
+      'SPACE MISSIONS',
+      'ENVIRONMENTAL',
+      'EXPLORE MANUALLY',
+      'DISMISS',
+    ]);
+    launcher.destroy();
+  } finally {
+    globalThis.MutationObserver = OriginalObserver;
+  }
+});
 
 test('markup, startup ordering and accessibility remain pinned', () => {
   const html = expandApplicationHtml(

@@ -137,3 +137,45 @@ for (const locale of ['es', 'ru']) {
     assert.equal(shown.label, t(error).toLocaleUpperCase(locale));
   });
 }
+
+test('the missing-key end state reads in the UI language, layer names included', () => {
+  const presentation = {
+    state: 'key-required',
+    label: 'NEEDS A KEY',
+    detail: 'NASA FIRMS — add it in Provider Settings',
+  };
+  setLocale('pt');
+  assert.deepEqual(localizeLoadingPresentation(presentation), {
+    state: 'key-required',
+    label: 'PRECISA DE UMA CHAVE',
+    detail: 'NASA FIRMS — adicione em "Configurações de provedores"',
+  });
+  assert.equal(
+    localizeLoadingPresentation({
+      ...presentation,
+      detail: 'Add it in Provider Settings',
+    }).detail,
+    'Adicione em "Configurações de provedores"',
+  );
+  for (const locale of [
+    'de',
+    'es',
+    'fr',
+    'it',
+    'ja',
+    'ru',
+    'uk',
+    'zh-CN',
+    'zh-Hant',
+  ]) {
+    setLocale(locale);
+    const shown = localizeLoadingPresentation(presentation);
+    assert.notEqual(shown.label, 'NEEDS A KEY', `${locale} label`);
+    assert.doesNotMatch(
+      shown.detail,
+      /add it in Provider Settings/,
+      `${locale} detail`,
+    );
+    assert.match(shown.detail, /NASA FIRMS/, `${locale} keeps the layer name`);
+  }
+});

@@ -84,3 +84,25 @@ test('opening a dock popover makes its controls keyboard-reachable immediately',
   const open = ruleText('#command-dock #location-bar:not(.collapsed) .dock-popover-content,');
   assert.match(open, /transition-delay:\s*0s/);
 });
+
+test('the desktop shell recolours the keyboard ring without weakening it', () => {
+  const rule = ruleText('body.earth-shell\n  :where(\n    button,');
+  // Same :focus-visible semantics and the same 2px unremovable ring as the
+  // global rule, in the shell's blue accent rather than near-white.
+  assert.match(rule, /\):focus-visible \{/);
+  assert.doesNotMatch(rule, /:focus \{/);
+  assert.match(rule, /outline:\s*2px solid var\(--earth-accent\) !important;/);
+  for (const selector of ['input', 'select', 'textarea', "[role='tab']", '[tabindex]'])
+    assert.ok(rule.includes(selector), `${selector} keeps a ring in the shell`);
+  // Text fields hug their own edge instead of floating a second box around it.
+  const fields = ruleText('body.earth-shell\n  :where(\n    input:not(');
+  assert.match(fields, /\):focus-visible \{\s*outline-offset:\s*-1px;\s*\}/);
+  assert.match(fields, /\[type='checkbox'\]/);
+  // The pill fields hand the same ring to their capsule; the input inside
+  // only goes transparent where the capsule draws it.
+  const capsule = ruleText('body.earth-shell #earth-search:has(#earth-search-input:focus-visible),');
+  assert.match(capsule, /\.earth-filter-field:has\(#earth-layer-filter:focus-visible\)/);
+  assert.match(capsule, /outline:\s*2px solid var\(--earth-accent\);/);
+  // The accent is defined by the shell itself.
+  assert.match(css, /body\.earth-shell \{[^}]*--earth-accent: #8ab4f8;/);
+});
