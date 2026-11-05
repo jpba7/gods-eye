@@ -853,7 +853,7 @@ export class StyleManager extends ShellFacade {
     );
     // One span holds both mode descriptions around a <br>; keep the <br>.
     const standbyDescription = document.querySelector(
-      '#context-mode-standby span',
+      '#context-mode-standby > span',
     );
     if (standbyDescription) {
       standbyDescription.replaceChildren(
