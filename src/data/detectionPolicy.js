@@ -26,21 +26,16 @@ export const ALLOCATION_STRATEGIES = Object.freeze([
 export const AIRCRAFT_BRACKET_ALPHA_FLOOR = 0.35;
 
 /**
- * Mirror of celestialRing's KEYHOLE_OUTSIDE_OPACITY_DEFAULT — the OUTSIDE
- * setting the bracket look is calibrated at, so `AIRCRAFT_BRACKET_ALPHA_FLOOR`
- * lands EXACTLY at the shipped default. Mirrored rather than imported so this
- * stays a pure policy module with no Cesium dependency; detectionPolicy.test.mjs
- * imports the real constant and pins the two together so they cannot drift.
+ * The OUTSIDE setting the bracket look is calibrated at, so
+ * `AIRCRAFT_BRACKET_ALPHA_FLOOR` lands EXACTLY there: the 1% first-run default
+ * the owner approved on 2026-08-24 (it had moved 0.05 → 0.03 → 0.01, and the
+ * anchor moved with it, because the approval attached to the bracket
+ * BRIGHTNESS, not the slider position).
  *
- * It MOVES WITH THE DEFAULT (0.05 → 0.03 → 0.01; owner final lock 2026-08-24).
- * That pin is the tripwire
- * for exactly this change, and the decision it forces is which of two things the
- * approval attaches to: the bracket BRIGHTNESS, or the slider POSITION. It is
- * the brightness — the floor exists so side aircraft brackets stay readable at
- * whatever the default is, and the owner's directive moved the label default,
- * not the bracket look. Holding the anchor at 0.05 instead would dim brackets to
- * 0.07 on a first run at the 1% default, which is the dead-zone complaint in
- * reverse.
+ * Since the Scope mask was removed (2026-11) the first-run OUTSIDE opacity is
+ * 100%, where the floor equals the label alpha and stops overriding, so there
+ * is no first-run bracket look left to calibrate. The anchor stays at 1%: an
+ * operator who lowers OUTSIDE to 1% still gets the approved readable brackets.
  */
 export const AIRCRAFT_BRACKET_FLOOR_ANCHOR = 0.01;
 

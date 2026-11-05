@@ -6,7 +6,6 @@ import { initImageryBoxTool } from '../ui/imageryBoxTool.js';
 import { createRecentImageryPanel } from '../ui/recentImagery.js';
 import { initGevVoiceCommands } from '../voice/gevRealtime.js';
 import { installViews, isEmbeddedInline } from './embed.js';
-import { installScopeMask, destroyScopeMask } from '../scopeMask.js';
 import { installLayerReleaseTrim } from '../sceneCommandRelease.js';
 import {
   installRenderGovernor,
@@ -120,10 +119,6 @@ export function createApplicationTools({
       requestRender: governorRequestRender,
     }),
   );
-
-  // Install the explicit scope mask used by the DISPLAY controls.
-  installScopeMask(viewer);
-  defer(() => destroyScopeMask());
 
   // The follow camera recomputes the tracked target's dead-reckon position
   // every frame — tracking anything is a per-frame animation. (perf wave 2)

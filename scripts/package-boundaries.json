@@ -877,7 +877,6 @@
       "src/ui/layerNames.js",
       "src/ui/statusText.js",
       "src/ui/statusBadge.js",
-      "src/scopeMaskPolicy.js",
       "src/visualStylePolicy.js"
     ],
     "external": ["cesium"]
@@ -2395,7 +2394,6 @@
       "src/director/playback.js",
       "src/scenes/recipes.js",
       "src/scenes/scenePolicy.js",
-      "src/scopeMask.js",
       "src/search/alpsGeocoder.js",
       "src/search/defaults.js",
       "src/search/geospatial.js",
@@ -2823,7 +2821,6 @@
       "src/voice/geminiCaptureWorklet.js",
       "src/ui/statusBadge.js",
       "src/sceneCommandRelease.js",
-      "src/scopeMaskPolicy.js",
       "src/visualStylePolicy.js",
       "src/layers/wikiPlaces/source.js",
       "src/layers/wikiPlaces/model.js",
@@ -3602,7 +3599,6 @@
       "src/i18n/locales/uk.json",
       "src/i18n/locales/zh-CN.json",
       "src/i18n/locales/zh-Hant.json",
-      "src/scopeMaskPolicy.js",
       "src/ui/displayControls.js",
       "src/visualStylePolicy.js"
     ],
@@ -4222,7 +4218,6 @@
       "src/data/layerStateTokenReservations.json",
       "src/data/idSwitches.js",
       "src/data/detectionPolicy.js",
-      "src/scopeMaskPolicy.js",
       "src/i18n/marker.js",
       "src/visualStylePolicy.js"
     ],

@@ -378,6 +378,91 @@ test('open drawers end above the status bar whatever the rail engine sizes', () 
   assert.match(rule[1], /overflow-y: auto;/);
 });
 
+test('the shell offers no Tactical HUD switch and forgets its old choice', () => {
+  const { doc, shell, values } = harness({
+    stored: { 'gev.earthShell.tacticalHud': '1' },
+  });
+  shell.setSection('visual');
+  assert.equal(doc.getElementById('earth-hud-switch'), null);
+  assert.equal(doc.body.classList.contains('earth-hud-visible'), false);
+  assert.equal(values.has('gev.earthShell.tacticalHud'), false);
+  shell.destroy();
+});
+
+test('every Visual drawer control explains its effect', () => {
+  const markup = readFileSync(
+    new URL('./templates/display-controls.html', import.meta.url),
+    'utf8',
+  );
+  const tag = (id) =>
+    new RegExp(`<[a-z]+\\b[^>]*\\bid="${id}"[^>]*>`).exec(markup)?.[0] ?? '';
+  // Toggles carry a translated tooltip and point at their one-line hint.
+  for (const [id, hint] of [
+    ['detection-toggle', 'detection-hint'],
+    ['models3d-toggle', 'models3d-hint'],
+    ['draw-toggle', 'draw-tool-hint'],
+    ['geo-import-button', 'geo-import-tool-hint'],
+    ['celestial-toggle', 'celestial-hint'],
+    ['clean-view-toggle', 'clean-view-hint'],
+    ['performance-toggle', 'performance-hint'],
+    ['bloom-toggle', 'bloom-hint'],
+    ['sharpen-toggle', 'sharpen-hint'],
+    ['hud-layout-select', 'hud-layout-hint'],
+  ]) {
+    const control = tag(id);
+    assert.match(control, /\btitle="[^"]+"/, `${id} has a tooltip`);
+    assert.match(control, /\bdata-i18n-title\b/, `${id} tooltip is translated`);
+    assert.match(control, new RegExp(`aria-describedby="${hint}"`), id);
+    assert.match(
+      tag(hint),
+      /^<p class="pp-hint" id="[^"]+" data-i18n>/,
+      `${hint} is a translated hint`,
+    );
+  }
+  // Settings carry a translated tooltip.
+  for (const id of [
+    'detection-density-slider',
+    'detection-allocation-elastic',
+    'detection-allocation-weighted',
+    'detection-fade-slider',
+    'detection-opacity-slider',
+    'models3d-mode-proximity',
+    'models3d-mode-all',
+    'draw-label-input',
+    'draw-color-select',
+    'draw-clear',
+    'bloom-intensity-slider',
+    'sharpen-intensity-slider',
+  ]) {
+    assert.match(tag(id), /\btitle="[^"]+"/, `${id} has a tooltip`);
+    assert.match(tag(id), /\bdata-i18n-title\b/, `${id} tooltip is translated`);
+  }
+  for (const shape of ['area', 'line', 'pin'])
+    assert.match(
+      new RegExp(`<button\\b[^>]*data-shape="${shape}"[^>]*>`).exec(markup)[0],
+      /\btitle="[^"]+"[^>]*data-i18n-title/,
+    );
+  // The retired Scope (Mira) control is gone.
+  assert.doesNotMatch(markup, /scope-toggle|scope-feather/);
+});
+
+test('hints show only in the Visual drawer', () => {
+  const css = readFileSync(
+    new URL('./styles/earth-visual.css', import.meta.url),
+    'utf8',
+  );
+  assert.match(css, /\n\.pp-hint \{\s*display: none;\s*\}/);
+  assert.match(
+    css,
+    /body\.earth-shell\[data-earth-section='visual'\] #pp-toggles \.pp-hint \{\s*display: block;/,
+  );
+  // One scroll container per drawer: the Display panel never scrolls itself.
+  assert.match(
+    css,
+    /#right-context-rail\s*> #pp-toggles \{[^}]*overflow: visible !important;/,
+  );
+});
+
 test('the Context drawer scrolls in one box and keeps Radio reachable', () => {
   const css = readFileSync(
     new URL('./styles/earth-shell.css', import.meta.url),

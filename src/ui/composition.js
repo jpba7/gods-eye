@@ -50,15 +50,6 @@ import {
   governorRequestRender,
 } from '../renderGovernor.js';
 import {
-  setScopeMaskEnabled,
-  isScopeMaskEnabled,
-  setScopeMaskFeather,
-  getScopeMaskFeather,
-  setScopeTerminusOverride,
-  getScopeTerminusOverride,
-  clampScopeTerminusPct,
-} from '../scopeMask.js';
-import {
   fetchRegionalBrief,
   regionalDistanceM,
   weatherCodeLabel,
@@ -104,13 +95,6 @@ export class StyleManager extends ApplicationShell {
         holdContinuousRender,
         releaseContinuousRender,
         governorRequestRender,
-        setScopeMaskEnabled,
-        isScopeMaskEnabled,
-        setScopeMaskFeather,
-        getScopeMaskFeather,
-        setScopeTerminusOverride,
-        getScopeTerminusOverride,
-        clampScopeTerminusPct,
         fetchRegionalBrief,
         regionalDistanceM,
         weatherCodeLabel,

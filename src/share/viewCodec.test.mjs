@@ -17,10 +17,9 @@ import {
   randomLayerState,
   rng,
 } from '../testSupport/shareViewFixtures.mjs';
-import {
-  SCOPE_TERMINUS_MAX_PCT,
-  SCOPE_TERMINUS_MIN_PCT,
-} from '../scopeMask.js';
+// The retired Scope terminus band; the codec still decodes it for old links.
+const SCOPE_TERMINUS_MIN_PCT = 94;
+const SCOPE_TERMINUS_MAX_PCT = 100;
 import {
   decodePanelStateParams,
   decodeStyleParamState,

@@ -291,7 +291,7 @@ test('existing baseline and military presets keep one detection default', () => 
   assert.equal(GLOBAL_POST_DEFAULTS.detectionDensity, 75);
   assert.equal(GLOBAL_POST_DEFAULTS.sharpen.intensity, 49);
   assert.equal(GLOBAL_POST_DEFAULTS.detectionFadePct, 7);
-  assert.equal(GLOBAL_POST_DEFAULTS.detectionOutsideOpacityPct, 1);
+  assert.equal(GLOBAL_POST_DEFAULTS.detectionOutsideOpacityPct, 100);
   for (const name of ['retro', 'surveillance', 'thermal']) {
     assert.equal(
       STYLE_PRESET_DEFAULTS[name].detection,

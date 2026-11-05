@@ -20,11 +20,11 @@ import { formatNumber, msg, t, tn } from '../i18n/index.js';
 export const EARTH_SHELL_MEDIA_QUERY = '(min-width: 721px)';
 export const EARTH_SHELL_CLASS = 'earth-shell';
 export const EARTH_SECTION_ATTR = 'data-earth-section';
-export const EARTH_HUD_CLASS = 'earth-hud-visible';
 export const EARTH_VOICE_ATTR = 'data-earth-voice';
 
 const SECTION_STORAGE_KEY = 'gev.earthShell.section';
-const HUD_STORAGE_KEY = 'gev.earthShell.tacticalHud';
+/** The retired Tactical HUD switch's key, cleared so it does not linger. */
+const RETIRED_HUD_STORAGE_KEY = 'gev.earthShell.tacticalHud';
 
 /** Panels each section expands. */
 export const EARTH_SECTION_PANELS = Object.freeze({
@@ -280,30 +280,6 @@ function buildRail(documentRef) {
   return rail;
 }
 
-function buildSwitch(documentRef, { id, label, hint }) {
-  const row = documentRef.createElement('div');
-  row.className = 'earth-switch-row';
-  const text = documentRef.createElement('div');
-  text.className = 'earth-switch-text';
-  const name = documentRef.createElement('span');
-  name.className = 'earth-switch-name';
-  name.id = `${id}-label`;
-  name.textContent = label;
-  const sub = documentRef.createElement('span');
-  sub.className = 'earth-switch-hint';
-  sub.textContent = hint;
-  text.append(name, sub);
-  const button = documentRef.createElement('button');
-  button.type = 'button';
-  button.id = id;
-  button.className = 'earth-switch';
-  button.setAttribute('role', 'switch');
-  button.setAttribute('aria-checked', 'false');
-  button.setAttribute('aria-labelledby', `${id}-label`);
-  row.append(text, button);
-  return { row, button };
-}
-
 function buildDrawer(documentRef) {
   const drawer = documentRef.createElement('aside');
   drawer.id = 'earth-drawer';
@@ -351,16 +327,6 @@ function buildDrawer(documentRef) {
   discover.textContent = t('Discover');
   explore.append(goTo, chips, discover);
 
-  const visual = documentRef.createElement('section');
-  visual.className = 'earth-extra';
-  visual.dataset.earthExtra = 'visual';
-  const hudSwitch = buildSwitch(documentRef, {
-    id: 'earth-hud-switch',
-    label: t('Tactical HUD'),
-    hint: t('Shows the original spy-satellite overlay'),
-  });
-  visual.append(hudSwitch.row);
-
   const layers = documentRef.createElement('section');
   layers.className = 'earth-extra';
   layers.dataset.earthExtra = 'layers';
@@ -376,7 +342,7 @@ function buildDrawer(documentRef) {
   filterLabel.append(filter);
   layers.append(filterLabel);
 
-  extras.append(explore, layers, visual);
+  extras.append(explore, layers);
   drawer.append(header, extras);
   return {
     drawer,
@@ -384,7 +350,6 @@ function buildDrawer(documentRef) {
     hint,
     close,
     extras,
-    hudSwitch: hudSwitch.button,
     filter,
   };
 }
@@ -679,16 +644,10 @@ export function initEarthShell({
     setVoiceOpen(body.getAttribute(EARTH_VOICE_ATTR) !== 'open'),
   );
 
-  // ── Tactical HUD switch ────────────────────────────────────────────────
-  const setHud = (visible, { remember = true } = {}) => {
-    body.classList.toggle(EARTH_HUD_CLASS, visible);
-    drawer.hudSwitch.setAttribute('aria-checked', String(visible));
-    if (remember) writeStored(storage, HUD_STORAGE_KEY, visible ? '1' : null);
-  };
-  setHud(readStored(storage, HUD_STORAGE_KEY) === '1', { remember: false });
-  listen(drawer.hudSwitch, 'click', () =>
-    setHud(!body.classList.contains(EARTH_HUD_CLASS)),
-  );
+  // The shell no longer offers the spy-satellite HUD (#intel-hud stays
+  // hidden here); forget the old switch's choice.
+  if (readStored(storage, RETIRED_HUD_STORAGE_KEY) !== null)
+    writeStored(storage, RETIRED_HUD_STORAGE_KEY, null);
 
   // ── Zoom ───────────────────────────────────────────────────────────────
   const zoomBy = (direction) => {
@@ -806,7 +765,7 @@ export function initEarthShell({
       if (statusTimer !== null) clearIntervalImpl?.(statusTimer);
       statusTimer = null;
       for (const remove of removers.splice(0)) remove();
-      body.classList.remove(EARTH_SHELL_CLASS, EARTH_HUD_CLASS);
+      body.classList.remove(EARTH_SHELL_CLASS);
       body.removeAttribute(EARTH_SECTION_ATTR);
       body.removeAttribute(EARTH_VOICE_ATTR);
       for (const name of written.keys()) body.style.removeProperty(name);

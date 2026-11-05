@@ -10,7 +10,6 @@ const parameters = readFileSync(new URL('./ui/styleParameters.js', import.meta.u
 // Native labels and hidden inputs must not be treated as missing aria-labels.
 test('HUD sliders and location search have descriptive explicit names', () => {
   for (const [id, name] of [
-    ['scope-feather-slider', 'Scope edge feather'],
     ['bloom-intensity-slider', 'Bloom intensity'],
     ['sharpen-intensity-slider', 'Sharpen intensity'],
     ['location-search', 'Search location by name or coordinates'],

@@ -4,8 +4,6 @@ import {
   migrateDetectionState,
   normalizeAllocationStrategy,
 } from './data/detectionPolicy.js';
-import { clampScopeTerminusPct } from './scopeMask.js';
-import { clampScopeFeatherPct } from './scopeMaskPolicy.js';
 import {
   decodeLayerStateParams,
   encodeLayerStateParams,
@@ -92,17 +90,12 @@ export class ShareLinkManager {
     this._detectionAllocation = 'ELASTIC';
     this._detectionFadePct = 7;
     // Mirrors KEYHOLE_OUTSIDE_OPACITY_DEFAULT in celestialRing.js and the
-    // slider's markup value (owner final lock 2026-08-24: 5 -> 3 -> 1). This is the
-    // state the link THIS session generates starts from, so it must match what
-    // the session actually renders; the `ko` PARSE fallback below is a separate
-    // question and deliberately stays at 5.
-    this._detectionOutsideOpacityPct = 1;
+    // slider's markup value (100 since the Scope mask was removed, 2026-11).
+    // This is the state the link THIS session generates starts from, so it must
+    // match what the session actually renders; the `ko` PARSE fallback below is
+    // a separate question and deliberately stays at 5.
+    this._detectionOutsideOpacityPct = 100;
     this._celestialRingEnabled = false;
-    this._scopeEnabled = true;
-    this._scopeFeatherPct = 100;
-    // null = the altitude-adaptive terminus (the default). A number pins the
-    // outside-fill opacity as a percent, 94..100. (`sce`, 2026-08-17)
-    this._scopeTerminusPct = null;
     this._mapStack = 'photoreal';
     this._layerStateProvider = null;
     this._panelStateProvider = null;
@@ -229,37 +222,19 @@ export class ShareLinkManager {
         0,
         Math.min(40, Math.round(parseOr(params.get('kf'), 16))),
       ),
-      // Deliberately still 5 after the 2026-08-23 default moved to 3. Same rule
-      // as `scf` below: this is the PARSE fallback for a link that predates
-      // `ko`, and such a link was authored when 5 was what its author saw. Every
-      // link since carries `ko` explicitly, because the generator always writes
-      // the field — so nothing from the 5 % era depends on this number either
-      // way. The first-run default is a different question, answered in
+      // Deliberately still 5 after the 2026-08-23 default moved to 3. This is
+      // the PARSE fallback for a link that predates `ko`, and such a link was
+      // authored when 5 was what its author saw. Every link since carries `ko`
+      // explicitly, because the generator always writes the field — so nothing
+      // from the 5 % era depends on this number either way. The first-run default is a different question, answered in
       // celestialRing.js.
       detectionOutsideOpacityPct: Math.max(
         0,
         Math.min(100, Math.round(parseOr(params.get('ko'), 5))),
       ),
       celestialRing: params.has('cr') ? params.get('cr') === '1' : false,
-      scopeEnabled: params.has('sc') ? params.get('sc') === '1' : true,
-      // Deliberately still 35 through both later default moves (0 on
-      // 2026-08-22, 8 on 2026-08-23). This is the PARSE fallback for a link that
-      // predates `scf` entirely, and such a link was authored when 35 was what
-      // its author saw — restoring their view is the point of a share link. A
-      // link from the feather-0 era is unaffected either way: it carries
-      // `scf=0` explicitly, because the generator always writes the field. The
-      // first-run default is a different question, answered in scopeMask.js.
-      // (`_scopeFeatherPct` in the constructor tracks the default: that one
-      // mirrors live state for the link this session generates, so it must match
-      // the mask, not the archive.)
-      scopeFeatherPct: clampScopeFeatherPct(parseOr(params.get('scf'), 35)),
-      // Absent (or non-numeric) `sce` = adaptive (null), the default behavior;
-      // a value pins the terminus opacity percent, clamped into the SUPPORTED
-      // 94..100 band. `sce=0` used to survive as a sub-94 terminus — a hole in
-      // the mask — and then got written straight back out on the next update.
-      scopeTerminusPct: params.has('sce')
-        ? clampScopeTerminusPct(params.get('sce'))
-        : null,
+      // The Scope mask was removed: older links' `sc`, `scf` and `sce` keys
+      // are read past and ignored.
       mapStack: params.get('map') || 'photoreal',
       layerState: decodedLayerState,
       layerStateInvalid:
@@ -418,9 +393,6 @@ export class ShareLinkManager {
           ? state.detectionOutsideOpacityPct
           : undefined,
         celestialRing: visualCurrent ? state.celestialRing : undefined,
-        scopeEnabled: visualCurrent ? state.scopeEnabled : undefined,
-        scopeFeatherPct: visualCurrent ? state.scopeFeatherPct : undefined,
-        scopeTerminusPct: visualCurrent ? state.scopeTerminusPct : undefined,
         mapStack: mapCurrent ? state.mapStack : undefined,
         panelState,
         styleParams: visualCurrent ? state.styleParams : undefined,
@@ -567,15 +539,6 @@ export class ShareLinkManager {
     }
     if (typeof extras.celestialRingEnabled === 'boolean')
       this._celestialRingEnabled = extras.celestialRingEnabled;
-    if (typeof extras.scopeEnabled === 'boolean')
-      this._scopeEnabled = extras.scopeEnabled;
-    if (typeof extras.scopeFeatherPct === 'number') {
-      this._scopeFeatherPct = clampScopeFeatherPct(extras.scopeFeatherPct);
-    }
-    if (extras.scopeTerminusPct === null) this._scopeTerminusPct = null;
-    else if (typeof extras.scopeTerminusPct === 'number') {
-      this._scopeTerminusPct = clampScopeTerminusPct(extras.scopeTerminusPct);
-    }
     if (typeof extras.mapStack === 'string') this._mapStack = extras.mapStack;
     this._scheduleUpdate();
   }
@@ -681,14 +644,6 @@ export class ShareLinkManager {
     params.set('kf', Math.round(this._detectionFadePct).toString());
     params.set('ko', Math.round(this._detectionOutsideOpacityPct).toString());
     params.set('cr', this._celestialRingEnabled ? '1' : '0');
-    params.set('sc', this._scopeEnabled ? '1' : '0');
-    params.set('scf', Math.round(this._scopeFeatherPct).toString());
-    // Only written when pinned — an absent `sce` IS the adaptive default, so a
-    // shared link never freezes the ramp for the recipient by accident. The
-    // same 94..100 clamp applies on the way OUT, so a link can never carry an
-    // unsupported terminus even if the field was set from somewhere else.
-    const terminusPct = clampScopeTerminusPct(this._scopeTerminusPct);
-    if (terminusPct != null) params.set('sce', String(terminusPct));
     params.set('map', this._mapStack);
     const layerState = this._layerStateProvider?.();
     if (layerState) encodeLayerStateParams(params, layerState);
